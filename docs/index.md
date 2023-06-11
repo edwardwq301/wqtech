@@ -1,18 +1,22 @@
-# Welcome to MkDocs
+---
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+hide:
+  #- navigation
+  - toc
+  - path
+---
+git add remote https://github.com/beautifulwq/beautifulwq.github.io
 
-## Commands
+# about me
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+![dog](image/gode.jpg){ width=120 hight=120 align=left }
 
-## Project layout
+- WQ
+- Undergraduate student in software engineering
+- email: 1906173192@qq.com
+- hobbies:
+    - play game
+    - read Science Fiction
+    - ACG
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
-        0000
+[my life blog](https://beautifulwq.github.io/hexoblog/)
