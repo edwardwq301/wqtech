@@ -5,7 +5,6 @@ hide:
   - toc
   - path
 ---
-git add remote https://github.com/beautifulwq/beautifulwq.github.io
 
 # about me
 
