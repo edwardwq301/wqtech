@@ -1,0 +1,1278 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Learning">
+      
+      
+        <meta name="author" content="WQ">
+      
+      
+      
+        <link rel="prev" href="../VSCODE1/">
+      
+      
+        <link rel="next" href="../hello-MkDocs/">
+      
+      <link rel="icon" href="../../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.8">
+    
+    
+      
+        <title>git使用 - WQ BLOG</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CHack:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Hack"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#git" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="WQ BLOG" class="md-header__button md-logo" aria-label="WQ BLOG" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            WQ BLOG
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              git使用
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/beautifulwq/beautifulwq.github.io/" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    beautifulwq.github.io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      about me
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../guide/" class="md-tabs__link">
+      用法
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../HTML%E5%88%9D%E4%BD%93%E9%AA%8C/" class="md-tabs__link md-tabs__link--active">
+        Tech
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="WQ BLOG" class="md-nav__button md-logo" aria-label="WQ BLOG" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    WQ BLOG
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/beautifulwq/beautifulwq.github.io/" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    beautifulwq.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        about me
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/" class="md-nav__link">
+        用法
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Tech
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Tech
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HTML%E5%88%9D%E4%BD%93%E9%AA%8C/" class="md-nav__link">
+        HTML初体验
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../VSCODE1/" class="md-nav__link">
+        VSCODE
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          git使用
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        git使用
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    基础命令
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    远程仓库
+  </a>
+  
+    <nav class="md-nav" aria-label="远程仓库">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    查看远程
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    远程操作
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tag" class="md-nav__link">
+    tag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    别名
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    分支
+  </a>
+  
+    <nav class="md-nav" aria-label="分支">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rebase" class="md-nav__link">
+    变基 rebase
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#git_1" class="md-nav__link">
+    git 交互式
+  </a>
+  
+    <nav class="md-nav" aria-label="git 交互式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patch" class="md-nav__link">
+    补丁 patch
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stash" class="md-nav__link">
+    储藏 stash
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    清理工作目录 clean
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    修改提交信息
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#todo" class="md-nav__link">
+    TODO:
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hello-MkDocs/" class="md-nav__link">
+        Welcome to MkDocs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hello-hexo/" class="md-nav__link">
+        Hello hexo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%AF%86%E7%A0%81/" class="md-nav__link">
+        加密
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%BB%BA%E7%AB%99/" class="md-nav__link">
+        建站
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    基础命令
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    远程仓库
+  </a>
+  
+    <nav class="md-nav" aria-label="远程仓库">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    查看远程
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    远程操作
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tag" class="md-nav__link">
+    tag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    别名
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    分支
+  </a>
+  
+    <nav class="md-nav" aria-label="分支">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rebase" class="md-nav__link">
+    变基 rebase
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#git_1" class="md-nav__link">
+    git 交互式
+  </a>
+  
+    <nav class="md-nav" aria-label="git 交互式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patch" class="md-nav__link">
+    补丁 patch
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stash" class="md-nav__link">
+    储藏 stash
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    清理工作目录 clean
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    修改提交信息
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#todo" class="md-nav__link">
+    TODO:
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<!-- more -->
+
+<h1 id="git">git</h1>
+<p>推荐</p>
+<p><a href="https://learngitbranching.js.org/?locale=zh_CN">玩游戏学git</a></p>
+<p><a href="https://training.github.com/downloads/zh_CN/github-git-cheat-sheet/">git命令小贴士</a></p>
+<p><a href="https://docs.github.com/zh/authentication/troubleshooting-ssh/error-permission-denied-publickey">github官方文档</a></p>
+<p><a href="https://github.com/github/gitignore">gitignore文档</a></p>
+<p>精通Git（第2版）Soctt Chacon    Ben Straub</p>
+<p><a href="https://wangchujiang.com/linux-command/c/tree.html">linux命令</a></p>
+<blockquote>
+<p>打消学习兴趣的一个因素是网络连接问题，等弄明白，精力也耗没了 </p>
+</blockquote>
+<h4 id="_1">基础命令</h4>
+<p>git staus -s </p>
+<ul>
+<li>左边标记：是否暂存</li>
+<li>右边标记：是否修改
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a> M readme.md
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>?? latex-tutorial-chinese-master/
+</span></code></pre></div></li>
+</ul>
+<p>git rm --cached readme.md</p>
+<ul>
+<li>从暂存区移除。和<code>git restore --staged &lt;file&gt;</code>很像</li>
+<li>(因为--cached和--staged是同义词)</li>
+</ul>
+<p>git mv from.md to.md</p>
+<ul>
+<li>重命名，相当于3条指令
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$ mv from.md to.md
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>$ git rm from.md
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>$ git add to.md
+</span></code></pre></div></li>
+</ul>
+<p>git diff </p>
+<ul>
+<li>不带参数：工作目录的内容和暂存区比较</li>
+<li>带参数：暂存区和上一次提交比较 eg：<code>git diff --stage(或者--cached)</code></li>
+</ul>
+<p>git log --pretty="%h - %an,%ar : %s"</p>
+<ul>
+<li>暂时自定义格式</li>
+</ul>
+<p>git log --pretty=format:"%h - %an,%ar : %s"</p>
+<ul>
+<li>永久自定义输出格式</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git commit -m "test of git commit message"</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">git commit -a -m "change something"</td>
+<td align="left">跳过git add直接提交</td>
+</tr>
+<tr>
+<td align="left">git log -p -2</td>
+<td align="left">查看最近2次提交所引入的差异（-2 -p没有顺序要求）</td>
+</tr>
+<tr>
+<td align="left">git log --stat</td>
+<td align="left">查看统计信息</td>
+</tr>
+<tr>
+<td align="left">git log nameA nameB --not nameC</td>
+<td align="left">在A或B中，但不在C中的提交</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_2">远程仓库</h4>
+<h5 id="_3">查看远程</h5>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git remote -v</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">git remote show gitexer</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">git remote add gitexer git@github.com:beautifulwq/gitexercise.git</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h5 id="_4">远程操作</h5>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git fetch gitexer</td>
+<td align="left">把本地没有的取过来，但是不合并</td>
+</tr>
+<tr>
+<td align="left">git pull</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">git push remote-name branch-name</td>
+<td align="left">本地到远程</td>
+</tr>
+<tr>
+<td align="left">git remote rename old new</td>
+<td align="left">同时会改远程分支名称</td>
+</tr>
+<tr>
+<td align="left">git remote rm</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="tag">tag</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git tag</td>
+<td align="left">查看标记</td>
+</tr>
+<tr>
+<td align="left">git tag -a v0.1</td>
+<td align="left">打标记</td>
+</tr>
+<tr>
+<td align="left">git show v0.1</td>
+<td align="left">show</td>
+</tr>
+<tr>
+<td align="left">git tag -a v0.09 a3nb3ah1(校验和)</td>
+<td align="left">补加标记</td>
+</tr>
+<tr>
+<td align="left">git push gitexer v0.1</td>
+<td align="left">推送标签</td>
+</tr>
+<tr>
+<td align="left">git push gitexer --tags</td>
+<td align="left">推送所有标签</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_5">别名</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git config --global alias.st status</td>
+<td align="left">git st</td>
+</tr>
+<tr>
+<td align="left">git config --global alias.last 'log -1 HEAD'</td>
+<td align="left">git last</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_6">分支</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git branch</td>
+<td align="left">查看分支</td>
+</tr>
+<tr>
+<td align="left">git branch -v</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">git branch --merged</td>
+<td align="left">查看已经合并了的分支</td>
+</tr>
+<tr>
+<td align="left">git branch --no-merged</td>
+<td align="left">查看没合并的分支</td>
+</tr>
+<tr>
+<td align="left">git checkout</td>
+<td align="left">切换分支</td>
+</tr>
+<tr>
+<td align="left">git branch testing</td>
+<td align="left">创建分支</td>
+</tr>
+<tr>
+<td align="left">git checkout -b hotfix</td>
+<td align="left">相当于git branch hotfix git checkout hotfix</td>
+</tr>
+<tr>
+<td align="left">git branch -d hotfix</td>
+<td align="left">删除branch</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">git checkout &amp;&amp; git switch</p>
+<p><a href="https://juejin.cn/post/7211316525512507447">外部链接</a></p>
+</div>
+<h5 id="rebase">变基 rebase</h5>
+<p>好处挺多，建议看书上的图。<strong>推荐在本地变基，但是不要对已经推送到远程服务器的提交进行变基。</strong></p>
+<p>我的理解是可以把并行的分支合并成看起来线性进行的，更加人性化</p>
+<p><code>git pull --rebase</code>可能会解决有人在远程变基，你又要拉取的问题 </p>
+<h4 id="git_1">git 交互式</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git add -i</td>
+<td align="left">进入交互式</td>
+</tr>
+</tbody>
+</table>
+<h5 id="patch">补丁 patch</h5>
+<p>git add -patch|进入补丁模式或者先进交互式再进补丁模式</p>
+<h4 id="stash">储藏 stash</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git stash</td>
+<td align="left">储藏</td>
+</tr>
+<tr>
+<td align="left">git stash list</td>
+<td align="left">查看储藏</td>
+</tr>
+<tr>
+<td align="left">git stash apply</td>
+<td align="left">应用最新的一次,也可以加参数来指定某一次</td>
+</tr>
+<tr>
+<td align="left">git stash drop stash@{0}</td>
+<td align="left">删除储藏</td>
+</tr>
+<tr>
+<td align="left"><strong>git stash --keep-index</strong></td>
+<td align="left">不储藏已经git add的内容</td>
+</tr>
+<tr>
+<td align="left"><strong>git stash --include-untracked</strong></td>
+<td align="left">同时储藏未跟踪的文件</td>
+</tr>
+<tr>
+<td align="left"><strong>git stash -u</strong></td>
+<td align="left">同上</td>
+</tr>
+<tr>
+<td align="left"><strong>git stash branch newbrname</strong></td>
+<td align="left">从储藏创建分支（省时省力）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="clean">清理工作目录 clean</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git clean</td>
+<td align="left">删除所有未跟踪的文件</td>
+</tr>
+<tr>
+<td align="left">git clean -d -n</td>
+<td align="left">预览会删除哪些</td>
+</tr>
+<tr>
+<td align="left">git clean -x</td>
+<td align="left">连.gitignore里忽略的文件也会删除</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info -n">
+<p class="admonition-title">Info</p>
+<ul>
+<li>可以先用<code>-n</code>参数先预览删除哪些文件</li>
+<li>可以用<code>-i</code>参数交互式地删除</li>
+</ul>
+</div>
+<h4 id="_7">修改提交信息</h4>
+<table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">git commit --amend</td>
+<td align="left">修改最近一次提交信息，但是会改变sha1值，类似一次微型变基</td>
+</tr>
+</tbody>
+</table>
+<p><code>git cherry-pick</code>选择性的rebase</p>
+<h3 id="todo">TODO:</h3>
+<ul>
+<li>[ ] 远程分支没看</li>
+<li>[ ] 变基还不是很明白</li>
+<li>[ ] git grep</li>
+</ul>
+<p>限制输出范围
+图片</p>
+<details class="已过时">
+<summary>已过时</summary>
+<table>
+<thead>
+<tr>
+<th align="left">short</th>
+<th align="left">example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">ls</td>
+<td align="left"><code>git list -a</code></td>
+</tr>
+<tr>
+<td align="left">log</td>
+<td align="left"><code>git log --all -- graph --decorate</code></td>
+</tr>
+<tr>
+<td align="left">cat</td>
+<td align="left"><code>cat 1.txt</code></td>
+</tr>
+<tr>
+<td align="left">echo</td>
+<td align="left"><code>echo "hello git" &gt;&gt; 1.txt</code></td>
+</tr>
+<tr>
+<td align="left">checkout</td>
+<td align="left"><code>git checkout master/sha1</code></td>
+</tr>
+<tr>
+<td align="left">blame</td>
+<td align="left"><code>git blame 1.txt</code></td>
+</tr>
+<tr>
+<td align="left">show</td>
+<td align="left"><code>git show sha1</code></td>
+</tr>
+<tr>
+<td align="left">diff</td>
+<td align="left"><code>git diff a b</code>(b-a)</td>
+</tr>
+<tr>
+<td align="left">merge</td>
+<td align="left"><code>git merge</code></td>
+</tr>
+<tr>
+<td align="left">rebase</td>
+<td align="left"><code>git rebase</code></td>
+</tr>
+<tr>
+<td align="left"><strong>待看</strong></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">stash</td>
+<td align="left"><code>git stash</code></td>
+</tr>
+<tr>
+<td align="left">bisect</td>
+<td align="left"><code>git bisect</code></td>
+</tr>
+<tr>
+<td align="left">snapshot</td>
+<td align="left">快照</td>
+</tr>
+<tr>
+<td align="left">discard</td>
+<td align="left">丢弃</td>
+</tr>
+</tbody>
+</table>
+<p><strong>cat</strong>
+- <code>&gt;&gt;</code> 追加 
+- <code>&gt;</code>  重写</p>
+<p><strong>merge</strong> A
+把A合并到当前指针</p>
+<p><strong>checkout</strong>
+到某一状态。另外如果在最后修改（没做add&amp;&amp;commit）再checkout到之前状态会error</p>
+<p><strong>HEAD</strong>
+类似指针，看向正在工作的位置</p>
+<p><strong>add</strong>
+<code>git add -p 1.txt</code> <code>s</code> split 手动选择add的内容</p>
+</details>
+<details class="info">
+<summary>:x 和 :wq 的区别</summary>
+<p>如下：
+(1) :wq 强制性写入文件并退出（存盘并退出 write and quite）。即使文件没有被修改也强制写入，并更新文件的修改时间。</p>
+<p>(2) :x 写入文件并退出。仅当文件被修改时才写入，并更新文件修改时间；否则不会更新文件修改时间。
+这两者一般情况下没什么不一样，但是在编程方面，对编辑源文件可能会产生重要影响。因为文件即使没有修改，":wq" 强制更新文件的修改时间，
+这样会让 make 编译整个项目时以为文件被修改过了，然后就得重新编译链接生成可执行文件。这可能会产生让人误解的后果，当然也产生了不必要的系统资源花销。不过像是版本控制的软件一般首选还是比较文件内容，修改时间一般不加以理会。</p>
+</details>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      cc
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["header.autohide", "navigation.tracking", "navigation.tabs", "navigation.top", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
