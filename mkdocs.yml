@@ -1,0 +1,67 @@
+site_name: WQ BLOG
+# site_url: https://csdiy.wiki/
+site_author: WQ
+site_description: >-
+  Learning
+
+repo_name: beautifulwq.github.io
+repo_url: https://github.com/beautifulwq/beautifulwq.github.io/
+
+copyright: cc
+
+theme:
+  name: material
+  language: zh
+  favicon: images/favicon.ico
+  apple-touch-icon-precomposed: images/mobile_icon.png
+  include_search_page: false
+  search_index_only: true
+
+  features:
+    - header.autohide
+    # - navigation.instant
+    # - navigation.expand
+    # - navigation.sections
+    - navigation.tracking
+    # - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    # - navigation.indexes
+    - search.highlight
+    - search.share
+    - search.suggest
+    # - toc.integrate
+    - content.code.annotate
+
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+  font:
+    text: Roboto
+    code: Hack
+  icon:
+    repo: fontawesome/brands/git-alt
+
+ 
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search:
+      lang: zh
+ 
