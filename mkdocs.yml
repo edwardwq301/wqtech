@@ -60,6 +60,9 @@ theme:
 
 markdown_extensions:
   - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - md_in_html
   - pymdownx.superfences
   - pymdownx.tabbed:
@@ -75,7 +78,6 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
 
- 
 
 plugins:
   - search:
