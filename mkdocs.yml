@@ -2,12 +2,12 @@ site_name: WQ BLOG
 # site_url: https://csdiy.wiki/
 site_author: WQ
 site_description: >-
-  Learning
+  WQ CS AND SOFTWARE
 
 repo_name: beautifulwq.github.io
 repo_url: https://github.com/beautifulwq/beautifulwq.github.io/
 
-copyright: cc
+copyright: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">under CC-BY-NC</a>.
 
 theme:
   name: material
