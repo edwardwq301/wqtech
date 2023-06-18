@@ -6,7 +6,7 @@ hide:
   - path
 ---
 
-# about me
+# About me
 
 ![dog](image/gode.jpg){ width=120 hight=120 align=left }
 
