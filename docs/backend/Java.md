@@ -245,6 +245,10 @@ protected|本包和所有类可见
     }
     ```
 
+### part4
+- 异常try catch finally(无论是执行了try还是catch，都要执行finally的语句)
+- 通过反射操作对象的私有属性或者私有方法。先获取Class,再获取Field，setAccessible,setInt。
+- 
 
 ### TODO
 
