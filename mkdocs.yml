@@ -85,10 +85,22 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.tilde
+  - pymdownx.arithmatex:
+      generic: true
 
 plugins:
   - search:
       lang: zh
+  - git-revision-date-localized:
+      type: datetime
+      timezone: Asia/Shanghai
+      locale: zh
+      enable_creation_date: true
+      exclude:
+        - guide.md
+        - index.md
+      
+        
  
 extra_javascript:
   - javascripts/katex.js 
