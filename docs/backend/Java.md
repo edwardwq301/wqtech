@@ -336,6 +336,25 @@ protected|本包和所有类可见
     }
     ```
 
+### 求两个日期间隔天数
 
+```java
+LocalDate start=LocalDate.now();
+LocalDate end = LocalDate.of(2025,5,5);
+Duration between = Duration.between(start.atStartOfDay(), end.atStartOfDay());
+System.out.println(between.toDays());
+```
 
+### javafx展示图片
 
+[传送门](https://www.tutorialspoint.com/how-to-display-an-image-in-javafx)
+
+### Java scanner关闭
+如果scanner的sys.in实例关闭了，即`实例名.close()`，不能再创建sys.in实例
+
+[StackOverflow](https://stackoverflow.com/questions/58244954/why-cant-i-just-create-another-scanner-object-after-using-scanner-close)
+[csdn相关](https://blog.csdn.net/Monkey_Long_/article/details/105409842)
+
+### 数字和字符串混合输入
+今天遇到这样一个情况，先输入数字，再输入字符串的时候总是空串。Java这个性质也太坑了😡
+相关解决办法[传送门](https://blog.csdn.net/yuekangwei/article/details/108568494)
