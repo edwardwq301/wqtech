@@ -16,7 +16,7 @@
         <link rel="prev" href="../../guide/">
       
       
-        <link rel="next" href="../problemSolve/">
+        <link rel="next" href="../algorithm/">
       
       <link rel="icon" href="../../images/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.8">
@@ -513,6 +513,34 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    求两个日期间隔天数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#javafx" class="md-nav__link">
+    javafx展示图片
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java-scanner" class="md-nav__link">
+    Java scanner关闭
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    数字和字符串混合输入
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -522,6 +550,20 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../algorithm/" class="md-nav__link">
+        Algorithm
+      </a>
     </li>
   
 
@@ -835,6 +877,34 @@
           <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     自定义比较
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    求两个日期间隔天数
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#javafx" class="md-nav__link">
+    javafx展示图片
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java-scanner" class="md-nav__link">
+    Java scanner关闭
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    数字和字符串混合输入
   </a>
   
 </li>
@@ -1238,13 +1308,28 @@
 </span><span id="__span-4-69"><a id="__codelineno-4-69" name="__codelineno-4-69" href="#__codelineno-4-69"></a><span class="p">}</span>
 </span></code></pre></div>
 </div>
+<h3 id="_4">求两个日期间隔天数</h3>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">LocalDate</span><span class="w"> </span><span class="n">start</span><span class="o">=</span><span class="n">LocalDate</span><span class="p">.</span><span class="na">now</span><span class="p">();</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">LocalDate</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LocalDate</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">Duration</span><span class="w"> </span><span class="n">between</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">between</span><span class="p">(</span><span class="n">start</span><span class="p">.</span><span class="na">atStartOfDay</span><span class="p">(),</span><span class="w"> </span><span class="n">end</span><span class="p">.</span><span class="na">atStartOfDay</span><span class="p">());</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">between</span><span class="p">.</span><span class="na">toDays</span><span class="p">());</span>
+</span></code></pre></div>
+<h3 id="javafx">javafx展示图片</h3>
+<p><a href="https://www.tutorialspoint.com/how-to-display-an-image-in-javafx">传送门</a></p>
+<h3 id="java-scanner">Java scanner关闭</h3>
+<p>如果scanner的sys.in实例关闭了，即<code>实例名.close()</code>，不能再创建sys.in实例</p>
+<p><a href="https://stackoverflow.com/questions/58244954/why-cant-i-just-create-another-scanner-object-after-using-scanner-close">StackOverflow</a>
+<a href="https://blog.csdn.net/Monkey_Long_/article/details/105409842">csdn相关</a></p>
+<h3 id="_5">数字和字符串混合输入</h3>
+<p>今天遇到这样一个情况，先输入数字，再输入字符串的时候总是空串。Java这个性质也太坑了😡
+相关解决办法<a href="https://blog.csdn.net/yuekangwei/article/details/108568494">传送门</a></p>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       最后更新:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">2023年6月23日 21:25:21</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime">2023年6月29日 17:34:03</span>
       
         <br>
         创建日期:
