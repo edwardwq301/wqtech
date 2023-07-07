@@ -1,4 +1,4 @@
-## [lakes div4-e](https://codeforces.com/contest/1829/problem/E)
+## [lakes](https://codeforces.com/contest/1829/problem/E)
 ??? lakes
     这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
     ```C++
@@ -99,4 +99,15 @@
         return 0;
     }
     ```
+
+## [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+??? slove
+    1. 一次遍历统计出所有字母的出现次数
+    2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
+    3. 统计所有字母，进行加和；
+    巧妙在相当于并行处理2个字符串，想不出来😥 
+
+
+
+
 
