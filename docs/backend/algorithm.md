@@ -1,4 +1,4 @@
-## [lakes](https://codeforces.com/contest/1829/problem/E)
+### [lakes](https://codeforces.com/contest/1829/problem/E)
 ??? lakes
     这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
     ```C++
@@ -61,7 +61,7 @@
 
     ```
 
-## [Hits Different](https://codeforces.com/contest/1829/problem/G)
+### [Hits Different](https://codeforces.com/contest/1829/problem/G)
 [前缀和动画讲解](https://usaco.guide/silver/more-prefix-sums?lang=cpp#2d-prefix-sums)
 ??? solve
     非常巧妙啊，转成前缀和,详情可以见相应英文题解
@@ -100,7 +100,7 @@
     }
     ```
 
-## [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
 ??? slove
     1. 一次遍历统计出所有字母的出现次数
     2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
@@ -108,6 +108,55 @@
     巧妙在相当于并行处理2个字符串，想不出来😥 
 
 
+## template
+### mergesort
+??? "&"
+    ```C++
+    #include "iostream"
+    #include "vector"
 
+    using namespace std;
 
+    void merge(vector<int> &nums, vector<int> &copy, int l, int r) {
+        if (l == r) {
+            copy[l] = nums[l];
+            return;
+        }
+        int mid = l + r >> 1;
+        merge(copy, nums, l, mid);
+        merge(copy, nums, mid + 1, r);
+
+        int i = l, j = mid + 1, idx = l;
+        while (i <= mid && j <= r) {
+            if (nums[i] < nums[j]) copy[idx++] = nums[i++];
+            else copy[idx++] = nums[j++];
+        }
+        while (i <= mid)
+            copy[idx++] = nums[i++];
+        while (j<=r)
+            copy[idx++] = nums[j++];
+
+    }
+
+    void mergesort(vector<int> &nums) {
+        if (nums.size() <= 1) return;
+        vector<int> copy = nums;
+        merge(nums, copy, 0, nums.size() - 1);
+        nums=copy;
+    }
+
+    int main() {
+        vector<int> nums;
+        int n;
+        cin >> n;
+        nums.resize(n);
+        for (int i = 0; i < n; ++i) {
+            cin >> nums[i];
+        }
+        mergesort(nums);
+        for (auto x: nums)
+            cout << x << ' ';
+        return 0;
+    }
+    ```
 

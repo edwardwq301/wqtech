@@ -17,4 +17,4 @@ hide:
     - play game
     - read Science Fiction
 
-[my life blog](https://beautifulwq.github.io/hexoblog/)
+[my life blog](https://beautifulwq.github.io/hugoblog/)
