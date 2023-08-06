@@ -1,4 +1,37 @@
-### [lakes](https://codeforces.com/contest/1829/problem/E)
+## leetcode
+#### 第K大的数
+[链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
+
+- 想要达到 $O(n)$ 时间，就得从快排变形。
+- 第K大的数正好是下标为size-k
+- 一次快排相当于把一个数放到对应位置，那就找哪一次放好了的下标正好是要求的
+> 没做出来时痛苦万分，~~~抄完了~~~ 学会了之后觉得就应该这么写😥
+??? slove
+    ```C++
+
+    class Solution {
+    public:
+    int findKthLargest(vector<int> &nums, int k) {
+        return quicksort(nums,0,nums.size()-1,nums.size()-k);
+    }
+
+    int quicksort(vector<int> &nums, int l, int r, int k) {
+        if (l == r) return nums[k];
+        int i = l - 1, j = r + 1, mid = nums[l + r >> 1];
+        while (i < j) {
+            do i++; while (nums[i] < mid);
+            do j--; while (nums[j] > mid);
+            if (i < j) swap(nums[i], nums[j]);
+        }
+        if (k <= j) return quicksort(nums, l, j, k);
+        else return quicksort(nums, j + 1, r, k);
+    }
+    };
+    ```
+    
+
+## codeforces
+#### [lakes](https://codeforces.com/contest/1829/problem/E)
 ??? lakes
     这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
     ```C++
@@ -61,7 +94,7 @@
 
     ```
 
-### [Hits Different](https://codeforces.com/contest/1829/problem/G)
+#### [Hits Different](https://codeforces.com/contest/1829/problem/G)
 [前缀和动画讲解](https://usaco.guide/silver/more-prefix-sums?lang=cpp#2d-prefix-sums)
 ??? solve
     非常巧妙啊，转成前缀和,详情可以见相应英文题解
@@ -100,7 +133,7 @@
     }
     ```
 
-### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+#### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
 ??? slove
     1. 一次遍历统计出所有字母的出现次数
     2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
