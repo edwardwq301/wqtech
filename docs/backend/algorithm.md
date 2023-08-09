@@ -30,6 +30,98 @@
     ```
     
 
+#### 环形链表2
+[题目链接](https://leetcode.cn/problems/linked-list-cycle-ii/description/)
+
+[完整版题解](https://leetcode.cn/problems/linked-list-cycle-ii/solutions/12616/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/)
+
+- 设有a个节点（不含环的起点），环内有b个节点
+- 当第一次相遇时，
+
+$$ fast=2*low $$
+
+$$ fast=low+n*b $$
+
+$$ fast=2nb $$
+
+$$low=nb $$
+
+- 所有从头开始走到环的起点都是 $a+Nb步$
+- 所以low再走a步就到起点，那么让快指针重新指向头，一次一步走a步，两者就会重合
+
+??? solve
+    ```C++
+    class Solution {
+    public:
+    ListNode *detectCycle(ListNode *head) {
+        ListNode *low = head;
+        ListNode *fast = head;
+        bool ff = false;
+        while (fast != nullptr && fast->next != nullptr) {
+            fast = fast->next->next;
+            low = low->next;
+            if (fast == low) {
+                ff = true;
+                break;
+            }
+        }
+        if (ff) {
+           fast=head;
+            while (fast!=low){
+                fast=fast->next;
+                low=low->next;
+            }
+            return low;
+        }
+        return nullptr;
+
+    }
+    };
+    ```
+
+
+
+#### 寻找重复数 要求O(1)空间
+
+[transport](https://leetcode.cn/problems/find-the-duplicate-number/description/)
+
+以[1,3,4,2,2]为例，如果有相同数字，相当于会存在一个环
+
+**核心**：
+下标和内容一起做指向
+
+| 下标 | 0 | 1 | 3 | 2 | 4       |
+|------|---|---|---|---|---------|
+| 内容 | 1 | 3 | 2 | 4 | 2(成环) |
+| 节点 | 1 | 3 | 2 | 4 | 2       |
+
+然后就和[环形链表2](https://leetcode.cn/problems/linked-list-cycle-ii/description/)一个做法，判环找入口
+
+??? slove
+    ```C++
+    class Solution {
+    public:
+        int findDuplicate(vector<int>& nums) {
+            int low=0,fast=0;
+            //go 1step 2step
+            low=nums[low];
+            fast=nums[nums[fast]];
+            while (low!=fast){
+                low=nums[low];
+                fast=nums[nums[fast]];
+            }
+            //fast goto begin node
+            fast=0;
+            while (low!=fast){
+                low=nums[low];
+                fast=nums[fast];
+            }
+            return fast;
+            
+        }
+    };
+    ```
+
 ## codeforces
 #### [lakes](https://codeforces.com/contest/1829/problem/E)
 ??? lakes
