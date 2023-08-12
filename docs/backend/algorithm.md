@@ -1,4 +1,9 @@
+---
+comments: true
+---
+
 ## leetcode
+
 #### 第K大的数
 [链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
 
@@ -29,7 +34,6 @@
     };
     ```
     
-
 #### 环形链表2
 [题目链接](https://leetcode.cn/problems/linked-list-cycle-ii/description/)
 
@@ -283,5 +287,83 @@ $$low=nb $$
             cout << x << ' ';
         return 0;
     }
+    ```
+
+## thought
+Q: 为什么区间dp先枚举长度再枚举左端点
+
+A: 防止用到还没算好的小区间 
+
+eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-substring/description/)
+
+用`dp[0][4]`的时候应该先算`dp[1][3]`,但是先枚举左端点的话就没做到先算`dp[1][3]`
+
+??? "wrong answer"
+    ```C++
+    class Solution {
+    public:
+        string longestPalindrome(string s) {
+
+            vector<vector<bool>> dp(s.size(), vector(s.size(), false));
+            pair<int, int> anw = {0, 1};
+            for (int i = 0; i < s.size() - 1; ++i) {
+                dp[i][i] = true;
+                if (s[i] == s[i + 1]) {
+                    dp[i][i + 1] = true;
+                    anw = {i, 2};
+                }
+            }
+            dp[s.size() - 1][s.size() - 1] = true;
+
+
+            for (int l = 0; l < s.size(); ++l) {
+                for (int len = 2; len <= s.size(); ++len) {
+                    if(len+l-1>=s.size()) continue;
+                    int r = l + len - 1;
+
+                    if (dp[l + 1][r - 1] == true && s[l] == s[r]) {
+                        dp[l][r] = true;
+                        cout<<l<<' '<<r<<endl;
+                        if (len > anw.second)
+                            anw = {l, len};
+                    }
+                }
+            }
+
+            return s.substr(anw.first, anw.second);
+
+        }
+    };
+    ```
+??? "correct answer"
+    ```C++
+    class Solution {
+    public:
+        string longestPalindrome(string s) {
+            if (s.size() == 0 || s.size() == 1) return s;
+            vector<vector<bool>> dp(s.size(), vector<bool>(s.size()));
+            int maxlen = 1, begin = 0;
+            for (int i = 0; i < s.size(); i++) {
+                dp[i][i] = true;
+                if (i < s.size() - 1 && s[i] == s[i + 1]) {
+                    dp[i][i + 1] = true;
+                    begin = i;
+                    maxlen = 2;
+                }
+            }
+
+            for (int len = 2; len <= s.size(); len++)
+                for (int i = 0; i + len - 1 < s.size(); i++) {
+                    int r = i + len - 1;
+                    if (s[i] == s[r] && dp[i + 1][r - 1] == true) {
+                        dp[i][r] = true;
+                        maxlen = len;
+                        begin = i;
+                    }
+                }
+
+            return s.substr(begin, maxlen);
+        }
+    };
     ```
 

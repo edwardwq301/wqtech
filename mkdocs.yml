@@ -1,18 +1,18 @@
 site_name: WQ BLOG
 # site_url: https://csdiy.wiki/
 site_author: WQ
-site_description: >-
-  WQ CS AND SOFTWARE
+site_description: CS AND SOFTWARE
 
 repo_name: beautifulwq.github.io
 repo_url: https://github.com/beautifulwq/beautifulwq.github.io/
 
-copyright: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">under CC-BY-NC</a>.
+copyright: '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-NC 4.0</a>'
 
 theme:
   name: material
+  custom_dir: overrides
   language: en
-  favicon: images/favicon.ico
+  favicon: favicon.ico
   apple-touch-icon-precomposed: images/mobile_icon.png
   include_search_page: false
   search_index_only: true
@@ -51,11 +51,14 @@ theme:
         name: Switch to light mode
 
   font:
-    text: Roboto
+    text: 'Roboto'
     code: Hack
   icon:
     repo: fontawesome/brands/git-alt
+    logo: 'material/school'
 
+extra:
+  pagetime: 'on'
  
 
 markdown_extensions:
@@ -92,6 +95,7 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 plugins:
   - search:
   - git-revision-date-localized:
