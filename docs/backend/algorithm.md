@@ -4,7 +4,8 @@ comments: true
 
 ## leetcode
 
-#### 第K大的数
+### 第K大的数
+
 [链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
 
 - 想要达到 $O(n)$ 时间，就得从快排变形。
@@ -34,7 +35,8 @@ comments: true
     };
     ```
     
-#### 环形链表2
+### 环形链表2
+
 [题目链接](https://leetcode.cn/problems/linked-list-cycle-ii/description/)
 
 [完整版题解](https://leetcode.cn/problems/linked-list-cycle-ii/solutions/12616/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/)
@@ -42,13 +44,15 @@ comments: true
 - 设有a个节点（不含环的起点），环内有b个节点
 - 当第一次相遇时，
 
-$$ fast=2*low $$
+$$
+\begin{aligned}
+fast &=2*low \\
+fast &=low+n*b \\
+fast &=2nb \\
+low  &=nb 
+\end{aligned}
+$$
 
-$$ fast=low+n*b $$
-
-$$ fast=2nb $$
-
-$$low=nb $$
 
 - 所有从头开始走到环的起点都是 $a+Nb步$
 - 所以low再走a步就到起点，那么让快指针重新指向头，一次一步走a步，两者就会重合
@@ -85,7 +89,7 @@ $$low=nb $$
 
 
 
-#### 寻找重复数 要求O(1)空间
+### 寻找重复数 要求O(1)空间
 
 [transport](https://leetcode.cn/problems/find-the-duplicate-number/description/)
 
@@ -127,7 +131,9 @@ $$low=nb $$
     ```
 
 ## codeforces
-#### [lakes](https://codeforces.com/contest/1829/problem/E)
+
+### [lakes](https://codeforces.com/contest/1829/problem/E)
+
 ??? lakes
     这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
     ```C++
@@ -190,8 +196,10 @@ $$low=nb $$
 
     ```
 
-#### [Hits Different](https://codeforces.com/contest/1829/problem/G)
+### [Hits Different](https://codeforces.com/contest/1829/problem/G)
+
 [前缀和动画讲解](https://usaco.guide/silver/more-prefix-sums?lang=cpp#2d-prefix-sums)
+
 ??? solve
     非常巧妙啊，转成前缀和,详情可以见相应英文题解
     ```C++
@@ -229,16 +237,53 @@ $$low=nb $$
     }
     ```
 
-#### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+
 ??? slove
     1. 一次遍历统计出所有字母的出现次数
     2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
     3. 统计所有字母，进行加和；
     巧妙在相当于并行处理2个字符串，想不出来😥 
 
+## 剑指offer
+
+### [二叉树的下一个节点](https://www.acwing.com/problem/content/description/31/)
+
+- 中序遍历**左根右**
+- 如果不是叶节点，要求的点相当于先往右一步，再一直往左走到头,是一个 **>** 的形状
+- 如果是叶节点**A**，可以先考虑它的下一个节点**B**怎么到的它本身，
+    - 就是**B**先往左一步，再往右走到头到达**A**，形成一个 **<** 的形状
+    - 然后发现拐角处容易求出来 `p->father->left==p`
+    - 如果说没有父节点，说明没有要求的答案，返回 `nullptr`
+
+??? slove
+    ```cpp
+    class Solution {
+    public:
+        TreeNode *inorderSuccessor(TreeNode *p) {
+            if (p->right != nullptr) {
+                p = p->right;
+                while (p->left != nullptr)
+                    p = p->left;
+                return p;
+            }
+            else {
+                while (p->father != nullptr && p->father->left != p)
+                    p = p->father;
+                if (p->father == nullptr)
+                    return nullptr;
+                else
+                    return p->father;
+            }
+        }
+    };
+    ```
+
 
 ## template
-### mergesort
+
+mergesort
+
 ??? "&"
     ```C++
     #include "iostream"
@@ -289,14 +334,49 @@ $$low=nb $$
     }
     ```
 
+heap
+??? "stl"
+    ```cpp
+    #include "bits/stdc++.h"
+
+    using namespace std;
+
+    vector<int> heap;
+
+    int main() {
+        int n;
+        cin >> n;
+        while (n--) {
+            int op;
+            cin >> op;
+            if (op == 1) {
+                int x;
+                cin >> x;
+                heap.push_back(x);
+                push_heap(heap.begin(), heap.end(), greater<int>());
+    //            make_heap(heap.begin(), heap.end(), greater<int>());
+            }
+            else if (op == 2)
+                cout << heap.front() << endl;
+            else {
+                pop_heap(heap.begin(), heap.end(), greater<int>());
+                heap.pop_back();
+            }
+
+        }
+        return 0;
+    }
+    ```
+
 ## thought
-Q: 为什么区间dp先枚举长度再枚举左端点
+
+### Q: 为什么区间dp先枚举长度再枚举左端点
 
 A: 防止用到还没算好的小区间 
 
 eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-substring/description/)
 
-用`dp[0][4]`的时候应该先算`dp[1][3]`,但是先枚举左端点的话就没做到先算`dp[1][3]`
+用 `dp[0][4]` 的时候应该先算 `dp[1][3]` ,但是先枚举左端点的话就没做到先算 `dp[1][3]`
 
 ??? "wrong answer"
     ```C++
@@ -335,6 +415,7 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
         }
     };
     ```
+
 ??? "correct answer"
     ```C++
     class Solution {
@@ -366,4 +447,95 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
         }
     };
     ```
+
+
+### 记忆化搜索
+
+[oi介绍](https://oi-wiki.org/dp/memo/#%E5%BC%95%E5%85%A5)
+
+[最长上升子序列](https://www.acwing.com/problem/content/description/897/)
+
+在原始dfs中，会出现很多重复没有用的计算。
+
+求数字8的位置时，把之前的3，1，2等就重复算了。
+```
+7
+3 1 2 1 8 5 6
+```
+
+??? "原始dfs"
+    ```cpp
+    #include "bits/stdc++.h"
+
+    using namespace std;
+
+    const int N = 1010;
+    int res = 0;
+    int a[N];
+    int dp[N];
+    int n;
+
+    int solve(int po) {
+        dp[po] = 1;
+        for (int i = 0; i < po; ++i) {
+            if (a[i] < a[po]) dp[po] = max(dp[po], solve(i) + 1);
+        }
+        return dp[po];
+    }
+
+    int main() {
+        cin >> n;
+        for (int i = 0; i < n; ++i) {
+            cin >> a[i];
+        }
+        for (int i = 0; i < n; ++i) {
+            res = max(res, solve(i));
+        }
+        cout << res;
+        return 0;
+    }
+    ```
+
+那么我们就存一个记忆化数组，如果之前算过了直接返回算好的值，否则，继续算
+
+??? "记忆化"
+    ```cpp
+    #include "bits/stdc++.h"
+
+    using namespace std;
+
+    const int N = 1010;
+    int res = 0;
+    int a[N];
+    int dp[N];
+    int n;
+
+    int solve(int po) {
+        // 算好了就返回
+        if (dp[po] != -1) return dp[po];
+
+        dp[po] = 1;
+        for (int i = 0; i < po; ++i) {
+            if (a[i] < a[po]) dp[po] = max(dp[po], solve(i) + 1);
+        }
+        return dp[po];
+    }
+
+    int main() {
+
+        ::memset(dp, -1, sizeof dp);
+
+
+        cin >> n;
+        for (int i = 0; i < n; ++i) {
+            cin >> a[i];
+        }
+        for (int i = 0; i < n; ++i) {
+            res = max(res, solve(i));
+        }
+        cout << res;
+        return 0;
+    }
+    ```
+
 

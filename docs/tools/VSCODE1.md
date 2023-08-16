@@ -1,5 +1,5 @@
 ---
-title: VSCODE
+title: editor
 time: 2022-4-5
 author: WQ
 tag: 
@@ -7,9 +7,10 @@ tag:
 categories: 
     - backend
 ---
-#简单引导
-<!-- more-->
-## C++
+
+## vscode
+
+### C++
 众所周知，可以用devC++，Visio Studio，vscode等等写C++，但是vscode可能会让人折腾半天。下面给出一个拿来就用的办法
 !!! 注意
 
@@ -123,7 +124,7 @@ categories:
 
 4. 在`sourcecode`文件夹写源代码即可
 
-## C
+### C
 
 今天好好的弄了一下`fork`。
 - 在父进程中，fork的返回值是子进程的pid
@@ -150,11 +151,11 @@ int main()
 }
 ```
 
-## markdown preview enhanced
+### markdown preview enhanced
 - 自定义字体（代码字体需要改官方代码）  [教程](https://zhuanlan.zhihu.com/p/458010679)
 - 打印背景（让代码块背景为灰色）    [教程](https://blog.csdn.net/RP123123123/article/details/118113026)
 
-## 更换vscode的代码颜色
+### 更换vscode的代码颜色
 1. 找到对应的文件夹
    默认主题 
    ` D:\C\vscode\Microsoft VS Code\resources\app\extensions\theme-defaults\themes`
@@ -162,3 +163,24 @@ int main()
 
 2. 打开json文件，主要修改`"tokenColors"`这一项
    可以用github dark的对应修改
+
+
+## vim
+
+相当于cheetsheet
+
+|操作|命令|
+|:---|:---|
+|复制|y|
+|选中后复制到系统剪贴板|"+y|
+|粘贴|p|
+|撤销undo|u|
+|重做redo|Ctrl-r|
+|visio block后进入insert|Shift-i|
+
+
+---
+
+参考资料
+
+[vim和系统剪贴板交互](https://www.zhihu.com/question/19863631/answer/89354508)
