@@ -8,7 +8,6 @@ categories:
     - backend
 ---
 
-## vscode
 
 ### C++
 众所周知，可以用devC++，Visio Studio，vscode等等写C++，但是vscode可能会让人折腾半天。下面给出一个拿来就用的办法

@@ -130,6 +130,103 @@ $$
     };
     ```
 
+
+### [最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
+
+**双指针**
+
+- 找出升序，降序的区间，中间就是无序。
+- 希望中间的值 `x>Lmax&&x<Rmin` ，反过来说，当 `x<Lmax||x>Rmin` 就应该调整左右端点
+- 细节部分
+- 为了方便调整到数组开始和结尾，用1e5+10和-1e5-10进行设置
+- 为什么无序区间的数字开始从**L**找？如果从**L+1**开始，反例是 `1, 3, 2, 2, 2`
+
+??? "双指针"
+    ```cpp
+
+    class Solution {
+    public:
+        int findUnsortedSubarray(vector<int> &nums) {
+            if (nums.size() == 1) return 0;
+
+            int l = 0, r = nums.size() - 1;
+            while (l < r && nums[l] <= nums[l + 1]) l++;
+            while (l < r && nums[r] >= nums[r - 1]) r--;
+
+            int lmaxval = nums[l], rminval = nums[r];
+            if (l == r) return 0;
+    
+            int i = l + 1;
+            for (int k = l ; k < r; ++k) {
+                if (nums[k] < lmaxval) {
+                    while (l >= 0 && nums[k] < lmaxval) {
+                        l--;
+                        if (l < 0) lmaxval = -1e5 - 10;
+                        else lmaxval = nums[l];
+                    }
+                
+                }
+                if (nums[k] > rminval) {
+                    while (r < nums.size() && nums[k] > rminval) {
+                        r++;
+                        if (r >= nums.size())
+                            rminval = 1e5 + 10;
+                        else rminval = nums[r];
+                    }
+                
+                }
+            }
+
+            return r - l - 1;
+        }
+    };
+    ```
+
+**一次遍历** [传送门](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/solutions/422614/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/comments/1194164)
+
+先只考虑中段数组，设其左边界为L，右边界为R：
+
+`nums[R]` 不可能是 `[L，R]` 中的最大值（否则应该将 `nums[R]` 并入右端数组）
+
+`nums[L]` 不可能是`[L,R]`中的最小值（否则应该将 `nums[L]` 并入左端数组）
+
+很明显:
+
+ `[L,R]` 中的最大值 等于 `[0，R]` 中的最大值，设其为 max
+
+ `[L,R]` 中的最小值 等于 `[L， nums.length-1]`中的最小值，设其为 min
+
+那么有：
+
+`nums[R] < max < nums[R+1] < nums[R+2] < ...`  所以说，从左往右遍历，最后一个小于max的为右边界
+
+`nums[L] > min > nums[L-1] > nums[L-2] > ... ` 所以说，从右往左遍历，最后一个大于min的为左边界
+
+??? "一次遍历"
+    ```cpp
+    class Solution {
+    public:
+        int findUnsortedSubarray(vector<int> &nums) {
+
+    
+            int min = nums[nums.size() - 1], max = nums[0];
+            int end = -1, begin = 0;
+            //end和begin的初值不重要，让end-bigin+1=0即可
+            for (int i = 0; i < nums.size(); ++i) {
+                if (nums[i] < max)
+                    end = i;
+                else max = nums[i];
+
+                if (nums[nums.size() - 1 - i] > min)
+                    begin = nums.size() - 1 - i;
+                else min = nums[nums.size() - 1 - i];
+            }
+            return end - begin + 1;
+        }
+    };
+    ```
+
+
 ## codeforces
 
 ### [lakes](https://codeforces.com/contest/1829/problem/E)
@@ -279,6 +376,220 @@ $$
     };
     ```
 
+
+### [旋转数组的最小数字](https://www.acwing.com/problem/content/description/20/)
+
+- 从后往前把和 `nums[0]` 相同的删除
+- 特判一下：如果是完全升序就返回 ` nums[0]`
+- 进行二分查找 小于 `nums[0]` 的左端点
+
+[辅助题解](https://www.acwing.com/solution/content/727/)
+
+??? slove
+    ```cpp
+    class Solution {
+    public:
+        int findMin(vector<int>& nums) {
+            if(nums.size()==0) return -1;
+            int n=nums.size()-1;
+            while (n>0&&nums[0]==nums[n]) n--;
+            if(nums[n]>=nums[0]) return nums[0];
+            
+            int l=0,r=n;
+            while (l<r){
+                int mid=l+r>>1;
+                if(nums[mid]<nums[0]) r=mid;
+                else l=mid+1;
+            }
+            return nums[l];
+        }
+    };
+    ```
+
+**举一反三**😋
+
+这个题做完了，可以尝试[搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/description/)
+
+- 先特判一下是不是完全升序，决定是不是直接二分
+- 和上一题一样，先找到最小值
+- 如果目标值在最小值和结尾中间就二分，反之在另一半二分
+
+??? solve
+    ```cpp
+    class Solution {
+    public:
+        int search(vector<int> &nums, int target) {
+
+            if (nums[nums.size() - 1] > nums[0])
+                return bins(nums, 0, nums.size() - 1, target);
+
+            int l = 0, r = nums.size() - 1;
+            while (l < r) {
+                int mid = l + r >> 1;
+                if (nums[mid] < nums[0]) r = mid;
+                else l = mid + 1;
+            }
+            cout << nums[l] << endl;
+
+            if (target >= nums[l] && target < nums[0])
+                return bins(nums, l, nums.size() - 1, target);
+            else
+                return bins(nums, 0, l - 1, target);
+
+        }
+
+        int bins(vector<int> &nums, int l, int r, int target) {
+            while (l < r) {
+                int mid = l + r >> 1;
+                if (nums[mid] >= target)
+                    r = mid;
+                else l = mid + 1;
+            }
+            if (nums[l] != target) return -1;
+            else return l;
+        }
+    };
+    ```
+
+### [矩阵中的路径](https://www.acwing.com/problem/content/21/)
+
+为什么这个不能调过来
+
+```cpp
+//correct
+if (matrix[x][y] != str[po]) return false;
+if (po == str.size() - 1) return true;
+// wrong
+if (po == str.size()) return true;
+if (matrix[x][y] != str[po]) return false;  
+```
+
+这个例子 `str=a martix=[a]`
+
+第一步成功了，但是在继续dfs的时候是不能继续dfs的，因为 `if (!(cx >= 0 && cx < n && cy >= 0 && cy < m)) continue;` 下标全都越界，进入 `continue` ,没法进入预计的 `dfs(1)`
+
+??? slove
+    ```cpp
+    class Solution {
+    public:
+        bool hasPath(vector<vector<char>> &matrix, string &str) {
+            if (matrix.size() == 0) return false;
+            bool ff = false;
+
+            int n = matrix.size();
+            int m = matrix[0].size();
+
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < m; ++j) {
+                    if (dfs(i, j, 0, str, matrix)) {
+                        ff = true;
+                        break;
+                    }
+                }
+            }
+            if (ff) return true;
+            else return false;
+
+        }
+
+        bool dfs(int x, int y, int po, string &str, vector<vector<char>> &matrix) {
+            if (matrix[x][y] != str[po]) return false;
+            if (po == str.size() - 1) return true;
+
+            int dx[4] = {-1, 1, 0, 0};
+            int dy[4] = {0, 0, -1, 1};
+            int n = matrix.size();
+            int m = matrix[0].size();
+
+            char tem = matrix[x][y];
+            matrix[x][y] = '*';
+            for (int i = 0; i < 4; ++i) {
+                int cx = x + dx[i];
+                int cy = y + dy[i];
+                if (!(cx >= 0 && cx < n && cy >= 0 && cy < m)) continue;
+                if (dfs(cx, cy, po + 1, str, matrix))
+                    return true;
+            }
+            matrix[x][y] = tem;
+            return false;
+        }
+    };
+    ```
+
+### [二进制中1的个数](https://www.acwing.com/problem/content/description/25/)
+
+1. 循环32次，每次判断最低位是不是1，再右移一位
+2. lowbit操作，求一次 [lowbit](https://oi-wiki.org/ds/fenwick/) ,anw++； 数字-lowbit
+
+=== "循环32次"
+
+    ```cpp
+    class Solution {
+    public:
+    int NumberOf1(int n) {
+
+        int anw=0;
+
+        for(int i=0;i<32;i++){
+            if(n&1) anw++;
+            n>>=1;
+        }
+        return anw;
+    }
+    };
+    ```
+
+=== "lowbit"
+
+    ```cpp
+    class Solution {
+    public:
+    int NumberOf1(int n) {
+        int anw=0;
+        while(n!=0){
+            n=n-(n&-n); anw++;
+        }
+        return anw;
+    }
+    };
+    ```
+
+
+### [删除链表中重复的节点](https://www.acwing.com/problem/content/description/27/)
+
+- 我理解此题关键在于**重复数字区间起点的前一个节点**，如果找区间的起点，不方便修改区间起点前一个的指向
+- 为了方便删除开始就有相同的情况，在头节点前开一个假的节点 `vir`
+- p指向vir，当p的下一个值是重复的一段 `[p->next,lat]` ，lat前进
+    - 如果重复， `p->next=lat->next` ;但是不能保证p直接进入 `p->next` 后不重复。
+        - 反例： `1, 2, 3, 3, 4, 4, 5`
+    - 不重复，这个时候已经保证p，p的下一个，p的下第二个都不是重复，放心大胆的往下连接🥰
+
+??? slove
+    ```cpp
+    class Solution {
+    public:
+        ListNode *deleteDuplication(ListNode *head) {
+            ListNode *vir = new ListNode(-1);
+            vir->next = head;
+            
+            ListNode *p = vir;
+
+            while (p->next){
+                ListNode* lat=p->next;
+                while (lat->next&&lat->next->val==p->next->val)
+                    lat=lat->next;
+                if(p->next==lat){
+                    p->next=lat;
+                    p=p->next;
+                }
+                else{
+                    p->next=lat->next;
+                }
+            }
+            return vir->next;
+        }
+    };
+    ```
 
 ## template
 

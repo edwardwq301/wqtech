@@ -107,6 +107,25 @@ plugins:
         - guide.md
         - index.md
       
-        
+
+nav:
+  - About:
+      index.md
+  - Guide:
+      guide.md
+  - Backend:
+      算法题: backend/algorithm.md
+      配环境: backend/problemSolve.md
+      Java: backend/Java.md
+      Python: backend/python.md
+  - Frontend:
+      建站: frontend/建站.md
+      MkDocs: frontend/hello-MkDocs.md
+      Hexo: frontend/hello-hexo.md
+      密码: frontend/密码.md
+      HTML: frontend/HTML.md
+  - Tools :
+      Git: tools/git.md
+      Vscode: tools/VSCODE1.md
  
 
