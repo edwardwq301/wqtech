@@ -227,121 +227,6 @@ $$
     ```
 
 
-## codeforces
-
-### [lakes](https://codeforces.com/contest/1829/problem/E)
-
-??? lakes
-    这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
-    ```C++
-    #include <cstring>
-    #include "iostream"
-
-    using namespace std;
-    const int N = 1010;
-    int gra[N][N];
-    int n, m;
-    int total;
-    int dx[4] = {0, 0, -1, 1};
-    int dy[4] = {1, -1, 0, 0};
-    bool visited[N][N];
-
-
-    int dfs(int a, int b) {
-        visited[a][b] = true;
-        if (gra[a][b] == 0) return 0;
-        int anw = gra[a][b];
-
-        for (int i = 0; i < 4; i++) {
-            int nx = a + dx[i];
-            int ny = b + dy[i];
-            if (nx >= 1 && nx <= n && ny >= 1 && ny <= m
-                && gra[nx][ny] > 0 && visited[nx][ny] == false) { anw += dfs(nx, ny); }
-        }
-        return anw;
-    }
-
-    void solve() {
-
-        int fin = 0;
-        cin >> n >> m;
-
-        for (int i = 1; i <= n; i++)
-            for (int j = 1; j <= m; j++)
-                cin >> gra[i][j];
-
-
-        memset(visited, 0, sizeof visited);
-        for (int i = 1; i <= n; i++)
-            for (int j = 1; j <= m; j++) {
-                if (gra[i][j] != 0 && visited[i][j] == false) {
-
-                    fin = max(dfs(i, j), fin);
-                }
-            }
-        cout << fin << endl;
-
-    }
-
-    int main() {
-
-        cin >> total;
-        while (total--)
-            solve();
-        return 0;
-    }
-
-    ```
-
-### [Hits Different](https://codeforces.com/contest/1829/problem/G)
-
-[前缀和动画讲解](https://usaco.guide/silver/more-prefix-sums?lang=cpp#2d-prefix-sums)
-
-??? solve
-    非常巧妙啊，转成前缀和,详情可以见相应英文题解
-    ```C++
-    #include "iostream"
-
-    using namespace std;
-
-    typedef long long  llint;
-    llint anw[2050000];
-    llint gra[2029][2029];
-    llint cur = 1;
-
-    void solve() {
-        llint x;
-        cin >> x;
-        cout << anw[x] << endl;
-    }
-
-    int main() {
-        ios::sync_with_stdio(false);
-        cin.tie(nullptr);
-        int n;
-        for (int i = 1; i <= 2023; i++)
-            for (int j = i; j >= 1; j--) {
-                gra[j][i - j + 1] = gra[j - 1][i - j + 1] + gra[j][i - j + 1 - 1]
-                                    - gra[j - 1][i - j + 1 - 1]
-                                    + cur * cur;
-                anw[cur] = gra[j][i - j + 1];
-                cur++;
-            }
-        cin >> n;
-        while (n--)
-            solve();
-        return 0;
-    }
-    ```
-
-### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
-
-??? slove
-    1. 一次遍历统计出所有字母的出现次数
-    2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
-    3. 统计所有字母，进行加和；
-    巧妙在相当于并行处理2个字符串，想不出来😥 
-
 ## 剑指offer
 
 ### [二叉树的下一个节点](https://www.acwing.com/problem/content/description/31/)
@@ -590,6 +475,348 @@ if (matrix[x][y] != str[po]) return false;
         }
     };
     ```
+
+
+### [调整数组顺序使奇数位于偶数前面](https://www.acwing.com/problem/content/description/30/)
+
+- 双指针，一个从前往后找偶数，一个从后往前找奇数，不重复就交换，重复就退出
+- 还尝试用归并去求，但是TLE了，原理应该是对的,还能保证相对顺序
+    - 把左区间结尾的偶数和右区间的奇数进行互换
+
+
+??? "双指针，归并"
+    ```cpp
+    class Solution {
+    public:
+        void reOrderArray(vector<int> &array) {
+            if(array.size()==0) return;
+            int l = 0, r = array.size() - 1;
+            while(l<r){
+            while (l < r && array[l] % 2 !=0) l++;
+            while (l<r&&array[r]%2==0) r--;
+            if(l==r) return;
+            else swap(array[l],array[r]);}
+        }
+
+        vector<int> mergesort(vector<int> &array, int l, int r) {
+            if (l >= r) return array;
+            int mid = l + r >> 1;
+            mergesort(array, 0, mid);
+            mergesort(array, mid + 1, r);
+
+            int i = mid, j = mid + 1;
+            vector<int> tem;
+
+            while (i >= 0 && j <= r && array[i] % 2 == 0 && array[j] % 2 != 0)
+                swap(array[i--], array[j--]);
+            return array;
+
+        }
+    };
+    ```
+
+### [反转链表](https://www.acwing.com/problem/content/33/)
+
+老生常谈了，刚学链表的时候受不了直接投降😰。力扣的递归感觉不是一下就理解了，我这个应该好一些
+
+=== "迭代"
+
+    ```cpp
+    class Solution {
+        public:
+        ListNode* reverseList(ListNode* head) {
+
+            if(head== nullptr) return head;
+            ListNode* pre= nullptr;
+            while (head!= nullptr){
+                ListNode*lat=head->next;
+                head->next=pre;
+                pre=head;
+                head=lat;
+            }
+            return pre;
+        }
+    };
+    ```
+
+=== "递归"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode *reverseList(ListNode *head) {
+
+            if (head == nullptr) return head;
+            return rev(head, nullptr);
+        }
+
+        ListNode *rev(ListNode *head, ListNode *pre) {
+            if (head == nullptr) return pre;
+
+            auto tem = head->next;
+            head->next = pre;
+            //先修改当前的next，再递归下一个
+            auto anw = rev(tem, head);
+            return anw;
+
+        }
+    };
+    ```
+
+### [树的子结构](https://www.acwing.com/problem/content/35/)
+
+想出来一部分😰
+
+??? slove
+    ```cpp
+    class Solution {
+    public:
+        bool hasSubtree(TreeNode *pRoot1, TreeNode *pRoot2) {
+            if (pRoot2 == nullptr || pRoot1 == nullptr) return false;
+            if (check(pRoot1, pRoot2))
+                return true;
+            return hasSubtree(pRoot1->left, pRoot2) || hasSubtree(pRoot1->right, pRoot2);
+            //1--p1,p2为根就相同
+            //2--p1的左子树里和p2相同
+            //3--p1的右子树里和p2相同
+        }
+
+        bool check(TreeNode *p1, TreeNode *p2) {
+            if (p2 == nullptr) return true;//条件成立
+            if (p1 == nullptr) return false;//2空1不空
+            if (p1->val != p2->val) return false;//12都不空且值不同
+            return check(p1->left, p2->left) && check(p1->right, p2->right);
+        }
+    };
+    ```
+
+### [对称的二叉树](https://www.acwing.com/problem/content/description/38/)
+
+直接看代码更好理解
+
+1. 递归检查两个节点a,b的值，a的左子树和b的右子树，a的右子树和b的左子树是否相同 👍👍👍
+2. bfs a,b的值，a的左子树和b的右子树，a的右子树和b的左子树是否相同 👍👍
+3. bfs 把下一层的值全存起来看是不是对称 👍
+
+=== "递归"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isSymmetric(TreeNode *root) {
+
+            if (root == nullptr) return true;
+            return dfs(root->left, root->right);
+        }
+
+        bool dfs(TreeNode *l1, TreeNode *l2) {
+            if (l1 == nullptr || l2 == nullptr)
+                return l1 == nullptr && l2 == nullptr;
+            //非常的精妙啊
+            return l1->val == l2->val && dfs(l1->left, l2->right)
+                && dfs(l1->right, l2->left);
+        }
+    };
+    ```
+
+=== "bfs左右"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isSymmetric(TreeNode *root) {
+            if (root == nullptr) return true;
+            return bfs(root);
+        }
+
+        bool bfs(TreeNode *root) {
+            queue<TreeNode *> qu;
+            qu.push(root->left);
+            qu.push(root->right);
+            while (qu.size()) {
+                TreeNode *left = qu.front();
+                qu.pop();
+                TreeNode *right = qu.front();
+                qu.pop();
+                if (left == nullptr && right == nullptr)
+                    continue;
+                if (left == nullptr && right != nullptr ||
+                    left != nullptr && right == nullptr ||
+                    left->val != right->val)
+                    return false;
+
+                qu.push(left->left);
+                qu.push(right->right);
+                qu.push(left->right);
+                qu.push(right->left);
+            }
+            return true;
+        }
+    };
+    ```
+
+=== "bfs全存"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isSymmetric(TreeNode *root) {
+            if (root == nullptr) return true;
+            return bfs(root);
+        }
+
+        bool bfs(TreeNode *root) {
+            queue<TreeNode *> qu;
+            qu.push(root);
+            while (qu.size()) {
+                vector<TreeNode *> newqu;
+                while (qu.size()) {
+                    auto tem = qu.front();
+                    qu.pop();
+                    if (tem == nullptr) continue;
+                    newqu.push_back(tem->left);
+                    newqu.push_back(tem->right);
+                }
+
+                for (int i = 0, j = newqu.size() - 1; i < j;) {
+
+                    if (newqu[i] == nullptr && newqu[j] != nullptr
+                        || newqu[i] != nullptr && newqu[j] == nullptr)
+                        return false;
+                    if(newqu[i]== nullptr&&newqu[j]== nullptr) 
+                    {i++,j--;continue;}
+                    if (newqu[i]->val == newqu[j]->val) i++, j--;
+                    else return false;
+                }
+
+                for (auto x: newqu) {
+                    qu.push(x);
+                }
+
+            }
+
+
+            return true;
+        }
+    };
+    ```
+
+
+## codeforces
+
+### [lakes](https://codeforces.com/contest/1829/problem/E)
+
+??? lakes
+    这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
+    ```C++
+    #include <cstring>
+    #include "iostream"
+
+    using namespace std;
+    const int N = 1010;
+    int gra[N][N];
+    int n, m;
+    int total;
+    int dx[4] = {0, 0, -1, 1};
+    int dy[4] = {1, -1, 0, 0};
+    bool visited[N][N];
+
+
+    int dfs(int a, int b) {
+        visited[a][b] = true;
+        if (gra[a][b] == 0) return 0;
+        int anw = gra[a][b];
+
+        for (int i = 0; i < 4; i++) {
+            int nx = a + dx[i];
+            int ny = b + dy[i];
+            if (nx >= 1 && nx <= n && ny >= 1 && ny <= m
+                && gra[nx][ny] > 0 && visited[nx][ny] == false) { anw += dfs(nx, ny); }
+        }
+        return anw;
+    }
+
+    void solve() {
+
+        int fin = 0;
+        cin >> n >> m;
+
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= m; j++)
+                cin >> gra[i][j];
+
+
+        memset(visited, 0, sizeof visited);
+        for (int i = 1; i <= n; i++)
+            for (int j = 1; j <= m; j++) {
+                if (gra[i][j] != 0 && visited[i][j] == false) {
+
+                    fin = max(dfs(i, j), fin);
+                }
+            }
+        cout << fin << endl;
+
+    }
+
+    int main() {
+
+        cin >> total;
+        while (total--)
+            solve();
+        return 0;
+    }
+
+    ```
+
+### [Hits Different](https://codeforces.com/contest/1829/problem/G)
+
+[前缀和动画讲解](https://usaco.guide/silver/more-prefix-sums?lang=cpp#2d-prefix-sums)
+
+??? solve
+    非常巧妙啊，转成前缀和,详情可以见相应英文题解
+    ```C++
+    #include "iostream"
+
+    using namespace std;
+
+    typedef long long  llint;
+    llint anw[2050000];
+    llint gra[2029][2029];
+    llint cur = 1;
+
+    void solve() {
+        llint x;
+        cin >> x;
+        cout << anw[x] << endl;
+    }
+
+    int main() {
+        ios::sync_with_stdio(false);
+        cin.tie(nullptr);
+        int n;
+        for (int i = 1; i <= 2023; i++)
+            for (int j = i; j >= 1; j--) {
+                gra[j][i - j + 1] = gra[j - 1][i - j + 1] + gra[j][i - j + 1 - 1]
+                                    - gra[j - 1][i - j + 1 - 1]
+                                    + cur * cur;
+                anw[cur] = gra[j][i - j + 1];
+                cur++;
+            }
+        cin >> n;
+        while (n--)
+            solve();
+        return 0;
+    }
+    ```
+
+### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+
+??? slove
+    1. 一次遍历统计出所有字母的出现次数
+    2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
+    3. 统计所有字母，进行加和；
+    巧妙在相当于并行处理2个字符串，想不出来😥 
+
 
 ## template
 
