@@ -701,6 +701,137 @@ if (matrix[x][y] != str[po]) return false;
     };
     ```
 
+### [栈的压入、弹出序列](https://www.acwing.com/problem/content/40/)
+
+[题解](https://www.acwing.com/solution/content/44046/)
+
+??? "slove"
+    ```cpp
+    class Solution {
+    public:
+        bool isPopOrder(vector<int> pushV,vector<int> popV) {
+            if(pushV.size()!=popV.size()) return false; //两个序列长度不等，直接返回false
+            int k=0;
+            stack<int>st;
+            for (int i = 0; i < popV.size(); ++i) {
+                while (st.empty()||st.top()!=popV[i]&&k<pushV.size()) 
+                    st.push(pushV[k++]);
+                if(st.top()==popV[i]) st.pop();
+                else return false;
+            }
+            return st.empty();
+        }
+    };
+    ```
+
+### [分行从上往下打印二叉树](https://www.acwing.com/problem/content/42/)
+
+用一个变量记录一下本层处理几个就好了
+
+??? "slove"
+    ```cpp
+    class Solution {
+    public:
+        vector<vector<int>> printFromTopToBottom(TreeNode *root) {
+
+            vector<vector<int>> anw;
+            if (root == nullptr) return anw;
+            queue<TreeNode *> qu;
+            qu.push(root);
+            while (qu.size()) {
+                vector<int> res;
+                int k = qu.size();
+                while (k--) {
+                    auto tem = qu.front();
+                    qu.pop();
+                    res.push_back(tem->val);
+                    if (tem->left != nullptr) qu.push(tem->left);
+                    if (tem->right != nullptr) qu.push(tem->right);
+                }
+                anw.push_back(res);
+            }
+        }
+    };
+    ```
+
+### [二叉树中和为某一值的路径](https://www.acwing.com/problem/content/description/45/)
+
+dfs思路，处理本层，判断下一层
+
+一些小坑：
+
+- 有可能 **没到结尾（路径端点）时结果就相等** ，但是这不是我们要的
+- 如果传引用注意回复现场
+
+=== "传值"
+
+    ```cpp
+    class Solution {
+    public:
+
+        vector<vector<int>> anw;
+
+        vector<vector<int>> findPath(TreeNode *root, int sum) {
+            vector<int> tem;
+            dfs(root, 0, sum, tem);
+            return anw;
+        }
+
+        void dfs(TreeNode *root, int now, int sum, vector<int> tem) {
+
+            if (root == nullptr) return;
+
+            now += root->val;
+            tem.push_back(root->val);
+            if (now == sum&&root->left== nullptr&&root->right== nullptr) {
+                anw.push_back(tem);
+                return;
+            }
+            if (root->left != nullptr) {
+                dfs(root->left, now, sum, tem);
+            }
+            if (root->right != nullptr) {
+                dfs(root->right, now, sum, tem);
+            }
+        }
+    };
+    ```
+
+=== "传引用"
+
+    ```cpp
+    class Solution {
+    public:
+
+        vector<vector<int>> anw;
+
+        vector<vector<int>> findPath(TreeNode *root, int sum) {
+            vector<int> tem;
+            dfs(root, 0, sum, tem);
+            return anw;
+        }
+
+        void dfs(TreeNode *root, int now, int sum, vector<int>& tem) {
+
+            if (root == nullptr) return;
+
+            now += root->val;
+            tem.push_back(root->val);
+            if (now == sum&&root->left== nullptr&&root->right== nullptr) {
+                anw.push_back(tem);
+                //取消掉注释也可以，但是popback不能丢
+                //不然既没进入最后的poopback也没回复现场
+                // tem.pop_back();
+                // return;
+            }
+            
+            dfs(root->left, now, sum, tem);
+            dfs(root->right, now, sum, tem);
+            tem.pop_back();
+        }
+    };
+    ```
+
 
 ## codeforces
 
