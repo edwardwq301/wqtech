@@ -833,6 +833,325 @@ dfs思路，处理本层，判断下一层
     ```
 
 
+### [复杂链表的复刻](https://www.acwing.com/problem/content/description/89/)
+
+[直接看视频题解](https://www.acwing.com/video/172/)
+
+这是人能想出来的？😰 多复习复习吧
+
+??? "solve"
+    ```cpp
+    class Solution {
+    public:
+        ListNode *copyRandomList(ListNode *head) {
+
+            if (head == nullptr) return head;
+
+            auto p = head;
+            while (p != nullptr) {
+                ListNode *np = new ListNode(p->val);
+                auto next = p->next;
+                np->next = next;
+                p->next = np;
+                p = p->next->next;
+            }
+
+            p = head;
+            while (p != nullptr) {
+                if (p->random != nullptr)
+                    p->next->random = p->random->next;
+                p = p->next->next;
+            }
+
+            ListNode *vir = new ListNode(-1);
+            p = head;
+            ListNode *cur = vir;
+            while (p != nullptr) {
+                cur->next = p->next;
+                p->next = p->next->next;
+                p = p->next;
+                cur = cur->next;
+            }
+            return vir->next;
+        }
+    };
+    ```
+
+### [二叉搜索树与双向链表](https://www.acwing.com/problem/content/description/87/)
+
+还真是人能想出来的，我想不出来，所以我不是人。 多复习复习吧
+
+??? "slove"
+    ```cpp
+    class Solution {
+    public:
+    
+        TreeNode *pre = nullptr;
+
+        TreeNode *convert(TreeNode *root) {
+
+            if (root == nullptr) return nullptr;
+            midread(root);
+            while (root->left != nullptr)
+                root = root->left;
+            return root;
+
+        }
+
+        void midread(TreeNode *root) {
+            if (root == nullptr) return;
+            midread(root->left);
+
+            root->left = pre;
+            if (pre) pre->right = root;
+            pre = root;
+
+            midread(root->right);
+        }
+    };
+    ```
+
+### [数据流中的中位数](https://www.acwing.com/problem/content/description/88/)
+
+用两个堆动态维护序列，最大堆放比中位数小的值，最小堆放比中位数大的值，想法很精妙，实现方法也比较多
+
+- 可以先往最小堆里放，也可以先往最大堆里放，我这个先放到最小堆
+- 如果两个堆顶逆序，调整，如果最小堆数量==最大堆数量，把最小堆的堆顶放到最大堆里
+- 取的时候，如果元素个数为奇数，取最大堆堆顶，偶数取两个堆顶平均值
+
+![示例图](../image/swardofferMidnum.png){ loading=lazy }
+
+??? "solve"
+    ```cpp
+    class Solution {
+    public:
+        priority_queue<int, vector<int>, greater<>> minheap;
+        priority_queue<int, vector<int>, less<>> maxheap;
+
+        void insert(int num) {
+            minheap.push(num);
+            if (maxheap.size() && minheap.top() < maxheap.top()) {
+                int minv = minheap.top(), maxv = maxheap.top();
+                minheap.pop(), maxheap.pop();
+                minheap.push(maxv), maxheap.push(minv);
+            }
+            if (minheap.size() > maxheap.size()) {
+                maxheap.push(minheap.top());
+                minheap.pop();
+            }
+
+        }
+
+        double getMedian() {
+            if ((maxheap.size() + minheap.size()) % 2 == 0) {
+                return (maxheap.top() + minheap.top()) / 2.0;
+            }
+            else
+                return maxheap.top();
+        }
+    };
+    ```
+
+### [连续子数组的最大和](https://www.acwing.com/problem/content/description/50/)
+
+比较简单的一道题 
+
+=== "空间On"
+
+    ```cpp
+    class Solution {
+    public:
+        int maxSubArray(vector<int>& nums) {
+
+            vector<int>anw(nums.size());
+            anw[0]=nums[0];
+            for (int i = 1; i <nums.size(); ++i) {
+                if(nums[i]+anw[i-1]>nums[i]) anw[i]=nums[i]+anw[i-1];
+                else anw[i]=nums[i];
+            }
+            return *max_element(anw.begin(), anw.end());
+        }
+    };
+    ```
+
+=== "空间O1"
+
+    ```cpp
+    class Solution {
+    public:
+        int maxSubArray(vector<int>& nums) {
+
+            vector<int>anw(nums.size());
+            int pre=nums[0];
+            int fin=nums[0];
+            for (int i = 1; i <nums.size(); ++i) {
+                if(pre>0) pre+=nums[i];
+                else pre=nums[i];
+                fin= max(fin,pre);
+            }
+            return fin;
+        }
+    };
+    ```
+
+### [求1+2+…+n](https://www.acwing.com/problem/content/80/)
+
+短路或者开空间，开空间真是 大受震撼.jpg
+
+=== "短路"
+
+    ```cpp
+    class Solution {
+    public:
+        int getSum(int n) {
+            (n>0)&&(n+= getSum(n-1));
+            return n;
+        }
+    };
+    ```
+
+=== "开空间"
+
+    ```cpp
+    class Solution {
+    public:
+        int getSum(int n) {
+            char x[n][n+1];
+            return sizeof(x)>>1;
+        }
+    };
+    ```
+
+### [把数组排成最小的数](https://www.acwing.com/problem/content/54/)
+
+不好解释
+
+??? "slove"
+
+    ```cpp
+    class Solution {
+    public:
+        string printMinNumber(vector<int> &nums) {
+            string anw;
+            if (nums.size() == 0) return anw;
+            sort(nums.begin(), nums.end(), [](int a, int b) {
+                if (to_string(a) + to_string(b) < to_string(b) + to_string(a))
+                    return true;
+                else return false;
+            });
+            for(int  x:nums){
+                anw+= to_string(x);
+            }
+            return anw;
+        }
+    };
+    ```
+
+### [把数字翻译成字符串](https://www.acwing.com/problem/content/55/)
+
+这个还好，最开始想的是dfs处理，看题解后发现还可以用跳台阶做。
+都差不多😋
+
+=== "dfs"
+
+    ```cpp
+    class Solution {
+    public:
+
+        int getTranslationCount(string s) {
+            int anw = dfs(s, 0);
+            return anw;
+        }
+
+        int dfs(string s, int po) {
+            if (po >= s.size()) return 1;
+            int cnt = 0;
+            cnt += dfs(s, po + 1);
+
+            if (po + 1 < s.size() && ((s[po] - '0') * 10 + (s[po + 1] - '0') <= 25)
+                && (s[po] - '0') * 10 + (s[po + 1] - '0') != (s[po + 1] - '0')
+                    )
+                cnt += dfs(s, po + 2);
+            return cnt;
+        }
+    };
+    ```
+
+=== "dp"
+
+    ```cpp
+    class Solution {
+    public:
+        int getTranslationCount(string s) {
+
+            vector<int> dp(s.size() + 1, 0);
+            dp[0] = 1;
+            if (s.size() == 1) return dp[0];
+            dp[1] = 1;
+            for (int i = 2; i <= s.size(); ++i) {
+                dp[i] = dp[i - 1];
+                int a = s[i - 2] - '0', b = s[i - 1] - '0';
+                if (a != 0 && a * 10 + b <= 25)
+                    dp[i] += dp[i - 2];
+            }
+
+            return dp[s.size()];
+        }
+    };
+    ```
+
+### [礼物的最大价值](https://www.acwing.com/problem/content/56/)
+
+- dfs时间超了，用dp
+-  `grid[i][j]` 用过之后就没用了，可以直接存结果，节省一点空间
+
+??? "不额外空间"
+
+    ```cpp
+    class Solution {
+    public:
+        int getMaxValue(vector<vector<int>>& grid) {
+
+            int m=grid.size(),n=grid[0].size();
+            for (int i = 0; i < m; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    if(i&&j) grid[i][j]+= max(grid[i-1][j],grid[i][j-1]);
+                    else if(i) grid[i][j]+=grid[i-1][j];
+                    else if(j) grid[i][j]+=grid[i][j-1];
+                }
+            }
+            return grid[m-1][n-1];
+        }
+    };
+    ```
+
+??? "额外空间"
+
+    ```cpp
+    class Solution {
+    public:
+        int getMaxValue(vector<vector<int>> &grid) {
+            int m = grid.size(), n = grid[0].size();
+
+            vector<vector<int>> dp(grid.size() + 1,
+                                vector<int>(grid[0].size() + 1,0));
+            for (int i = 0; i <= m; ++i)
+                dp[m][0] = 0;
+            for (int i = 0; i <= n; ++i) {
+                dp[0][n] = 0;
+            }
+
+            for (int i = 1; i <= m; ++i) {
+                for (int j = 1; j <= n; ++j) {
+                    dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]) + grid[i - 1][j - 1];
+                }
+            }
+            return dp[m][n];
+        }
+    };
+    ```
+
+
 ## codeforces
 
 ### [lakes](https://codeforces.com/contest/1829/problem/E)
