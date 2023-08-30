@@ -1151,6 +1151,146 @@ dfs思路，处理本层，判断下一层
     };
     ```
 
+### [最长不含重复字符的子字符串](https://www.acwing.com/problem/content/57/)
+
+- 推荐方法：双指针+哈希表
+- 第二种方法： [dp解释](https://leetcode.cn/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/solutions/1220699/java-on-dong-tai-gui-hua-si-lu-qing-xi-z-w2ji/)
+
+
+=== "双指针"
+
+    ```cpp
+    class Solution {
+    public:
+        int longestSubstringWithoutDuplication(string s) {
+            if(s.empty()) return 0;
+            int anw=1;
+            unordered_map<char,int>map;
+            for (int l = 0,r=0; r < s.size(); ++r) {
+                map[s[r]]++;
+                while (map[s[r]]>1){
+                    map[s[l++]]--;
+                }
+                anw= max(anw,r-l+1);
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "dp"
+
+    ```cpp
+    class Solution {
+    public:
+        int longestSubstringWithoutDuplication(string s) {
+            if (s.empty()) return 0;
+            int anw = 1;
+            vector<int> dp(s.size());
+            unordered_map<char, int> map;
+            for (int i = 0; i < s.size(); ++i) {
+                if (i == 0) {
+                    map[s[i]] = 0;
+                    dp[0] = 1;
+                    anw = 1;
+                    continue;
+                }
+                int last = map[s[i]];
+                if (map[s[i]] == 0 && s[0] != s[i])
+                    dp[i] = dp[i - 1] + 1;
+                else
+                    dp[i] = min(dp[i - 1] + 1, i - last);
+                anw = max(anw, dp[i]);
+                map[s[i]] = i;
+            }
+            return anw;
+        }
+    };
+    ```
+
+
+
+### [0到n-1中缺失的数字](https://www.acwing.com/problem/content/description/64/)
+
+二分 特征 `f[i]=i` `f[i]!=i`
+
+??? "查后面的"
+
+    ```cpp
+    class Solution {
+    public:
+        int getMissingNumber(vector<int> &nums) {
+            if(nums.size()==0) return 0;
+            return midsearch(nums, 0, nums.size() - 1);
+        }
+
+        int midsearch(vector<int> nums, int l, int r) {
+            while (l < r) {
+                int val=nums[l+r>>1];
+                int idx=l+r>>1;
+                if(val>idx) r=idx;
+                else l=idx+1;
+            }
+            if(nums[l]==l) return l+1;
+            return l;
+        }
+    };
+    ```
+
+??? "查前边的"
+
+    ```cpp
+    class Solution {
+    public:
+        int getMissingNumber(vector<int> &nums) {
+            if(nums.size()==0) return 0;
+            if(nums.size()==1) return 1;
+            return midsearch(nums, 0, nums.size() - 1);
+        }
+
+        int midsearch(vector<int> nums, int l, int r) {
+            while (l < r) {
+                int val=nums[l+r+1>>1];
+                int idx=l+r+1>>1;
+                if(idx==val) l=idx;
+                else r=idx-1;
+            }
+            if(l==0) return 0;
+            return l+1;
+        }
+    };
+    ```
+
+### [二叉搜索树的第k个结点](https://www.acwing.com/problem/content/description/66/)
+
+dfs时进行计数
+
+??? "dfs"
+
+    ```cpp
+    class Solution {
+    public:
+        TreeNode *kthNode(TreeNode *root, int k) {
+            dfs(root, k);
+            return anw;
+        }
+
+        TreeNode *anw = nullptr;
+
+        void dfs(TreeNode *root, int &k) {
+            if (root == nullptr) return;
+            dfs(root->left, k);
+            k--;
+            if (k == 0) {
+                anw = root;
+                return;
+            }
+            dfs(root->right, k);
+
+        }
+    };
+    ```
+
 
 ## codeforces
 
