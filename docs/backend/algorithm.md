@@ -2,231 +2,6 @@
 comments: true
 ---
 
-## leetcode
-
-### 第K大的数
-
-[链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
-
-- 想要达到 $O(n)$ 时间，就得从快排变形。
-- 第K大的数正好是下标为size-k
-- 一次快排相当于把一个数放到对应位置，那就找哪一次放好了的下标正好是要求的
-> 没做出来时痛苦万分，~~~抄完了~~~ 学会了之后觉得就应该这么写😥
-??? slove
-    ```C++
-
-    class Solution {
-    public:
-    int findKthLargest(vector<int> &nums, int k) {
-        return quicksort(nums,0,nums.size()-1,nums.size()-k);
-    }
-
-    int quicksort(vector<int> &nums, int l, int r, int k) {
-        if (l == r) return nums[k];
-        int i = l - 1, j = r + 1, mid = nums[l + r >> 1];
-        while (i < j) {
-            do i++; while (nums[i] < mid);
-            do j--; while (nums[j] > mid);
-            if (i < j) swap(nums[i], nums[j]);
-        }
-        if (k <= j) return quicksort(nums, l, j, k);
-        else return quicksort(nums, j + 1, r, k);
-    }
-    };
-    ```
-    
-### 环形链表2
-
-[题目链接](https://leetcode.cn/problems/linked-list-cycle-ii/description/)
-
-[完整版题解](https://leetcode.cn/problems/linked-list-cycle-ii/solutions/12616/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/)
-
-- 设有a个节点（不含环的起点），环内有b个节点
-- 当第一次相遇时，
-
-$$
-\begin{aligned}
-fast &=2*low \\
-fast &=low+n*b \\
-fast &=2nb \\
-low  &=nb 
-\end{aligned}
-$$
-
-
-- 所有从头开始走到环的起点都是 $a+Nb步$
-- 所以low再走a步就到起点，那么让快指针重新指向头，一次一步走a步，两者就会重合
-
-??? solve
-    ```C++
-    class Solution {
-    public:
-    ListNode *detectCycle(ListNode *head) {
-        ListNode *low = head;
-        ListNode *fast = head;
-        bool ff = false;
-        while (fast != nullptr && fast->next != nullptr) {
-            fast = fast->next->next;
-            low = low->next;
-            if (fast == low) {
-                ff = true;
-                break;
-            }
-        }
-        if (ff) {
-           fast=head;
-            while (fast!=low){
-                fast=fast->next;
-                low=low->next;
-            }
-            return low;
-        }
-        return nullptr;
-
-    }
-    };
-    ```
-
-
-
-### 寻找重复数 要求O(1)空间
-
-[transport](https://leetcode.cn/problems/find-the-duplicate-number/description/)
-
-以[1,3,4,2,2]为例，如果有相同数字，相当于会存在一个环
-
-**核心**：
-下标和内容一起做指向
-
-| 下标 | 0 | 1 | 3 | 2 | 4       |
-|------|---|---|---|---|---------|
-| 内容 | 1 | 3 | 2 | 4 | 2(成环) |
-| 节点 | 1 | 3 | 2 | 4 | 2       |
-
-然后就和[环形链表2](https://leetcode.cn/problems/linked-list-cycle-ii/description/)一个做法，判环找入口
-
-??? slove
-    ```C++
-    class Solution {
-    public:
-        int findDuplicate(vector<int>& nums) {
-            int low=0,fast=0;
-            //go 1step 2step
-            low=nums[low];
-            fast=nums[nums[fast]];
-            while (low!=fast){
-                low=nums[low];
-                fast=nums[nums[fast]];
-            }
-            //fast goto begin node
-            fast=0;
-            while (low!=fast){
-                low=nums[low];
-                fast=nums[fast];
-            }
-            return fast;
-            
-        }
-    };
-    ```
-
-
-### [最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
-
-**双指针**
-
-- 找出升序，降序的区间，中间就是无序。
-- 希望中间的值 `x>Lmax&&x<Rmin` ，反过来说，当 `x<Lmax||x>Rmin` 就应该调整左右端点
-- 细节部分
-- 为了方便调整到数组开始和结尾，用1e5+10和-1e5-10进行设置
-- 为什么无序区间的数字开始从**L**找？如果从**L+1**开始，反例是 `1, 3, 2, 2, 2`
-
-??? "双指针"
-    ```cpp
-
-    class Solution {
-    public:
-        int findUnsortedSubarray(vector<int> &nums) {
-            if (nums.size() == 1) return 0;
-
-            int l = 0, r = nums.size() - 1;
-            while (l < r && nums[l] <= nums[l + 1]) l++;
-            while (l < r && nums[r] >= nums[r - 1]) r--;
-
-            int lmaxval = nums[l], rminval = nums[r];
-            if (l == r) return 0;
-    
-            int i = l + 1;
-            for (int k = l ; k < r; ++k) {
-                if (nums[k] < lmaxval) {
-                    while (l >= 0 && nums[k] < lmaxval) {
-                        l--;
-                        if (l < 0) lmaxval = -1e5 - 10;
-                        else lmaxval = nums[l];
-                    }
-                
-                }
-                if (nums[k] > rminval) {
-                    while (r < nums.size() && nums[k] > rminval) {
-                        r++;
-                        if (r >= nums.size())
-                            rminval = 1e5 + 10;
-                        else rminval = nums[r];
-                    }
-                
-                }
-            }
-
-            return r - l - 1;
-        }
-    };
-    ```
-
-**一次遍历** [传送门](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/solutions/422614/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/comments/1194164)
-
-先只考虑中段数组，设其左边界为L，右边界为R：
-
-`nums[R]` 不可能是 `[L，R]` 中的最大值（否则应该将 `nums[R]` 并入右端数组）
-
-`nums[L]` 不可能是`[L,R]`中的最小值（否则应该将 `nums[L]` 并入左端数组）
-
-很明显:
-
- `[L,R]` 中的最大值 等于 `[0，R]` 中的最大值，设其为 max
-
- `[L,R]` 中的最小值 等于 `[L， nums.length-1]`中的最小值，设其为 min
-
-那么有：
-
-`nums[R] < max < nums[R+1] < nums[R+2] < ...`  所以说，从左往右遍历，最后一个小于max的为右边界
-
-`nums[L] > min > nums[L-1] > nums[L-2] > ... ` 所以说，从右往左遍历，最后一个大于min的为左边界
-
-??? "一次遍历"
-    ```cpp
-    class Solution {
-    public:
-        int findUnsortedSubarray(vector<int> &nums) {
-
-    
-            int min = nums[nums.size() - 1], max = nums[0];
-            int end = -1, begin = 0;
-            //end和begin的初值不重要，让end-bigin+1=0即可
-            for (int i = 0; i < nums.size(); ++i) {
-                if (nums[i] < max)
-                    end = i;
-                else max = nums[i];
-
-                if (nums[nums.size() - 1 - i] > min)
-                    begin = nums.size() - 1 - i;
-                else min = nums[nums.size() - 1 - i];
-            }
-            return end - begin + 1;
-        }
-    };
-    ```
-
-
 ## 剑指offer
 
 ### [二叉树的下一个节点](https://www.acwing.com/problem/content/description/31/)
@@ -1287,6 +1062,358 @@ dfs时进行计数
             }
             dfs(root->right, k);
 
+        }
+    };
+    ```
+
+
+### [数组中只出现一次的两个数字](https://www.acwing.com/problem/content/description/69/)
+
+偶数个相同的数字进行异或或等于0，0异或a等于a
+
+- 先进行全部异或 `anw=x^y`
+- 因为 `x!=y` 一定可以找到某一位（假定为k位）上的数字两者不同
+- 就可以分成两类，k位是1，k位是0， **成对的数字不管分在哪一类进行异或后都是0**
+- 分别异或就行了
+
+??? "异或"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> findNumsAppearOnce(vector<int> &nums) {
+
+            int anw = 0;
+            for (int i = 0; i < nums.size(); ++i) {
+                anw = anw ^ nums[i];
+            }
+
+            int k = 0;
+            while ((anw >> k & 1) == 0) { k++; }
+
+            int t = 0;
+            for (int i = 0; i < nums.size(); ++i) {
+                if ((nums[i] >> k & 1) == 1) t = t ^ nums[i];
+            }
+            vector<int> res;
+            res.push_back(anw ^ t);
+            res.push_back(t);
+            return res;
+        }
+    };
+    ```
+
+
+### [数组中唯一只出现一次的数字](https://www.acwing.com/problem/content/description/70/)
+
+在一个数组中除了一个数字只出现一次之外，其他数字都出现了三次。
+
+请找出那个只出现一次的数字。
+
+1. int 32位，如果一个数出现3次，那么他的每一位都出现3次
+2. 把所有数的每一位都统计一下，如果是3的倍数，那要求的答案在这一位上是0，否则为1
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        int findNumberAppearingOnce(vector<int> &nums) {
+
+            int cnt[32] = {0};
+            for (int i = 0; i < nums.size(); ++i) {
+                int x = nums[i];
+                for (int j = 0; j < 32; ++j) {
+                    cnt[j] += (x >> j & 1);
+                }
+            }
+            int anw = 0;
+            for (int i = 31; i >= 0; i--) {
+                anw = anw << 1;
+                if (cnt[i] % 3)
+                    anw += 1;
+            }
+            return anw;
+        }
+    };
+    ```
+
+### [和为S的连续正数序列](https://www.acwing.com/problem/content/72/)
+
+1. 起始数字a,长度n `(a>=1,n>=2) (a+a+n-1)*n/2 =x` ，解方程
+2. 双指针的滑动窗口
+
+=== "解方程"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<vector<int> > findContinuousSequence(int sum) {
+
+            if (sum < 3) return vector<vector<int>>{};
+            vector<vector<int>> res;
+            for (int n = 2; n * (n + 1) / 2 <= sum; n++) {
+                vector<int> anw;
+                if (2 * sum % n == 0 && (2 * sum / n - n + 1) % 2 == 0) {
+                    int a = (2 * sum / n - n + 1) / 2;
+                    for (int i = a; i < n + a; ++i) {
+                        anw.push_back(i);
+                    }
+                    res.push_back(anw);
+                }
+            }
+            return res;
+        }
+    };
+    ```
+
+=== "滑动窗口"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<vector<int> > findContinuousSequence(int sum) {
+            vector<vector<int>> res;
+
+            for (int l = 1, r = 2, total = 3; l <= sum / 2 + 1; l++) {
+                while (total < sum)
+                    r++, total += r;
+                if (total == sum) {
+                    vector<int> anw;
+                    for (int k = l; k <= r; k++)
+                        anw.push_back(k);
+                    res.push_back(anw);
+                    total -= l;
+                }
+                else
+                    total -= l;
+                //可以把上边两句合起来
+            }
+            return res;
+        }
+    };
+    ```
+
+## leetcode
+
+### 第K大的数
+
+[链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
+
+- 想要达到 $O(n)$ 时间，就得从快排变形。
+- 第K大的数正好是下标为size-k
+- 一次快排相当于把一个数放到对应位置，那就找哪一次放好了的下标正好是要求的
+> 没做出来时痛苦万分，~~~抄完了~~~ 学会了之后觉得就应该这么写😥
+??? slove
+    ```C++
+
+    class Solution {
+    public:
+    int findKthLargest(vector<int> &nums, int k) {
+        return quicksort(nums,0,nums.size()-1,nums.size()-k);
+    }
+
+    int quicksort(vector<int> &nums, int l, int r, int k) {
+        if (l == r) return nums[k];
+        int i = l - 1, j = r + 1, mid = nums[l + r >> 1];
+        while (i < j) {
+            do i++; while (nums[i] < mid);
+            do j--; while (nums[j] > mid);
+            if (i < j) swap(nums[i], nums[j]);
+        }
+        if (k <= j) return quicksort(nums, l, j, k);
+        else return quicksort(nums, j + 1, r, k);
+    }
+    };
+    ```
+    
+### 环形链表2
+
+[题目链接](https://leetcode.cn/problems/linked-list-cycle-ii/description/)
+
+[完整版题解](https://leetcode.cn/problems/linked-list-cycle-ii/solutions/12616/linked-list-cycle-ii-kuai-man-zhi-zhen-shuang-zhi-/)
+
+- 设有a个节点（不含环的起点），环内有b个节点
+- 当第一次相遇时，
+
+$$
+\begin{aligned}
+fast &=2*low \\
+fast &=low+n*b \\
+fast &=2nb \\
+low  &=nb 
+\end{aligned}
+$$
+
+
+- 所有从头开始走到环的起点都是 $a+Nb步$
+- 所以low再走a步就到起点，那么让快指针重新指向头，一次一步走a步，两者就会重合
+
+??? solve
+    ```C++
+    class Solution {
+    public:
+    ListNode *detectCycle(ListNode *head) {
+        ListNode *low = head;
+        ListNode *fast = head;
+        bool ff = false;
+        while (fast != nullptr && fast->next != nullptr) {
+            fast = fast->next->next;
+            low = low->next;
+            if (fast == low) {
+                ff = true;
+                break;
+            }
+        }
+        if (ff) {
+           fast=head;
+            while (fast!=low){
+                fast=fast->next;
+                low=low->next;
+            }
+            return low;
+        }
+        return nullptr;
+
+    }
+    };
+    ```
+
+
+
+### 寻找重复数 要求O(1)空间
+
+[transport](https://leetcode.cn/problems/find-the-duplicate-number/description/)
+
+以[1,3,4,2,2]为例，如果有相同数字，相当于会存在一个环
+
+**核心**：
+下标和内容一起做指向
+
+| 下标 | 0 | 1 | 3 | 2 | 4       |
+|------|---|---|---|---|---------|
+| 内容 | 1 | 3 | 2 | 4 | 2(成环) |
+| 节点 | 1 | 3 | 2 | 4 | 2       |
+
+然后就和[环形链表2](https://leetcode.cn/problems/linked-list-cycle-ii/description/)一个做法，判环找入口
+
+??? slove
+    ```C++
+    class Solution {
+    public:
+        int findDuplicate(vector<int>& nums) {
+            int low=0,fast=0;
+            //go 1step 2step
+            low=nums[low];
+            fast=nums[nums[fast]];
+            while (low!=fast){
+                low=nums[low];
+                fast=nums[nums[fast]];
+            }
+            //fast goto begin node
+            fast=0;
+            while (low!=fast){
+                low=nums[low];
+                fast=nums[fast];
+            }
+            return fast;
+            
+        }
+    };
+    ```
+
+
+### [最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
+
+**双指针**
+
+- 找出升序，降序的区间，中间就是无序。
+- 希望中间的值 `x>Lmax&&x<Rmin` ，反过来说，当 `x<Lmax||x>Rmin` 就应该调整左右端点
+- 细节部分
+- 为了方便调整到数组开始和结尾，用1e5+10和-1e5-10进行设置
+- 为什么无序区间的数字开始从**L**找？如果从**L+1**开始，反例是 `1, 3, 2, 2, 2`
+
+??? "双指针"
+    ```cpp
+
+    class Solution {
+    public:
+        int findUnsortedSubarray(vector<int> &nums) {
+            if (nums.size() == 1) return 0;
+
+            int l = 0, r = nums.size() - 1;
+            while (l < r && nums[l] <= nums[l + 1]) l++;
+            while (l < r && nums[r] >= nums[r - 1]) r--;
+
+            int lmaxval = nums[l], rminval = nums[r];
+            if (l == r) return 0;
+    
+            int i = l + 1;
+            for (int k = l ; k < r; ++k) {
+                if (nums[k] < lmaxval) {
+                    while (l >= 0 && nums[k] < lmaxval) {
+                        l--;
+                        if (l < 0) lmaxval = -1e5 - 10;
+                        else lmaxval = nums[l];
+                    }
+                
+                }
+                if (nums[k] > rminval) {
+                    while (r < nums.size() && nums[k] > rminval) {
+                        r++;
+                        if (r >= nums.size())
+                            rminval = 1e5 + 10;
+                        else rminval = nums[r];
+                    }
+                
+                }
+            }
+
+            return r - l - 1;
+        }
+    };
+    ```
+
+**一次遍历** [传送门](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/solutions/422614/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/comments/1194164)
+
+先只考虑中段数组，设其左边界为L，右边界为R：
+
+`nums[R]` 不可能是 `[L，R]` 中的最大值（否则应该将 `nums[R]` 并入右端数组）
+
+`nums[L]` 不可能是`[L,R]`中的最小值（否则应该将 `nums[L]` 并入左端数组）
+
+很明显:
+
+ `[L,R]` 中的最大值 等于 `[0，R]` 中的最大值，设其为 max
+
+ `[L,R]` 中的最小值 等于 `[L， nums.length-1]`中的最小值，设其为 min
+
+那么有：
+
+`nums[R] < max < nums[R+1] < nums[R+2] < ...`  所以说，从左往右遍历，最后一个小于max的为右边界
+
+`nums[L] > min > nums[L-1] > nums[L-2] > ... ` 所以说，从右往左遍历，最后一个大于min的为左边界
+
+??? "一次遍历"
+    ```cpp
+    class Solution {
+    public:
+        int findUnsortedSubarray(vector<int> &nums) {
+
+    
+            int min = nums[nums.size() - 1], max = nums[0];
+            int end = -1, begin = 0;
+            //end和begin的初值不重要，让end-bigin+1=0即可
+            for (int i = 0; i < nums.size(); ++i) {
+                if (nums[i] < max)
+                    end = i;
+                else max = nums[i];
+
+                if (nums[nums.size() - 1 - i] > min)
+                    begin = nums.size() - 1 - i;
+                else min = nums[nums.size() - 1 - i];
+            }
+            return end - begin + 1;
         }
     };
     ```
