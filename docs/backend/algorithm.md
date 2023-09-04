@@ -1194,6 +1194,413 @@ dfs时进行计数
     };
     ```
 
+### [左旋转字符串](https://www.acwing.com/problem/content/description/74/)
+
+1. substr(beginPosi,cnt) `str.substr(n)+str.substr(0,n);`
+2. 反转前一部分，反转后一部分，全部反转 ${(a^{-1}b^{-1})}^{-1} =ba$
+
+### [滑动窗口的最大值](https://www.acwing.com/problem/content/description/75/)
+
+窗口里比新进来小的数都没有用了，单调队列 [题解](https://www.acwing.com/solution/content/853/)
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> maxInWindows(vector<int>& nums, int k) {
+
+            vector<int>anw;
+            deque<int>qu;
+            for (int i = 0; i < nums.size(); ++i) {
+                if (!qu.empty() && i - qu.front() >= k) qu.pop_front();
+                while (!qu.empty() && nums[i] > nums[qu.back()]) qu.pop_back();
+                qu.push_back(i);
+                if (i >= k - 1) anw.push_back(nums[qu.front()]);
+            }
+            return anw;
+        }
+    };
+    ```
+
+### [骰子的点数](https://www.acwing.com/problem/content/description/76/)
+
+假设 `f[i][j]` 表示第i次投，总点数为j，可以从上一次的总点数+1,+2...+6，即 `f[i][j]=f[i-1][j-k]  1<=j-k`
+
+=== "n2 1-6"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> numberOfDice(int n) {
+
+            vector<int> anw;
+            vector<vector<int>> dp(n + 1, vector<int>(6 * n + 6, 0));
+
+            for (int i = 1; i <= 6; i++)
+                dp[1][i] = 1;
+
+            for (int i = 2; i <= n; i++) {
+                for (int j = i; j <= 6 * i; ++j) {
+                    for (int k = 1; k <= 6; k++)
+                        if (j - k > 0)
+                            dp[i][j] += dp[i - 1][j - k];
+                }
+            }
+
+            for (int i = n; i <= 6 * n; i++)
+                anw.push_back(dp[n][i]);
+            return anw;
+        }
+    };
+    ```
+
+=== "n2 另一种"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> numberOfDice(int n) {
+
+            vector<int> anw;
+
+            vector<vector<int>> dp(n + 1, vector<int>(6 * n + 6, 0));
+
+            for (int i = 1; i <= 6; i++)
+                dp[1][i] = 1;
+
+
+            for (int i = 2; i <= n; i++) {
+                for (int j = i; j <= 6 * i; ++j) {
+                    for (int k = j - 6; k <= j - 1; k++)
+                        if (k >= i - 1 && k <= 6 * (i - 1))
+                            dp[i][j] += dp[i - 1][k];
+
+                }
+                
+            }
+
+            for (int i = n; i <= 6 * n; i++)
+                anw.push_back(dp[n][i]);
+            return anw;
+        }
+    };
+    ```
+
+=== "On"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> numberOfDice(int n) {
+
+            vector<int> anw;
+            vector<int> dp(6 * (n + 1), 0);
+
+            for (int i = 1; i <= 6; i++)
+                dp[i] = 1;
+
+
+            for (int i = 2; i <= n; i++) {
+                for (int j = i * 6; j >= i; --j) {
+                    dp[j]=0;
+                    for (int k = j - 6; k <= j - 1; k++)
+                        if (k >= i - 1 && k <= 6 * (i - 1))
+                            dp[j] += dp[k];
+
+                }
+            }
+
+            for (int i = n; i <= 6 * n; i++)
+                anw.push_back(dp[i]);
+            return anw;
+        }
+    };
+    ```
+
+### [扑克牌的顺子](https://www.acwing.com/problem/content/description/77/)
+
+1. 除了0以外不能出现两个相同的数字；
+2. 排序后两个相邻数字的差值不能大于0的个数。
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isContinuous(vector<int> nums) {
+
+            if (nums.size() == 0) return false;
+            int cnt = 0;
+            std::sort(nums.begin(), nums.end());
+
+            for (int i = 0; i < nums.size() - 1; ++i) {
+                if (nums[i] == 0) {
+                    cnt++;
+                    continue;
+                }
+                if (nums[i] == nums[i + 1]) return false;
+                if (nums[i + 1] - nums[i] > 1) {
+                    cnt -= (nums[i + 1] - nums[i] - 1);
+                    if (cnt < 0) return false;
+                }
+            }
+            return true;
+        }
+    };
+    ```
+
+
+### [圆圈中最后剩下的数字](https://www.acwing.com/problem/content/description/78/)
+
+约瑟夫环问题， [省流版](https://blog.csdn.net/yzyyylx/article/details/78473304
+) ， [详细版](https://www.acwing.com/solution/content/796/)
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        int lastRemaining(int n, int m) {
+
+            if (n == 1) return 0;
+            int anw = 0;
+            for (int i = 2; i <= n; i++)
+                anw = (anw + m) % i;
+            return anw;
+        }
+    };
+    ```
+
+### [买卖股票1：股票的最大利润](https://www.acwing.com/problem/content/79/)
+
+求 `a[j]-a[i] j>i` 的最大值，动态维护最小值 `buy`
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        int maxDiff(vector<int>& nums) {
+
+            if(nums.size()==0) return 0;
+            int anw=0;
+            int buy=nums[0];
+            for(int i=1;i<nums.size();i++){
+                if(nums[i]<buy) buy=nums[i];
+                if(nums[i]>buy) anw= max(anw,nums[i]-buy);
+            }
+            return anw;
+        }
+    };
+    ```
+
+
+### [构建乘积数组](https://www.acwing.com/problem/content/description/82/)
+
+- 不让用除法，一种方法是对每个数全乘一次，结果是 $O(n^2)$
+- 可以分成 `a[0]..a[i-1]` `a[i+1]..a[n-1]` 前一部分和后一部分， `anw[i]=left[i]*right[i]` 。
+- 如果不额外用 $O(n)$ 空间，可以先处理后缀，再用一个变量记录前缀乘积， `anw[i]=left*right[i]`
+
+
+=== "On空间"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> multiply(const vector<int> &nums) {
+
+            vector<int> anw(nums.size());
+            vector<int> left(nums.size(), 1);
+            vector<int> right(nums.size(), 1);
+            for (int i = 1; i < nums.size(); ++i) {
+                left[i] *= nums[i - 1] * left[i - 1];
+            }
+            for (int i = nums.size() - 2; i >= 0; --i) {
+                right[i] *= nums[i + 1] * right[i + 1];
+            }
+            for (int i = 0; i < nums.size(); ++i) {
+                anw[i] = left[i] * right[i];
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "后缀"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> multiply(const vector<int> &nums) {
+
+            vector<int> right(nums.size(), 1);
+            for (int i = nums.size() - 2; i >= 0; i--)
+                right[i] = right[i + 1] * nums[i + 1];
+            int pre = 1;
+            for (int i = 0; i < nums.size() ; i++) {
+                right[i] = pre * right[i];
+                pre *= nums[i];
+            }
+            return right;
+        }
+    };
+    ```
+
+=== "前缀"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> multiply(const vector<int> &nums) {
+
+            vector<int> left(nums.size(), 1);
+            int right = 1;
+            for (int i = 1; i < nums.size(); i++)
+                left[i] *= left[i - 1] * nums[i - 1];
+            for (int i = nums.size() - 2; i >= 0; i--) {
+                right *= nums[i + 1];
+                left[i] *= right;
+            }
+            return left;
+        }
+    };
+    ```
+
+### [把字符串转换成整数](https://www.acwing.com/problem/content/description/83/)
+
+先在最后加一个别的字母，节省判断条件
+
+    ```cpp
+    class Solution {
+    public:
+        int strToInt(string str) {
+            if (str.size() == 0) return 0;
+            str += 'g';
+            int idx = 0;
+            long anw = 0;
+            bool ff = false;
+            while (str[idx] == ' ') idx++;
+            if (str[idx] == '-') ff = true, idx++;
+            if (str[idx] == '+') idx++;
+
+            for (int i = idx; i < str.size(); ++i) {
+                if (str[i] < '0' || str[i] > '9')
+                    break;
+                anw *= 10;
+                anw += str[i] - '0';
+                if (anw > INT_MAX && !ff) return INT_MAX;
+                if (ff && (0 - anw) < INT_MIN) return INT_MIN;
+            }
+            if (ff) anw = 0 - anw;
+            return anw;
+        }
+    };
+    ```
+
+### [不用加减乘除做加法](https://www.acwing.com/problem/content/description/81/)
+
+1. 从一位全加器入手 `anw=a^b^c cin=a&b|a&c|b&c`
+2. [异或+进位](https://www.acwing.com/solution/content/763/)
+
+
+=== "全加器 未优化版"
+
+    ```cpp
+    class Solution {
+    public:
+        int add(int num1, int num2) {
+            stack<int> st;
+            int a, b, c;
+            c = 0;
+            for (int i = 0; i < 32; i++) {
+                a = num1 >> i & 1;
+                b = num2 >> i & 1;
+                st.push(a ^ b ^ c);
+                c = a & b | a & c | b & c;
+            }
+            int anw = 0;
+            while (!st.empty()) {
+                anw = anw << 1;
+                anw += st.top();
+
+                st.pop();
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "全加器 优化版"
+
+    ```cpp
+    class Solution {
+    public:
+        int add(int num1, int num2) {
+
+            int a, b, c;
+            c = 0;
+            int anw=0;
+            for (int i = 0; i < 32; i++) {
+                a = num1 >> i & 1;
+                b = num2 >> i & 1;
+                anw|=((a^b^c)<<i);
+                c = (a & b | a & c | b & c);
+            }
+
+            return anw;
+        }
+    };
+    ```
+
+=== "异或+进位"
+
+    ```cpp
+    class Solution {
+    public:
+        int add(int num1, int num2){
+            while(num2!=0){
+                int sum = num1 ^ num2;//不进位的加法
+                int carry = (num1 & num2)<<1;//进位
+                num1 = sum;
+                num2 = carry;
+            }
+            return num1;
+        }
+    };
+    ```
+
+### [把字符串转换成整数](https://www.acwing.com/problem/content/83/)
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        int strToInt(string str) {
+            if (str.size() == 0) return 0;
+            str += 'g';
+            int idx = 0;
+            long anw = 0;
+            bool ff = false;
+            while (str[idx] == ' ') idx++;
+            if (str[idx] == '-') ff = true, idx++;
+            if (str[idx] == '+') idx++;
+
+            for (int i = idx; i < str.size(); ++i) {
+                if (str[i] < '0' || str[i] > '9')
+                    break;
+                anw *= 10;
+                anw += str[i] - '0';
+                if (anw > INT_MAX && !ff) return INT_MAX;
+                if (ff && (0 - anw) < INT_MIN) return INT_MIN;
+            }
+            if (ff) anw = 0 - anw;
+            return anw;
+        }
+    };
+    ```
+
 ## leetcode
 
 ### 第K大的数
@@ -1625,6 +2032,8 @@ heap
 
 ## thought
 
+[图的存储](https://blog.csdn.net/raelum/article/details/129108365)
+
 ### Q: 为什么区间dp先枚举长度再枚举左端点
 
 A: 防止用到还没算好的小区间 
@@ -1794,3 +2203,6 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
     ```
 
 
+## todo
+
+买卖股票
