@@ -1601,6 +1601,48 @@ dfs时进行计数
     };
     ```
 
+### [数字序列中某一位的数字](https://www.acwing.com/problem/content/submission/code_detail/27770322/)
+
+用减法比较好，加法一方面不好找对应原始数字，一方面还要担心爆int
+
+**核心思想** ：判断是几位数，找原始数字，找到原始数字的哪一位
+
+- [0-9]有10位数，[10-99]有 `90*2` 位，[100-999]有 `900*3` 位
+- 如果 `n>cnt` ,说明不在这一段里。
+    - eg：13>9,13-9=4<180，在第二段里的第四位
+    - 从10开始，从1计数，就是n=1,x=1; n=2,x=0; n=3,x=1...
+- `anw=pow(10,i-1)+(n-1)/i` 这个地方相当于把从1开始计数变成从0开始计数，这样方便判断是哪一位，即使取模也非常方便，
+- 取模判断右移次数，最后模上10就是答案
+
+上取整： 
+
+1.  $$ \begin{aligned} x &=(a-1)/b+1 \\ x &=(a+b-1)/b \end{aligned} $$
+2. ceil(x)
+
+
+??? "solve"
+
+    ```cpp
+    class Solution {
+    public:
+        int digitAtIndex(int n) {
+            long long anw = 0, i = 1, cnt = 9;
+            while (n > cnt) {
+                n -= cnt;
+                cnt = 9 * pow(10, i) * (i + 1);
+                i++;
+            }
+            anw = (n - 1) / i + pow(10, i - 1);
+            int po = (n - 1) % i;
+            while (i - po - 1 > 0) {
+                anw /= 10;
+                i--;
+            }
+            return anw % 10;
+        }
+    };
+    ```
+
 ## leetcode
 
 ### 第K大的数
