@@ -1868,6 +1868,154 @@ $$
     ```
 
 
+### [最长上升子序列](https://www.acwing.com/problem/content/description/897/)
+
+1. dp $O(n^2)$ , `dp[i]=max(dp[i],dp[j]+1) when a[i]>a[j],`
+2. dp+贪心，每次找 `x<=anw[i]`的左端点更新
+3. 记忆化搜索
+
+=== "dp On2"
+
+    ```cpp
+    #include "bits/stdc++.h"
+
+    using namespace std;
+
+    int main() {
+        int n;
+        cin >> n;
+        vector<int> a(n);
+        for (int i = 0; i < n; i++)
+            cin >> a[i];
+        vector<int> dp(n, 1);
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (a[i] > a[j])
+                    dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+        cout << *max_element(dp.begin(), dp.end());
+        return 0;
+    }
+    ```
+
+=== "dp+贪心"
+
+    ```cpp
+    #include "bits/stdc++.h"
+
+    using namespace std;
+
+    void check(int x, vector<int> &anw) {
+        int l = 0, r = anw.size() - 1;
+        while (l < r) {
+            int mid = l+r>>1;
+            if (anw[mid] <x)l = mid+1;
+            else r = mid;
+        }
+
+        anw[r] = x;
+    }
+
+    int main() {
+        int n;
+        cin >> n;
+        vector<int> a(n);
+        for (int i = 0; i < n; i++)
+            cin >> a[i];
+        vector<int> anw;
+        anw.push_back(a[0]);
+        for (int i = 1; i < n; i++) {
+            if (anw[anw.size() - 1] < a[i])
+                anw.push_back(a[i]);
+            else check(a[i], anw);
+        }
+        cout << anw.size();
+        return 0;
+    }
+    ```
+
+### [数组中的逆序对](https://www.acwing.com/problem/content/description/61/)
+
+- 归并排序，注意循环的边界是 `l r`不是 **0**
+- 套模板会空间多一点但是直观，优化一下相当于不停在求子问题
+
+=== "开空间较多"
+
+```cpp
+class Solution {
+public:
+    int inversePairs(vector<int> &nums) {
+        if(nums.size()==0) return 0;
+        int anw = mergesort(nums, 0, nums.size() - 1);
+        return anw;
+    }
+
+    int mergesort(vector<int> &nums, int l, int r) {
+        if (l == r) return 0;
+        int mid = l + r >> 1;
+        int cnt = 0;
+        cnt += mergesort(nums, l, mid);
+        cnt += mergesort(nums, mid + 1, r);
+
+        int m = mid, n = r, id = r;
+        
+        vector<int> anw(nums.size());
+        
+        while (m >= l && n > mid) {
+            if (nums[n] >= nums[m]) anw[id--] = nums[n--];
+            else cnt+=n-mid, anw[id--] = nums[m--];
+        }
+        while (m >= l) anw[id--] = nums[m--];
+        while (n > mid)anw[id--] = nums[n--];
+        
+        id = l;
+        while (id <= r)
+            nums[id] = anw[id], id++;
+            
+        return cnt;
+    }
+};
+```
+
+=== "On空间"
+
+```cpp
+class Solution {
+public:
+    int inversePairs(vector<int> &nums) {
+        if (nums.size() == 0) return 0;
+        vector<int> tem = nums;
+        int anw = mergesort(nums, 0, nums.size() - 1, tem);
+        return anw;
+    }
+
+    int mergesort(vector<int> &nums, int l, int r, vector<int> &tem) {
+        if (l == r) {
+            tem[l] = nums[l];
+            return 0;
+        }
+        int mid = l + r >> 1;
+        int cnt = 0;
+        cnt += mergesort(tem, l, mid, nums);
+        cnt += mergesort(tem, mid + 1, r, nums);
+
+        int m = mid, n = r, id = r;
+        while (m >= l && n >= mid+1) {
+            if(nums[m]>nums[n]) {
+                tem[id--]=nums[m--];
+                cnt+=n-mid;
+            }
+            else tem[id--]=nums[n--];
+        }
+        while (m >= l) tem[id--] = nums[m--];
+        while (n > mid)tem[id--] = nums[n--];
+
+        return cnt;
+    }
+};
+```
+
 ## codeforces
 
 ### [lakes](https://codeforces.com/contest/1829/problem/E)
