@@ -1,5 +1,4 @@
 site_name: WQ BLOG
-# site_url: https://csdiy.wiki/
 site_author: WQ
 site_description: CS AND SOFTWARE
 
@@ -127,5 +126,10 @@ nav:
   - Tools :
       Git: tools/git.md
       Vscode: tools/VSCODE1.md
- 
+  - Life :
+      20ty: life/20th.md
+      转专业: life/转专业.md
+      化工: life/化工.md
+      键盘: life/keyboar.md
+  
 

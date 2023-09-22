@@ -2393,6 +2393,50 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
     ```
 
 
-## todo
 
-买卖股票
+### manacher
+
+[讲解](https://www.zhihu.com/question/37289584/answer/465656849)
+
+??? "slove"
+
+    ```
+    class Solution {
+    public:
+        string longestPalindrome(string s) {
+            string todo = "";
+
+            for (int i = 0; i < s.size(); i++)
+                todo += s[i], todo += '#';
+            todo = "^#" + todo;
+            todo += '$';
+
+            vector<int> p(todo.size(), 1);
+            int id = 0, maxid = 0;
+            for (int i = 1; i < todo.size(); i++) {
+                if (i < maxid) {
+                    p[i] = min(p[2 * id - i], maxid - i);
+                }
+
+                while (todo[i - p[i]] == todo[i + p[i]])
+                    p[i]++;
+                if (p[i] + i > maxid) {
+                    maxid = i + p[i];
+                    id = i;
+                }
+            }
+
+
+            int st = 0, len = 0;
+            for (int i = 1; i < p.size() - 1; i++) {
+                if (p[i] > len) {
+                    st = i;
+                    len = p[i];
+                }
+            }
+            cout << st << ' ' << len;
+            return s.substr((st - len) / 2, len - 1);
+        }
+    };
+    ```
+
