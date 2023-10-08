@@ -4,6 +4,38 @@ comments: true
 
 ## 剑指offer
 
+### [正则表达式匹配](https://www.acwing.com/problem/content/28/)
+
+[solve](https://www.acwing.com/solution/content/3390/)
+
+??? "solve"
+    ```cpp
+    class Solution {
+    public:
+        bool isMatch(string str, string pattern) {
+            vector<vector<bool>> dp(str.length() + 1, vector(pattern.size() + 1, false));
+            dp[0][0] = true;
+            for (int i = 0; i <= str.length(); i++)
+                for (int j = 1; j <= pattern.size(); j++) {
+                    if ((i > 0) &&
+                        (pattern[j - 1] == '.' ||
+                        pattern[j - 1] != '*' && pattern[j - 1] == str[i - 1]))
+                        dp[i][j] = dp[i - 1][j - 1];
+                    else if (pattern[j - 1] == '*') {
+                        if (j > 1 && dp[i][j - 2] == true)
+                            dp[i][j] = true;
+                        else if ((i > 0 && j > 1) &&
+                                (pattern[j - 2] == str[i - 1] || pattern[j - 2] == '.')
+                                && dp[i - 1][j] == true)
+                            dp[i][j] = true;
+                    }
+                }
+            return dp[str.length()][pattern.size()];
+
+        }
+    };
+    ```
+
 ### [二叉树的下一个节点](https://www.acwing.com/problem/content/description/31/)
 
 - 中序遍历**左根右**
