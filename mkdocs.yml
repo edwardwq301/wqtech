@@ -115,6 +115,7 @@ nav:
   - Backend:
       算法题: backend/algorithm.md
       配环境: backend/problemSolve.md
+      C++: backend/effectivecpp.md
       Java: backend/Java.md
       Python: backend/python.md
   - Frontend:
