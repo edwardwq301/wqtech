@@ -2048,6 +2048,45 @@ public:
 };
 ```
 
+### review
+
+第二题，two sum 链表版
+
+??? "solve"
+    ```cpp
+    class Solution {
+    public:
+        ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+            ListNode* head = new ListNode(0);
+            ListNode* tem = head;
+            int adding = 0;
+            while (l1 || l2) {
+                int x = 0, y = 0;
+                if (l1) x = l1->val;
+                if (l2) y = l2->val;
+                int sum = (x + y + adding) % 10;
+                adding = (x + y + adding) / 10;
+                ListNode* ne = new ListNode(sum);
+                tem->next = ne;
+                tem = tem->next;
+                if (l1)
+                    l1 = l1->next;
+                if (l2)
+                    l2 = l2->next;
+            }
+            if (adding) {
+                ListNode* ne = new ListNode(adding);
+                tem->next = ne;
+            }
+            tem = head->next;
+            delete head;
+            return tem;
+        }
+    };
+    ```
+
+
+
 ## codeforces
 
 ### [lakes](https://codeforces.com/contest/1829/problem/E)
