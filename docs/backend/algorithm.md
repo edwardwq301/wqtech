@@ -1235,7 +1235,53 @@ dfs时进行计数
 
 窗口里比新进来小的数都没有用了，单调队列 [题解](https://www.acwing.com/solution/content/853/)
 
-??? "solve"
+[可读性强的题解](https://github.com/youngyangyang04/leetcode-master/blob/master/problems/0239.%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E6%9C%80%E5%A4%A7%E5%80%BC.md)
+
+=== "可读性强"
+
+    ```cpp
+    class mydeque {
+        deque<int> que;
+
+    public:
+        void push(int val) {
+            while (!que.empty() && val > que.back())
+                que.pop_back();
+            que.push_back(val);
+        }
+
+        void pop(int val) {
+            if (!que.empty() && que.front() == val)
+                que.pop_front();
+        }
+
+        int get() {
+            return que.front();
+        }
+    };
+
+    class Solution {
+    public:
+        vector<int> maxInWindows(vector<int>& nums, int k) {
+            vector<int> res;
+            mydeque que;
+            for (int i = 0; i < k; i++)
+                que.push(nums[i]);
+
+            res.push_back(que.get());
+
+            for (int i = k; i < nums.size(); i++) {
+                que.pop(nums[i - k]);
+                que.push(nums[i]);
+                res.push_back(que.get());
+            }
+            return res;
+        }
+    };
+
+    ```
+
+=== "可读性不强"
 
     ```cpp
     class Solution {
