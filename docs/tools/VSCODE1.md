@@ -10,118 +10,130 @@ categories:
 
 
 ### C++
-众所周知，可以用devC++，Visio Studio，vscode等等写C++，但是vscode可能会让人折腾半天。下面给出一个拿来就用的办法
-!!! 注意
+早日远离M$C++，早日获得新生😋
 
-    前提：需要安装好`vscode`，`mingw64`
+使用clangd打开或关闭函数参数提示(inlay hints)
 
-1. 配置文件夹
+`ctrl+shift+p;clangd:toggle inlay hints`
 
-2. 在`.vscode`文件夹下创建以下三个文件
-      1. `c_cpp_properties.json`
-      2. `launch.json`
-      3. `tasks.json`
-3. 复制粘贴以下
+- [教程](https://zhangjk98.xyz/vscode-c-and-cpp-develop-and-debug-setting/)
+- [可能遇到的问题及解决](https://www.cnblogs.com/zjutzz/p/15303480.html#34-clangd-%E6%89%93%E5%BC%80%E6%88%96%E5%85%B3%E9%97%AD%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BAinlay-hints)
 
-    ===  "c_cpp_properties.json"
-       
-        ```json
-        {
-        "configurations": [
-            {
-                "name": "Win32",
-                "includePath": [
-                    "${workspaceFolder}/**"
-                ],
-                "defines": [
-                    "_DEBUG",
-                    "UNICODE",
-                    "_UNICODE"
-                ],
-                "compilerPath": "D:/C/vscode/gcc/mingw64/bin/g++.exe",//你的g++位置
-                "cStandard": "gnu17",
-                "cppStandard": "gnu++14",
-                "intelliSenseMode": "windows-gcc-x64"
-            }
-            ],
-        "version": 4
-        }
-        ```
 
-    ===  "launch.json"  
+??? tip "过时版"
+
+    众所周知，可以用devC++，Visio Studio，vscode等等写C++，但是vscode可能会让人折腾半天。下面给出一个拿来就用的办法
+    !!! 注意
+
+        前提：需要安装好`vscode`，`mingw64`
+
+    1. 配置文件夹
+
+    2. 在`.vscode`文件夹下创建以下三个文件
+        1. `c_cpp_properties.json`
+        2. `launch.json`
+        3. `tasks.json`
+    3. 复制粘贴以下
+
+        ===  "c_cpp_properties.json"
         
-        ```json
-        {
-        "version": "0.2.0",
-        "configurations": [
+            ```json
             {
-                "name": "(gdb) 内部终端启动",
-                "type": "cppdbg",
-                "request": "launch",
-                "program": "${workspaceFolder}\\exe\\${fileBasenameNoExtension}.exe",//更多信息请查看gcc/g++的手册
-                "args": [],
-                "stopAtEntry": true,
-                "cwd": "${fileDirname}",
-                "environment": [],
-                "externalConsole": false,
-                
-                "MIMode": "gdb",
-                "miDebuggerPath": "D:\\C\\vscode\\gcc\\mingw64\\bin\\gdb.exe",
-                //你的gdb位置
-                "setupCommands": [
-                    {
-                        "description": "为 gdb 启用整齐打印",
-                        "text": "-enable-pretty-printing",
-                        
-                        "ignoreFailures": true
-                    },
-                    {
-                        "description": "将反汇编风格设置为 Intel",
-                        "text": "-gdb-set disassembly-flavor intel",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            ]
-        }
-        ```
-
-    ===  "task.json"
-
-        ```json
-        {
-        "tasks": [
-            
-            {
-                "type": "cppbuild",
-                "label": "g++.exe ",
-                "command": "D:/C/vscode/gcc/mingw64/bin/g++.exe",//对应你的g++位置
-                "args": [
-                    "-fdiagnostics-color=always",
-                    "-g",
-                    "${file}",
-                    "-o",
-                    "${workspaceFolder}\\exe\\${fileBasenameNoExtension}.exe"
+            "configurations": [
+                {
+                    "name": "Win32",
+                    "includePath": [
+                        "${workspaceFolder}/**"
+                    ],
+                    "defines": [
+                        "_DEBUG",
+                        "UNICODE",
+                        "_UNICODE"
+                    ],
+                    "compilerPath": "D:/C/vscode/gcc/mingw64/bin/g++.exe",//你的g++位置
+                    "cStandard": "gnu17",
+                    "cppStandard": "gnu++14",
+                    "intelliSenseMode": "windows-gcc-x64"
+                }
                 ],
-                "options": {
-                    "cwd": "D:/C/vscode/gcc/mingw64/bin"
-                },
-                "problemMatcher": [
-                    "$gcc"
-                ],
-                "group": {
-                    "kind": "build",
-                    "isDefault": true
-                },
-                "detail": "调试器生成的任务。"
+            "version": 4
             }
-            ],
-            "version": "2.0.0"
-        }
-        ```
+            ```
+
+        ===  "launch.json"  
+            
+            ```json
+            {
+            "version": "0.2.0",
+            "configurations": [
+                {
+                    "name": "(gdb) 内部终端启动",
+                    "type": "cppdbg",
+                    "request": "launch",
+                    "program": "${workspaceFolder}\\exe\\${fileBasenameNoExtension}.exe",//更多信息请查看gcc/g++的手册
+                    "args": [],
+                    "stopAtEntry": true,
+                    "cwd": "${fileDirname}",
+                    "environment": [],
+                    "externalConsole": false,
+                    
+                    "MIMode": "gdb",
+                    "miDebuggerPath": "D:\\C\\vscode\\gcc\\mingw64\\bin\\gdb.exe",
+                    //你的gdb位置
+                    "setupCommands": [
+                        {
+                            "description": "为 gdb 启用整齐打印",
+                            "text": "-enable-pretty-printing",
+                            
+                            "ignoreFailures": true
+                        },
+                        {
+                            "description": "将反汇编风格设置为 Intel",
+                            "text": "-gdb-set disassembly-flavor intel",
+                            "ignoreFailures": true
+                        }
+                    ]
+                },
+                ]
+            }
+            ```
+
+        ===  "task.json"
+
+            ```json
+            {
+            "tasks": [
+                
+                {
+                    "type": "cppbuild",
+                    "label": "g++.exe ",
+                    "command": "D:/C/vscode/gcc/mingw64/bin/g++.exe",//对应你的g++位置
+                    "args": [
+                        "-fdiagnostics-color=always",
+                        "-g",
+                        "${file}",
+                        "-o",
+                        "${workspaceFolder}\\exe\\${fileBasenameNoExtension}.exe"
+                    ],
+                    "options": {
+                        "cwd": "D:/C/vscode/gcc/mingw64/bin"
+                    },
+                    "problemMatcher": [
+                        "$gcc"
+                    ],
+                    "group": {
+                        "kind": "build",
+                        "isDefault": true
+                    },
+                    "detail": "调试器生成的任务。"
+                }
+                ],
+                "version": "2.0.0"
+            }
+            ```
 
 
-4. 在`sourcecode`文件夹写源代码即可
+    4. 在`sourcecode`文件夹写源代码即可
 
 ### C
 
