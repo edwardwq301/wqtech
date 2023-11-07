@@ -2094,6 +2094,77 @@ public:
 };
 ```
 
+### [编辑距离](https://leetcode.cn/problems/edit-distance/)
+
+[题解](https://leetcode.cn/problems/edit-distance/solutions/2468072/dai-ma-sui-xiang-lu-72-bian-ji-ju-chi-by-or3j/)
+
+可以优化成O(M)
+
+??? "slove"
+
+    ```cpp
+    class Solution {
+    public:
+        void printmarix(vector<int> source) {
+            for (auto x : source)
+                cout << x << ' ';
+            cout << endl;
+        }
+
+        void printVect(vector<vector<int>> dp) {
+            for (auto x : dp) {
+                for (auto y : x)
+                    cout << y << ' ';
+                cout << endl;
+            }
+        }
+
+        int minDistance(string source, string dest) {
+            vector<int> dp(dest.size() + 1, 0);
+
+
+            for (int i = 0; i <= dest.size(); i++)
+                dp[i] = i;
+
+            for (int i = 1; i <= source.size(); i++) {
+                int tem = dp[0];
+                dp[0] = i;
+                for (int j = 1; j <= dest.size(); j++) {
+                    int pre_dp_j = dp[j];
+                    if (source[i - 1] == dest[j - 1])
+                        dp[j] = tem;
+                    else
+                        dp[j] = min(tem, min(dp[j - 1], dp[j])) + 1;
+
+                    tem = pre_dp_j;
+                }
+                //  printmarix(dp);
+            }
+            return dp[dest.size()];
+        }
+
+        int minDistance_corr(string source, string dest) {
+            vector<vector<int>> dp(source.size() + 1, vector<int>(dest.size() + 1, 0));
+
+            for (int i = 0; i <= source.size(); i++)
+                dp[i][0] = i;
+            for (int i = 0; i <= dest.size(); i++)
+                dp[0][i] = i;
+
+            for (int i = 1; i <= source.size(); i++)
+                for (int j = 1; j <= dest.size(); j++) {
+                    if (source[i - 1] == dest[j - 1])
+                        dp[i][j] = dp[i - 1][j - 1];
+                    else
+                        dp[i][j] = min(min(dp[i - 1][j - 1], dp[i - 1][j]), dp[i][j - 1]) + 1;
+                }
+            //  printVect(dp);
+            return dp[source.size()][dest.size()];
+        }
+    };
+
+    ```
+
 ### review
 
 第二题，two sum 链表版
@@ -2556,4 +2627,92 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
         }
     };
     ```
+
+### 质数筛
+
+[埃氏筛](https://swtch.com/~rsc/thread/#:~:text=As%20another%20example%2C%20which%20Hoare%20credits%20to%20Doug%20McIlroy%2C%20consider%20the%20generation%20of%20all%20primes%20less%20than%20a%20thousand.%20The%20sieve%20of%20Eratosthenes%20can%20be%20simulated%20by%20a%20pipeline%20of%20processes%20executing%20the%20following%20pseudocode%3A)
+
+??? "例子"
+
+    ```cpp
+    #include <bits/stdc++.h>
+
+    using namespace std;
+    //埃氏筛未优化
+    vector<int> get_prime_core(vector<int>& anw, vector<int> source) {
+        if (!source.empty())
+            anw.push_back(source[0]);
+        else
+            return anw;
+        vector<int> todo;
+        for (int x : source) {
+            if (x % source[0] != 0) {
+                todo.push_back(x);
+            }
+        }
+        return get_prime_core(anw, todo);
+    }
+
+    vector<int> get_prime(int n) {
+        vector<int> anw;
+        vector<int> source(n - 1);
+        for (int i = 0, begin = 2; i < source.size(); i++, begin++)
+            source[i] = begin;
+        return get_prime_core(anw, source);
+    }
+
+
+    //埃氏筛优化
+    vector<int> get_prime_update_ei(int n) {
+        vector<bool> is_prime(n + 1, true);
+        vector<int> anw;
+
+        for (int i = 2; i <= n; i++) {
+            if (is_prime[i])
+                anw.push_back(i);
+            else
+                continue;
+            for (int id = i; id <= n; id += i)
+                is_prime[id] = false;
+        }
+        for (auto x : anw)
+            cout << x << ' ';
+        cout << endl
+            << anw.size();
+        return anw;
+    }
+
+
+    //线性筛
+    vector<int> get_prime_update_On(int n) {
+        vector<bool> is_prime(n + 1, true);
+        vector<int> anw;
+
+        for (int i = 2; i <= n; i++) {
+            if (is_prime[i])
+                anw.push_back(i);
+            for (int j = 0; anw[j] <= n / i; j++) {
+                is_prime[anw[j] * i] = false;
+                if (i % anw[j] == 0)
+                    break;
+            }
+        }
+
+        for (auto x : anw)
+            cout << x << ' ';
+        cout << endl
+            << anw.size();
+        return anw;
+    }
+
+    int main() {
+        int n = 20;
+        vector<int> anw = get_prime_update_On(n);
+
+        return 0;
+    }
+    ```
+
+
+
 
