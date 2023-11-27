@@ -110,8 +110,6 @@ plugins:
 nav:
   - About:
       index.md
-  - Guide:
-      guide.md
   - Backend:
       算法题: backend/algorithm.md
       配环境: backend/problemSolve.md
@@ -123,7 +121,6 @@ nav:
       MkDocs: frontend/hello-MkDocs.md
       Hexo: frontend/hello-hexo.md
       密码: frontend/密码.md
-      HTML: frontend/HTML.md
   - Tools :
       Git: tools/git.md
       Vscode: tools/VSCODE1.md
@@ -131,7 +128,5 @@ nav:
       21st: life/20th.md
       reading: life/reading.md
       转专业: life/转专业.md
-      化工: life/化工.md
-      键盘: life/keyboar.md
       
 

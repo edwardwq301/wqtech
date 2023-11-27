@@ -2322,6 +2322,8 @@ public:
 
 ## template
 
+vector删除特定元素 `nums.erase(remove(nums.begin(), nums.end(), val) ,nums.end());`
+
 mergesort
 
 ??? "&"

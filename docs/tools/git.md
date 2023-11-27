@@ -190,3 +190,4 @@ git commit --amend|修改最近一次提交信息，但是会改变sha1值，类
 
 
 
+[revert vs amend](https://stackoverflow.com/questions/28166547/what-are-the-differences-between-revert-amend-rollback-and-undo-a-com)
