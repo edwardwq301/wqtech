@@ -1,20 +1,18 @@
 ---
 
 hide:
-  #- navigation
+  - navigation
   - toc
   - path
 ---
 
-# About me
+# Hello world
 
-![dog](image/gode.jpg){ width=120 hight=120 align=left }
+![睦头人](image/mygo6.png){ width=300 hight=320 align=left }
 
 
-- :student:Undergraduate student in software engineering
+- :student: Undergraduate student in software engineering
 - :octicons-mail-16: edwardwq301@gmail.com
 - hobbies:
     - play game
     - read Science Fiction
-
-[my life blog](https://beautifulwq.github.io/hugoblog/)
