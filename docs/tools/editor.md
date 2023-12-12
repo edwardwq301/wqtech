@@ -9,7 +9,7 @@ categories:
 ---
 
 
-### C++
+## C++
 早日远离M$C++，早日获得新生😋
 
 使用clangd打开或关闭函数参数提示(inlay hints)
@@ -135,38 +135,11 @@ categories:
 
     4. 在`sourcecode`文件夹写源代码即可
 
-### C
 
-今天好好的弄了一下`fork`。
-- 在父进程中，fork的返回值是子进程的pid
-- 在子进程中，fork的返回值是0
-- 出错了，返回的是-1
-```C
-#include "student.h"
+## markdown preview enhanced
+- 打印背景（让代码块背景为灰色） [教程](https://blog.csdn.net/RP123123123/article/details/118113026)
 
-int main()
-{
-    int pid = fork();
-    if (pid == 0)
-    {
-        printf("son:i am %d,my father is %d\n", getpid(), getppid());
-        printf("  %d\n", pid);
-    }
-    else
-    {
-        printf("father:i am %d\n", getpid());
-        printf("  %d\n", pid);
-    }
-
-    return 0;
-}
-```
-
-### markdown preview enhanced
-- 自定义字体（代码字体需要改官方代码）  [教程](https://zhuanlan.zhihu.com/p/458010679)
-- 打印背景（让代码块背景为灰色）    [教程](https://blog.csdn.net/RP123123123/article/details/118113026)
-
-### 更换vscode的代码颜色
+## 更换vscode的代码颜色
 1. 找到对应的文件夹
    默认主题 
    ` D:\C\vscode\Microsoft VS Code\resources\app\extensions\theme-defaults\themes`
@@ -178,8 +151,6 @@ int main()
 
 ## vim
 
-相当于cheetsheet
-
 |操作|命令|
 |:---|:---|
 |复制|y|
@@ -189,9 +160,5 @@ int main()
 |重做redo|Ctrl-r|
 |visio block后进入insert|Shift-i|
 
-
----
-
-参考资料
 
 [vim和系统剪贴板交互](https://www.zhihu.com/question/19863631/answer/89354508)
