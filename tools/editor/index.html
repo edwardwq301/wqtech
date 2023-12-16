@@ -16,11 +16,11 @@
         <link rel="prev" href="../git/">
       
       
-        <link rel="next" href="../../life/20th/">
+        <link rel="next" href="../linux/">
       
       
       <link rel="icon" href="../../image/gode.jpg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.0">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.45e1311d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -426,7 +426,7 @@
         
   
   <span class="md-ellipsis">
-    算法题
+    algorithm
   </span>
   
 
@@ -447,7 +447,28 @@
         
   
   <span class="md-ellipsis">
-    配环境
+    environment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backend/leetcode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    leetcode
   </span>
   
 
@@ -630,27 +651,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../frontend/%E5%AF%86%E7%A0%81/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    密码
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -739,7 +739,7 @@
           
   
   <span class="md-ellipsis">
-    Vscode
+    Editor
   </span>
   
 
@@ -750,7 +750,7 @@
         
   
   <span class="md-ellipsis">
-    Vscode
+    Editor
   </span>
   
 
@@ -773,15 +773,6 @@
   <a href="#c" class="md-nav__link">
     <span class="md-ellipsis">
       C++
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#c_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      C
     </span>
   </a>
   
@@ -818,6 +809,27 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linux/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Linux
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -974,15 +986,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#c_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      C
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#markdown-preview-enhanced" class="md-nav__link">
     <span class="md-ellipsis">
       markdown preview enhanced
@@ -1027,9 +1030,9 @@
   
 
 
-  <h1>Vscode</h1>
+  <h1>Editor</h1>
 
-<h3 id="c">C++</h3>
+<h2 id="c">C++</h2>
 <p>早日远离M$C++，早日获得新生😋</p>
 <p>使用clangd打开或关闭函数参数提示(inlay hints)</p>
 <p><code>ctrl+shift+p;clangd:toggle inlay hints</code></p>
@@ -1159,36 +1162,11 @@
 </li>
 </ol>
 </details>
-<h3 id="c_1">C</h3>
-<p>今天好好的弄了一下<code>fork</code>。
-- 在父进程中，fork的返回值是子进程的pid
-- 在子进程中，fork的返回值是0
-- 出错了，返回的是-1
-<div class="language-C highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;student.h&quot;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">{</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fork</span><span class="p">();</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;son:i am %d,my father is %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">getpid</span><span class="p">(),</span><span class="w"> </span><span class="n">getppid</span><span class="p">());</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;  %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p">);</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="k">else</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;father:i am %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">getpid</span><span class="p">());</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;  %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p">);</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="p">}</span>
-</span></code></pre></div></p>
-<h3 id="markdown-preview-enhanced">markdown preview enhanced</h3>
+<h2 id="markdown-preview-enhanced">markdown preview enhanced</h2>
 <ul>
-<li>自定义字体（代码字体需要改官方代码）  <a href="https://zhuanlan.zhihu.com/p/458010679">教程</a></li>
-<li>打印背景（让代码块背景为灰色）    <a href="https://blog.csdn.net/RP123123123/article/details/118113026">教程</a></li>
+<li>打印背景（让代码块背景为灰色） <a href="https://blog.csdn.net/RP123123123/article/details/118113026">教程</a></li>
 </ul>
-<h3 id="vscode">更换vscode的代码颜色</h3>
+<h2 id="vscode">更换vscode的代码颜色</h2>
 <ol>
 <li>
 <p>找到对应的文件夹
@@ -1201,7 +1179,6 @@
 </li>
 </ol>
 <h2 id="vim">vim</h2>
-<p>相当于cheetsheet</p>
 <table>
 <thead>
 <tr>
@@ -1236,8 +1213,6 @@
 </tr>
 </tbody>
 </table>
-<hr />
-<p>参考资料</p>
 <p><a href="https://www.zhihu.com/question/19863631/answer/89354508">vim和系统剪贴板交互</a></p>
 
 
@@ -1261,7 +1236,7 @@
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_datetime">2023-10-28 14:34:14</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_datetime">2023-12-12 20:26:39</span>
   </span>
 
     
