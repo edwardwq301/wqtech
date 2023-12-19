@@ -52,7 +52,20 @@ void shellSort(vector<int> &todo) {
 }
 ```
 
-### 并查集j
+knuth shuffle: in iteration i, swap a[i] and a[k] (random k in [0, i])
+
+```cpp
+void shuffle(vector<int> &todo) {
+    int N = todo.size();
+    for (int i = 0; i < N; i++) {
+        int k = rand() % (i + 1);   //[0, i]
+        swap(todo[i], todo[k]);
+    }
+}
+```
+
+
+### 并查集
 
 ```java
 public class Union {
@@ -96,7 +109,7 @@ public class Union {
 
 ```
 
-exercise: *Successor* with delete. Given a set of n integers S={0,1,...,n−1} and a sequence of requests of the following form:
+*Successor* with delete: Given a set of n integers S = {0, 1, ..., n−1} and a sequence of requests of the following form:
 
 - remove x from S 
 - find *successor* of  x : the smallest y in S such that y>=x
@@ -189,52 +202,134 @@ vector删除特定元素 `nums.erase(remove(nums.begin(), nums.end(), val) ,nums
 
 mergesort
 
-??? "&"
-    ```C++
-    #include "iostream"
+=== "normal"
+
+    ```cpp linenums="1" hl_lines="19 20 22 32 33"
     #include "vector"
+    #include "iostream"
+    #include "algorithm"
+
 
     using namespace std;
 
-    void merge(vector<int> &nums, vector<int> &copy, int l, int r) {
-        if (l == r) {
-            copy[l] = nums[l];
-            return;
+    void check(vector<int> checkitem) {
+        for (int i : checkitem) {
+            cout << i << ' ';
         }
-        int mid = l + r >> 1;
-        merge(copy, nums, l, mid);
-        merge(copy, nums, mid + 1, r);
+        cout << endl;
+    }
 
-        int i = l, j = mid + 1, idx = l;
-        while (i <= mid && j <= r) {
-            if (nums[i] < nums[j]) copy[idx++] = nums[i++];
-            else copy[idx++] = nums[j++];
+    void mergeCore(vector<int> &a, vector<int> &aux, int lo, int hi) {
+        if (lo >= hi) return;
+        int mid = (lo + hi) / 2;
+
+        mergeCore(a, aux, lo, mid);
+        mergeCore(a, aux, mid + 1, hi);
+
+        int i = lo, j = mid + 1, k = lo;
+
+        while (i <= mid && j <= hi) {
+            if (a[i] < a[j])
+                aux[k++] = a[i++];
+            else aux[k++] = a[j++];
         }
-        while (i <= mid)
-            copy[idx++] = nums[i++];
-        while (j<=r)
-            copy[idx++] = nums[j++];
+        while (i <= mid) aux[k++] = a[i++];
+        while (j <= hi) aux[k++] = a[j++];
+
+        for (int ti = lo, tk = lo; ti <= hi; ti++, tk++)
+            a[ti] = aux[tk];
+
 
     }
 
-    void mergesort(vector<int> &nums) {
-        if (nums.size() <= 1) return;
-        vector<int> copy = nums;
-        merge(nums, copy, 0, nums.size() - 1);
-        nums=copy;
+    void mergeSort(vector<int> &a, int lo, int hi) {
+        auto aux = a;
+        mergeCore(a, aux, lo, hi);
+
+    }
+
+    void testSort() {
+
+        vector<int> pre = {20, 19, 18, 17, 16};
+
+
+        vector<int> anw = pre;
+        std::sort(anw.begin(), anw.end());
+
+        mergeSort(pre, 0, pre.size() - 1);
+
+        check(pre);
+
     }
 
     int main() {
-        vector<int> nums;
-        int n;
-        cin >> n;
-        nums.resize(n);
-        for (int i = 0; i < n; ++i) {
-            cin >> nums[i];
+        testSort();
+        return 0;
+    }
+    ```
+
+=== "improve"
+
+    ```cpp linenums="1" hl_lines="19 20 41"
+    #include "vector"
+    #include "iostream"
+    #include "algorithm"
+
+
+    using namespace std;
+
+    void check(vector<int> checkitem) {
+        for (int i: checkitem) {
+            cout << i << ' ';
         }
-        mergesort(nums);
-        for (auto x: nums)
-            cout << x << ' ';
+        cout << endl;
+    }
+
+    void mergeCore(vector<int> &a, vector<int> &aux, int lo, int hi) {
+        if (lo >= hi) return;
+        int mid = (lo + hi) / 2;
+
+        mergeCore(aux, a, lo, mid);
+        mergeCore(aux, a, mid + 1, hi);
+
+        int i = lo, j = mid + 1, k = lo;
+
+        while (i <= mid && j <= hi) {
+            if (a[i] < a[j])
+                aux[k++] = a[i++];
+            else aux[k++] = a[j++];
+        }
+        while (i <= mid) aux[k++] = a[i++];
+        while (j <= hi) aux[k++] = a[j++];
+
+    //    for (int ti = lo, tk = lo; ti <= hi; ti++, tk++)
+    //        a[ti] = aux[tk];
+
+
+    }
+
+    void mergeSort(vector<int> &a, int lo, int hi) {
+        auto aux = a;
+        mergeCore(a, aux, lo, hi);
+        a = aux;
+    }
+
+    void testSort() {
+
+        vector<int> pre = {20, 19, 18, 17, 16};
+
+
+        vector<int> anw = pre;
+        std::sort(anw.begin(), anw.end());
+
+        mergeSort(pre, 0, pre.size() - 1);
+
+        check(pre);
+
+    }
+
+    int main() {
+        testSort();
         return 0;
     }
     ```

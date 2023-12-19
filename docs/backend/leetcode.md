@@ -2217,6 +2217,7 @@ public:
 第二题，two sum 链表版
 
 ??? "solve"
+
     ```cpp
     class Solution {
     public:
@@ -2249,7 +2250,34 @@ public:
     };
     ```
 
+[The Dutch national flag](https://en.wikipedia.org/wiki/Dutch_national_flag_problem): sort an array of some 0,1,2 in O(n) 
 
+- [0, i-1] < midElement
+- [i, j-1] = midElement
+- [j, k] unsorted
+- [k+1, end] >midElement
+
+
+??? "solve"
+
+    ```cpp
+    void dutchFlag(vector<int>&todo){
+        int N=todo.size();
+        int low=0,mid=0,high=N-1;
+        while (mid<=high){
+            if(todo[mid]==0){
+                swap(todo[low],todo[mid]);
+                low++;
+                mid++;
+            }
+            else if(todo[mid]==2){
+                swap(todo[mid],todo[high]);
+                high--;
+            }
+            else mid++;
+        }
+    }
+    ```
 
 ## codeforces
 

@@ -6,13 +6,11 @@ hide:
   - path
 ---
 
-# Hello world
+# About Me
 
-![睦头人](image/mygo6.png){ width=300 hight=320 align=left }
+![pic](image/lightmusic2.png){ width=300 hight=300 align=left }
 
 
-- :student: Undergraduate student in software engineering
-- :octicons-mail-16: edwardwq301@gmail.com
-- hobbies:
-    - play game
-    - read Science Fiction
+- Undergraduate student in software engineering
+- edwardwq301@gmail.com
+- hobbies: play game, read Science Fiction, acgn
