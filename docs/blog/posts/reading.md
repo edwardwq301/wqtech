@@ -1,6 +1,14 @@
 ---
+author: wq
+date: 2023-10-20
 comments: true
+categories:
+    - life
 ---
+
+reading books
+
+<!-- more -->
 
 ## 科幻小说
 第十一届星云奖

@@ -1,6 +1,7 @@
 site_name: WQ BLOG
 site_author: WQ
 site_description: CS AND SOFTWARE
+site_url: https://beautifulwq.github.io/
 
 repo_name: beautifulwq.github.io
 repo_url: https://github.com/beautifulwq/beautifulwq.github.io/
@@ -110,7 +111,10 @@ plugins:
       blog_toc: false
       archive_name: Archive
       categories_toc: false
-     
+  - rss:
+      match_path: blog/posts/.*
+      date_from_meta:
+        as_creation: date
 
 nav:
   - About:
@@ -134,10 +138,6 @@ nav:
       Editor: tools/editor.md
       Linux: tools/linux.md
       
-  - Life :
-      21st: life/20th.md
-      reading: life/reading.md
-      转专业: life/转专业.md
   - Blog:   
       - blog/index.md
 
