@@ -75,3 +75,8 @@ int main() {
 |  private  | unvisited | unvisited | unvisited |
 | protected | protected |  private  | protected |
 |  public   |  public   |  private  | protected |
+
+
+## C++ Q&A
+- 为什么 C++ 没有 `interface`
+    - 有一种[说法](https://stackoverflow.com/questions/478725/why-is-the-oo-concept-interface-not-represented-by-a-keyword-in-c)是 C++ 支持多重继承，而 Java 不支持，所以就没设计关键字 
