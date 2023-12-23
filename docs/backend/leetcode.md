@@ -2212,9 +2212,8 @@ public:
 
     ```
 
-### review
-
-第二题，two sum 链表版
+## review
+two sum with link node
 
 ??? "solve"
 
@@ -2250,7 +2249,7 @@ public:
     };
     ```
 
-[The Dutch national flag](https://en.wikipedia.org/wiki/Dutch_national_flag_problem): sort an array of some 0,1,2 in O(n) 
+[**The Dutch national flag**](https://en.wikipedia.org/wiki/Dutch_national_flag_problem): sort an array of some 0,1,2 in O(n) 
 
 - [0, i-1] < midElement
 - [i, j-1] = midElement
@@ -2276,6 +2275,62 @@ public:
             }
             else mid++;
         }
+    }
+    ```
+
+
+**Merging with smaller auxiliary array**: given an array[2n], which is sorted from a[0] to a[n], and sorted from a[n+1] to a[2n]. you need to sort the entire array with O(n) space
+
+solve:
+1. copy the first part to auxiliary array
+2. merge auxiliary array and the second part of original array 
+
+??? "solve"
+
+    ```cpp
+    #include <vector>
+    #include <algorithm>
+    #include <iostream>
+
+    using namespace std;
+
+    void merge(vector<int> &a) {
+        vector<int> aux = vector<int>(a.size() / 2);
+        int half = a.size() / 2;
+        for (int i = 0; i < half; i++)
+            aux[i] = a[i];
+
+        int lo = 0, hi = half;
+        int k = 0;
+        
+        while (lo < half && hi < a.size()) {
+            if (aux[lo] < a[hi])
+                a[k++] = aux[lo++];
+            else a[k++] = a[hi++];
+        }
+        while (lo < half) a[k++] = aux[lo++];
+        while (hi < a.size()) a[k++] = a[hi++];
+
+    }
+
+    void test() {
+        vector<int> a = {6, 7, 8, 9, 10, 1, 2, 3, 4, 5};
+        vector<int> expect = a;
+        std::sort(expect.begin(), expect.end());
+
+        merge(a);
+        for (auto x: a)
+            cout << x << ' ';
+
+        if (a == expect)
+            cout << "yes";
+        else
+            cout << "NO";
+    }
+
+    int main() {
+        test();
+        return 0;
     }
     ```
 

@@ -13,4 +13,4 @@ hide:
 
 - Undergraduate student in software engineering
 - edwardwq301@gmail.com
-- hobbies: play game, read Science Fiction, acgn
+- hobbies: read science fiction, acgn, play game
