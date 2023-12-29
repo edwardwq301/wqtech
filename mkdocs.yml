@@ -124,6 +124,7 @@ nav:
       algorithm: backend/algorithm.md
       environment: backend/problemSolve.md
       leetcode: backend/leetcode.md
+      剑指: backend/sword.md
       C++: backend/effectivecpp.md
       Java: backend/Java.md
       Python: backend/python.md
