@@ -1,4 +1,4 @@
-## pointer vs reference
+### pointer vs reference
 pointer：
 
 - 不同时间指向不同的物体
@@ -8,7 +8,7 @@ reference：
 
 - 不会为空（一定指向某个物体），不用检查null，所以创建的时候就初始化（赋值）
 
-### const pointer
+const pointer
 
 - `const`在`*`左边，所指物为`const` （指针可以不同时间指向不同物体，但是物体内容不能改变）
 - `const`在`*`右边，指针为`const` （指针一直指向一个物体，但是物体内容可改变）
@@ -22,7 +22,7 @@ char* const cpnd = p1;       // const pointer,non-const data
 const char* const cpcd = p1; // const pointer,const data
 ```
 
-## 类型转换
+### 类型转换
 `const_cast< >` 把const转为非const，去掉constness或者volatileness
 
 ```cpp
@@ -57,7 +57,7 @@ int main() {
 }
 ```
 
-## class 
+
 ### 使用前先初始化
 
 - 推荐使用初始化列表进行初始化
@@ -76,7 +76,66 @@ int main() {
 | protected | protected |  private  | protected |
 |  public   |  public   |  private  | protected |
 
+### `overload` and `override`
+
+- `overload` in same range, same function name,different args
+- `override` in different range(base and derived class), same function name, same args, but the function is **virtual**
+- `overwrite` in different range, same function name, same args, but the funciton is **not** virtual, function will hide the same in base class. 函数 'writeFunc' 从 类 'father' 中隐藏了一个非虚拟函数
+
+[参考](https://wuciawe.github.io/object%20oriented/2014/08/29/override-overload-overwrite.html)
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+class father {
+public:
+    virtual void func(int a) {
+        cout << "in father virtual func\n";
+    }
+
+    void writeFunc(int x) {
+        cout << "in father overwrite func\n";
+    }
+};
+
+class son : public father {
+public:
+    //override
+    void func(int a) override {
+        cout << "in son override func\n";
+    }
+
+    void getMax(int a, int b) {
+        cout << max(a, b) << endl;
+    }
+
+    // overload
+    void getMax(int a, int b, int c) {
+        cout << max(a, max(b, c)) << endl;
+    }
+
+    //overwrite
+    void writeFunc(int x) {
+        cout << "in son wirte func\n";
+    }
+};
+
+void test() {
+    son s1;
+    s1.func(1);
+    s1.writeFunc(3);
+    s1.getMax(1, 2);
+    s1.getMax(3, 4, 5);
+}
+
+int main() {
+    test();
+    return 0;
+}
+```
 
 ## C++ Q&A
-- 为什么 C++ 没有 `interface`
-    - 有一种[说法](https://stackoverflow.com/questions/478725/why-is-the-oo-concept-interface-not-represented-by-a-keyword-in-c)是 C++ 支持多重继承，而 Java 不支持，所以就没设计关键字 
+- 为什么 C++ 没有 `interface` ? 有一种[说法](https://stackoverflow.com/questions/478725/why-is-the-oo-concept-interface-not-represented-by-a-keyword-in-c)是 C++ 支持多重继承，而 Java 不支持，所以就没设计关键字 
+

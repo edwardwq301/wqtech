@@ -4,6 +4,178 @@ comment: true
 
 ## leetcode
 
+### 倒水
+有一个容量为8, 5, 3的桶，其中8为满，5和3为空，只能倒满和倒空，想一个办法得到4的水
+
+bfs，注意搜过的状态不在搜，但是为什么这个类只能存到上一步不能存到上上步，很奇怪，求指点🥰
+
+??? "slove"
+
+    ```cpp
+    #include <iostream>
+    #include <queue>
+    #include <set>
+    #include <vector>
+    using namespace std;
+
+    class state {
+        int bu8;
+        int bu5;
+        int bu3;
+        state * father;
+
+    public:
+        state(int bu8, int bu5, int bu3) : bu8(bu8), bu5(bu5), bu3(bu3) {}
+        vector<state> getPossState() {
+            vector<state> poss;
+            if (bu8 > 0) {
+                if (bu5 < 5) {
+                    int loss = min(5 - bu5, bu8);
+                    poss.push_back(state(bu8 - loss, bu5 + loss, bu3));
+                }
+                if (bu3 < 3) {
+                    int loss = min(3 - bu3, bu8);
+                    poss.push_back(state(bu8 - loss, bu5, bu3 + loss));
+                }
+            }
+            if (bu5 > 0) {
+                if (bu8 < 8) {
+                    int loss = min(8 - bu8, bu5);
+                    poss.push_back(state(bu8 + loss, bu5 - loss, bu3));
+                }
+                if (bu3 < 3) {
+                    int loss = min(3 - bu3, bu5);
+                    poss.push_back(state(bu8, bu5 - loss, bu3 + loss));
+                }
+            }
+            if (bu3 > 0) {
+                if (bu8 < 8) {
+                    int loss = min(8 - bu8, bu3);
+                    poss.push_back(state(bu8 + loss, bu5, bu3 - loss));
+                }
+                if (bu5 < 5) {
+                    int loss = min(5 - bu5, bu3);
+                    poss.push_back(state(bu8, bu5 + loss, bu3 - loss));
+                }
+            }
+            return poss;
+        }
+
+        bool isAnw() {
+            return bu8 == 4 || bu3 == 4 || bu5 == 4;
+        }
+
+        int toInt() {
+            int anw = bu8;
+            anw *= 10;
+            anw += bu5;
+            anw *= 10;
+            anw += bu3;
+            return anw;
+        }
+
+        void setFather(state * fa) {
+            father = fa;
+        }
+
+        state * getFather() {
+            return father;
+        }
+    };
+
+
+
+    void test() {
+        int fat[900]; // fat store its father
+
+        state begin(8, 0, 0);
+        begin.setFather(nullptr);
+        fat[800] = 0;
+
+        queue<state> queue;
+        queue.push(begin);
+        set<int> visited;
+        visited.insert(begin.toInt());
+
+        while (!queue.empty()) {
+            auto top = queue.front();
+            queue.pop();
+
+            for (state x : top.getPossState()) {
+                if (visited.count(x.toInt()) == 0) {
+                    visited.insert(x.toInt());
+                    queue.push(x);
+                    x.setFather(&top);
+
+                    fat[x.toInt()] = top.toInt();
+                    cout << x.toInt() << " father is " << x.getFather()->toInt()
+                        << " father'address is " << x.getFather() << endl;
+                }
+                if (x.isAnw()) {
+                    cout << "yes\n";
+                    int k = x.toInt();
+                    while (fat[k] != 0) {
+                        cout << k << ' ';
+                        k = fat[k];
+                    }
+                    cout << endl;
+                    // why this is wrong, only can store its father, cannot store
+                    // its grandfather?
+
+                    while (x.toInt() != 800) {
+                        cout << x.toInt() << ' ';
+                        x = *(x.getFather());
+                    }
+                }
+            }
+        }
+    }
+
+
+    int main() {
+        cout << endl;
+        test();
+
+        return 0;
+    }
+    ```
+
+### 124 二叉树中的最大路径和
+
+刚开始想到类似后序遍历，找到左子树和右子树的最大路径和，再和根加一起，方向是对的，但应该不是返回最大路径和，而是以 `root.left/right` 为一端的结果
+
+正解：处理当前节点，找到左子树和右子树的最大路径和 `left,right` 。动态更新 `anw` （看 `left, right` 有没有贡献，有贡献就加到 `sum`）。 另外 dfs 找的是子树（假如是左子树）为一端的结果。直接看代码可能更好理解
+
+??? "slove 124"
+
+    ```cpp
+    class Solution {
+    public:
+        int anw = -0x3f3f3f;
+        int maxPathSum(TreeNode * root) {
+            dfs(root);
+            return anw;
+        }
+        
+        int dfs(TreeNode * root) {
+            if (root == nullptr)
+                return 0;
+
+            int val = root->val;
+            int left = dfs(root->left);
+            int right = dfs(root->right);
+            if (left > 0)
+                val += left;
+            if (right > 0)
+                val += right;
+            anw = max(anw, val);
+
+            return max(root->val, max(left, right) + root->val);
+        }
+    };
+
+    ```
+
 ### 232 两个栈实现队列
 push 的时候好说，在 pop 的时候没有必要全倒腾，只有在输出栈为空的时候再倒腾就行了
 

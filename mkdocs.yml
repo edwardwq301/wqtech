@@ -9,136 +9,130 @@ repo_url: https://github.com/beautifulwq/beautifulwq.github.io/
 copyright: '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-NC 4.0</a>'
 
 theme:
-  name: material
-  custom_dir: overrides
-  language: en
-  favicon: image/gode.jpg
-  apple-touch-icon-precomposed: images/mobile_icon.png
-  include_search_page: false
-  search_index_only: true
+    name: material
+    custom_dir: overrides
+    language: en
+    favicon: image/gode.jpg
+    apple-touch-icon-precomposed: images/mobile_icon.png
+    include_search_page: false
+    search_index_only: true
 
-  features:
-    - header.autohide
-    # - navigation.instant
-    # - navigation.expand
-    - navigation.sections
-    - navigation.tracking
-    - navigation.tabs
-    # - navigation.tabs.sticky
-    - navigation.top
-    - navigation.indexes
-    - search.highlight
-    - search.share
-    - search.suggest
-    # - toc.integrate
-    - content.code.annotate
-    - content.code.copy 
+    features:
+        - header.autohide
+        # - navigation.instant
+        # - navigation.expand
+        - navigation.sections
+        - navigation.tracking
+        - navigation.tabs
+        # - navigation.tabs.sticky
+        - navigation.top
+        - navigation.indexes
+        - search.highlight
+        - search.share
+        - search.suggest
+        # - toc.integrate
+        - content.code.annotate
+        - content.code.copy
 
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: indigo
-      accent: deep purple
-      toggle:
-        icon: material/weather-sunny
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: indigo
-      accent: deep purple
-      toggle:
-        icon: material/weather-night
-        name: Switch to light mode
+    palette:
+        - media: "(prefers-color-scheme: light)"
+          scheme: default
+          primary: indigo
+          accent: deep purple
+          toggle:
+              icon: material/weather-sunny
+              name: Switch to dark mode
+        - media: "(prefers-color-scheme: dark)"
+          scheme: slate
+          primary: indigo
+          accent: deep purple
+          toggle:
+              icon: material/weather-night
+              name: Switch to light mode
 
-  font:
-    text: 'Roboto'
-    code: Hack
-  icon:
-    repo: fontawesome/brands/git-alt
-    logo: 'material/school'
+    font:
+        text: "Roboto"
+        code: Hack
+    icon:
+        repo: fontawesome/brands/git-alt
+        logo: "material/school"
 
 extra:
-  pagetime: 'on'
- 
+    pagetime: "on"
 
 markdown_extensions:
-  - attr_list
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - md_in_html
-  - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - admonition
-  - pymdownx.details
-  - footnotes
-  - pymdownx.superfences
-  - pymdownx.critic
-  - pymdownx.caret
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.tilde
-  - pymdownx.arithmatex:
-      generic: true
+    - attr_list
+    - pymdownx.tasklist:
+          custom_checkbox: true
+    - pymdownx.emoji:
+          emoji_index: !!python/name:material.extensions.emoji.twemoji
+          emoji_generator: !!python/name:material.extensions.emoji.to_svg
+    - md_in_html
+    - pymdownx.superfences
+    - pymdownx.tabbed:
+          alternate_style: true
+    - pymdownx.highlight:
+          anchor_linenums: true
+          line_spans: __span
+          pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - admonition
+    - pymdownx.details
+    - footnotes
+    - pymdownx.superfences
+    - pymdownx.critic
+    - pymdownx.caret
+    - pymdownx.keys
+    - pymdownx.mark
+    - pymdownx.tilde
+    - pymdownx.arithmatex:
+          generic: true
 
 extra_javascript:
-  - javascripts/mathjax.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+    - javascripts/mathjax.js
+    - https://polyfill.io/v3/polyfill.min.js?features=es6
+    - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 plugins:
-  - search:
-  - git-revision-date-localized:
-      type: iso_datetime
-      timezone: Asia/Shanghai
-      locale: en
-      enable_creation_date: true
-      exclude:
-        - guide.md
-        - index.md
-  - blog:
-      blog_dir: blog
-      blog_toc: false
-      archive_name: Archive
-      categories_toc: false
-  # - rss:
-  #     match_path: blog/posts/.*
-  #     date_from_meta:
-  #       as_creation: date
+    - search:
+    - git-revision-date-localized:
+          type: iso_datetime
+          timezone: Asia/Shanghai
+          locale: en
+          enable_creation_date: true
+          exclude:
+              - guide.md
+              - index.md
+    - blog:
+          blog_dir: blog
+          blog_toc: false
+          archive_name: Archive
+          categories_toc: false
+    # - rss:
+    #     match_path: blog/posts/.*
+    #     date_from_meta:
+    #       as_creation: date
 
 nav:
-  - About:
-      index.md
+    - About: index.md
 
-  - Backend:
-      algorithm: backend/algorithm.md
-      environment: backend/problemSolve.md
-      leetcode: backend/leetcode.md
-      剑指: backend/sword.md
-      C++: backend/effectivecpp.md
-      Java: backend/Java.md
-      Python: backend/python.md
+    - Backend:
+          algorithm: backend/algorithm.md
+          environment: backend/problemSolve.md
+          leetcode: backend/leetcode.md
+          剑指: backend/sword.md
+          C++: backend/effectivecpp.md
+          Java: backend/Java.md
+          Python: backend/python.md
 
-  - Frontend:
-      建站: frontend/建站.md
-      MkDocs: frontend/hello-MkDocs.md
-      Hexo: frontend/hello-hexo.md
+    - Demo: guide.md
 
-  - Tools :
-      Git: tools/git.md
-      Editor: tools/editor.md
-      Linux: tools/linux.md
-      
-  - Blog:   
-      - blog/index.md
+    - Tools:
+          Git: tools/git.md
+          Editor: tools/editor.md
+          Linux: tools/linux.md
 
+    - Blog:
+          - blog/index.md

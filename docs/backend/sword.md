@@ -98,11 +98,62 @@
 
 这个题做完了，可以尝试[搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/description/)
 
-- 先特判一下是不是完全升序，决定是不是直接二分
-- 和上一题一样，先找到最小值
-- 如果目标值在最小值和结尾中间就二分，反之在另一半二分
+1. 先找从 `nums[0]` 升序的最后一位 upId
+2. 如果 `target>=num[0]` 从 `[0, upId]` 二分找，否则从 `[upId+1, len-1]` 找
+3. trick：二分查找时开始就越界直接返回 -1
 
-??? solve
+```cpp
+class Solution {
+public:
+    int search(vector<int> & nums, int target) {
+        // 找从nums[0]升序的最后一位下标
+        int hiBound = getUpperId(nums);
+
+        if (nums[0] <= target)
+            return binsearch(nums, target, 0, hiBound);
+        else
+            return binsearch(nums, target, hiBound + 1, nums.size() - 1);
+    }
+
+    int getUpperId(vector<int> nums) {
+        int lo = 0, hi = nums.size() - 1;
+        int tail = nums[0];
+        while (lo < hi) {
+            int mid = lo + hi + 1 >> 1;
+            if (nums[mid] >= tail)
+                lo = mid;
+            else
+                hi = mid - 1;
+        }
+        return lo;
+    }
+
+    int binsearch(vector<int> nums, int target, int begin, int end) {
+
+        if (begin >= nums.size())
+            return -1;
+        
+        while (begin < end) {
+            int mid = begin + end >> 1;
+            if (nums[mid] >= target)
+                end = mid;
+            else
+                begin = mid + 1;
+        }
+        if (nums[begin] != target)
+            return -1;
+
+        return begin;
+    }
+};
+```
+
+??? "old version"
+
+    - 先特判一下是不是完全升序，决定是不是直接二分
+    - 和上一题一样，先找到最小值
+    - 如果目标值在最小值和结尾中间就二分，反之在另一半二分
+
     ```cpp
     class Solution {
     public:

@@ -17,7 +17,10 @@ hide:
 ---
 ```
 
+Lorem ipsum dolor sit amet, (1) consectetur adipiscing elit.
+{ .annotate }
 
+1. :man_raising_hand: I'm an annotation! 
 
 !!! note "Phasellus posuere in sem ut cursus"
 
