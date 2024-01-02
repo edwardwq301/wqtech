@@ -2,117 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://beautifulwq.github.io/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/guide/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/backend/Java/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/backend/algorithm/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/backend/effectivecpp/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/backend/leetcode/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/backend/problemSolve/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/backend/python/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://beautifulwq.github.io/backend/sword/</loc>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/2022/09/22/20th/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://beautifulwq.github.io/blog/2024/01/02/bolggene/</loc>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/2023/10/20/reading/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/2023/12/23/%E7%AC%AC17%E5%91%A8%E6%9C%89%E6%84%9F/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/2022/09/01/%E8%BD%AC%E4%B8%93%E4%B8%9A/</loc>
-         <lastmod>2023-12-24</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://beautifulwq.github.io/frontend/hello-MkDocs/</loc>
-         <lastmod>2023-12-24</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://beautifulwq.github.io/frontend/hello-hexo/</loc>
-         <lastmod>2023-12-24</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://beautifulwq.github.io/frontend/%E5%BB%BA%E7%AB%99/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/tools/editor/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/tools/emojiCheetSheet/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/tools/git/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/tools/linux/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://beautifulwq.github.io/blog/archive/2024/</loc>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/archive/2023/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/archive/2022/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://beautifulwq.github.io/blog/category/tech/</loc>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://beautifulwq.github.io/blog/category/life/</loc>
-         <lastmod>2023-12-24</lastmod>
+         <lastmod>2024-01-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
