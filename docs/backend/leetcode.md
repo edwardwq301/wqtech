@@ -140,6 +140,73 @@ bfs，注意搜过的状态不在搜，但是为什么这个类只能存到上�
     }
     ```
 
+### 739 每日温度
+2024-01-03 看到公众号发的，当时有个朦胧的思路，想到用单调栈，然后发现力扣曾经交过这个题，复习一下
+
+开始是这么想的，用 `[1, 5, 4, 2, 7]` 试了一下，答案是 `[1, 3, 2, 1, 0]` ，从后往前来，（最后一个元素的答案一定是 0），7 先压栈，2 比 7 小，答案是 1，4 的下一个气温应该是 7，但是栈里现在有个 2 ，不是我们想要的就弹出，所以总结出，当前指向元素比栈顶小就入栈，比栈顶大就不断弹栈，如果等于栈顶呢，举个例子就好了 `[2, 2, 7]`，很容易就得出应该弹栈，因为我们找的是比当前元素大的气温。
+
+??? "倒序"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> dailyTemperatures(vector<int> &temperatures) {
+            stack<int> st;
+            int n = temperatures.size();
+            vector<int> anw(n);
+
+            for (int i = n - 1; i >= 0; i--) {
+                while (!st.empty() && temperatures[i] >= temperatures[st.top()]) {
+                    st.pop();
+                }
+                if (!st.empty())
+                    anw[i] = st.top() - i;
+                else anw[i] = 0;
+                
+                st.push(i);
+            }
+            return anw;
+        }
+    };
+    ```
+
+然后看了一下答案，他是正序处理的，如果当前元素比栈顶大，说明应该用当前元素更新之前想要的答案，（就是找了高的气温），反之直接入栈
+
+??? "正序"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> dailyTemperatures(vector<int> &temperatures) {
+            stack<int> st;
+            int n = temperatures.size();
+            vector<int> anw(n);
+
+            for (int i = 0; i < n; i++) {
+                while (!st.empty() && temperatures[i] > temperatures[st.top()]) {
+                    int top = st.top();
+                    anw[top] = i - top;
+                    st.pop();
+                }
+                st.push(i);
+            }
+            return anw;
+        }
+    };
+    ```
+
+事后想一想，其实都差不多，甚至正序更直观，符合题的操作说法。正序处理相当于是存已知的低温，用更高的气温更新过去。逆序相当于是存已知的高温，用低温去找高温。
+
+[洛谷原题](https://www.luogu.com.cn/problem/P5788)第一个题解这么看更好理解
+
+```txt
+-------------`
+     2  4  7 |
+-------------          
+```
+
+做出来了，feel good🥰
+
 ### 124 二叉树中的最大路径和
 
 刚开始想到类似后序遍历，找到左子树和右子树的最大路径和，再和根加一起，方向是对的，但应该不是返回最大路径和，而是以 `root.left/right` 为一端的结果

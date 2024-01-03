@@ -5,11 +5,11 @@ categories :
 date: 2024-01-02
 comments: true
 ---
-
+# 我与博客
 我对博客生成工具的看法
 
 <!-- more -->
-# 我与博客
+
 ## 点评工具
 现在用的是 Python 的 mkdocs material，之前尝试过 vuepress、
 hexo、hugo 这几款静态生成器。没使用 Wordpress、Typecho这种动态网站是因为动态一般需要域名备案、远程机配置等工作，相对于直接在GitHub上挂静态网页麻烦了一些，还有被攻击的风险。但是另一方面动态的功能会更强一些，各取所需。
