@@ -769,40 +769,70 @@ dfs思路，处理本层，判断下一层
 
 用两个堆动态维护序列，最大堆放比中位数小的值，最小堆放比中位数大的值，想法很精妙，实现方法也比较多
 
-- 可以先往最小堆里放，也可以先往最大堆里放，我这个先放到最小堆
+- 上来放到左半部分，但是有可能其实应该在右半部分（因为大于中位数），就先把左部分的右端点放到右部分
+- 如果右边个数比左边多，就把右边的左端点放到左半部分
+
+??? "slove1"
+
+```cpp
+class MedianFinder {
+public:
+    priority_queue<int> leftPart;
+    priority_queue<int, vector<int>, greater<int>> rightPart;
+    
+    void addNum(int num) {
+        leftPart.push(num);
+        rightPart.push(leftPart.top());
+        leftPart.pop();
+        
+        if (rightPart.size() > leftPart.size()) {
+            leftPart.push(rightPart.top());
+            rightPart.pop();
+        }
+    }
+    
+    double findMedian() {
+        if (rightPart.size() == leftPart.size())
+            return 0.5 * (rightPart.top() + leftPart.top());
+        return leftPart.top();
+    }
+};
+```
+
+- 可以先往最小堆(右半部分)里放，也可以先往最大堆里放，我这个先放到最小堆
 - 如果两个堆顶逆序，调整，如果最小堆数量==最大堆数量，把最小堆的堆顶放到最大堆里
 - 取的时候，如果元素个数为奇数，取最大堆堆顶，偶数取两个堆顶平均值
 
 ![示例图](../image/swardofferMidnum.png){ loading=lazy }
 
-??? "solve"
+??? "solve2"
     ```cpp
     class Solution {
     public:
-        priority_queue<int, vector<int>, greater<>> minheap;
-        priority_queue<int, vector<int>, less<>> maxheap;
+    priority_queue<int, vector<int>, greater<>> rightpart;
+    priority_queue<int, vector<int>, less<>> leftpart;
 
-        void insert(int num) {
-            minheap.push(num);
-            if (maxheap.size() && minheap.top() < maxheap.top()) {
-                int minv = minheap.top(), maxv = maxheap.top();
-                minheap.pop(), maxheap.pop();
-                minheap.push(maxv), maxheap.push(minv);
-            }
-            if (minheap.size() > maxheap.size()) {
-                maxheap.push(minheap.top());
-                minheap.pop();
-            }
-
+    void insert(int num) {
+        rightpart.push(num);
+        if (leftpart.size() && rightpart.top() < leftpart.top()) {
+            int minv = rightpart.top(), maxv = leftpart.top();
+            rightpart.pop(), leftpart.pop();
+            rightpart.push(maxv), leftpart.push(minv);
+        }
+        if (rightpart.size() > leftpart.size()) {
+            leftpart.push(rightpart.top());
+            rightpart.pop();
         }
 
-        double getMedian() {
-            if ((maxheap.size() + minheap.size()) % 2 == 0) {
-                return (maxheap.top() + minheap.top()) / 2.0;
-            }
-            else
-                return maxheap.top();
+    }
+
+    double getMedian() {
+        if ((leftpart.size() + rightpart.size()) % 2 == 0) {
+            return (leftpart.top() + rightpart.top()) / 2.0;
         }
+        else
+            return leftpart.top();
+    }
     };
     ```
 

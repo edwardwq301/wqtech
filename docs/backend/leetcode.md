@@ -140,6 +140,141 @@ bfs，注意搜过的状态不在搜，但是为什么这个类只能存到上�
     }
     ```
 
+### 3 无重复字符的最长子串
+要求的是最长字串（就是要挨着的字符），不是子序列
+
+**小技巧**：把字符串前边加一个空格或者别的占位，这样计数的时候 `dp[i]` 就自然的表示以第 i 个字母结尾的性质，开空间用新的长度也可以正常访问
+
+解法一：2024/1/19 想的是 dp，以 `dp[i]` 表示第 i 个字母结尾（闭区间）的最长子串
+
+- 如果 `str[i]` 没出现过， `dp[i]=dp[i-1]+1`
+- 如果出现过了，就是 `dp[i]=i-上一次出现的位置`，然后提交发现错了 `abba`，再分析一下，
+    - 如果上一次 a 出现右边有重复 `eg: bb`，`dp[i]=dp[i-1]+1`
+    - 如果没有重复，`dp[i]=i-上一次出现位置`。总之得出应该是两者取小
+- 更新出现当前字母出现位置
+```
+a |qbbc|a
+
+bb|...a....|a
+```
+
+??? "dp"
+
+    ```cpp
+    class Solution {
+    public:
+        int lengthOfLongestSubstring(string s) {
+
+            if (s.empty()) return 0;
+            s = ' ' + s;
+            int n = s.length();
+            vector<int> len(n, 0);
+            unordered_map<char, int> map;
+            for (int i = 1; i < n; i++) {//开空间后正常访问，不用\<=
+                if (map.count(s[i])) {
+                    len[i] = min(i - map[s[i]], len[i - 1] + 1);
+                }
+                else len[i] = len[i - 1] + 1;
+                map[s[i]] = i;
+            }
+            return *max_element(len.begin(), len.end());
+        }
+    };
+    ```
+
+解法二：滑动窗口，很多解释都是这个，就不多说了，直接看代码也能明白
+
+??? "滑动窗口"
+
+    ```cpp
+    class Solution {
+    public:
+        int lengthOfLongestSubstring(string s) {
+            if (s.size() == 0)
+                return 0;
+            unordered_map<char, int> cnt;
+
+            int anw = 0;
+            int l = 0, r = 0;
+            while (r < s.size()) {
+                cnt[s[r]]++;
+                while (cnt[s[r]] > 1) {
+                    cnt[s[l]]--;
+                    l++;
+                }
+                anw = max(anw, r - l + 1);
+                r++;
+            }
+            return anw;
+        }
+    };
+    ```
+
+### 229 多数元素2
+- 如果已经出现了，次数加一
+- 如果没出现
+    - 桶还能放，就放到桶里
+    - 没有多余的桶，所有的次数减一
+
+可能有出现在数组靠后的元素，会占到桶里，所以重新统计一次（多余一个桶时）
+
+桶的个数：假如说要找超过 `n/k` 个的元素，桶的个数就是 `k-1` 。假如取 `x` 个， `x*(n/k) <= n  ---> x <= k` ，又因为超过 `n/k` ，所以取 `k-1`
+
+??? "slove"
+
+    ```cpp
+    class Solution {
+    public:
+        //first 存数字，second 存出现次数
+        pair<int, int> anw[2];
+        int cnt = 0;
+
+        void write(int x) {
+            if (anw[0].first == x ) {
+                anw[0].second++;
+                return;
+            }
+            else if (anw[1].first == x ) {
+                anw[1].second++;
+                return;
+            }
+            else if (anw[0].second == 0) {
+                anw[0].first = x;
+                anw[0].second = 1;
+                return;
+            }
+            else if (anw[1].second == 0) {
+                anw[1].first = x;
+                anw[1].second = 1;
+                return;
+            }
+            else {
+                anw[0].second--;
+                anw[1].second--;
+            }
+        }
+        vector<int> majorityElement(vector<int> & nums) {
+            anw[0].first = anw[1].first = INT_MAX;
+            for (auto x : nums) {
+                write(x);
+            }
+            vector<int> res;
+            anw[0].second = anw[1].second = 0;
+            for (auto x : nums) {
+                if (x == anw[0].first)
+                    anw[0].second++;
+                else if (x == anw[1].first)
+                    anw[1].second++;
+            }
+            if (anw[0].second > nums.size() / 3)
+                res.push_back(anw[0].first);
+            if (anw[1].second > nums.size() / 3)
+                res.push_back(anw[1].first);
+            return res;
+        }
+    };
+    ```
+
 ### 739 每日温度
 2024-01-03 看到公众号发的，当时有个朦胧的思路，想到用单调栈，然后发现力扣曾经交过这个题，复习一下
 
@@ -923,7 +1058,10 @@ public:
 
     ```
 
-## review
+## interesting question
+### Decimal dominants
+Given an array with n keys, design an algorithm to find all values that occur more than  n/10 times. The expected running time of your algorithm should be linear. [题解](https://www.cnblogs.com/evasean/p/7273857.html) 这个让我联想到莫尔投票法的一个题[力扣169](https://leetcode.cn/problems/majority-element/description/)
+
 two sum with link node
 
 ??? "solve"
@@ -960,7 +1098,8 @@ two sum with link node
     };
     ```
 
-[**The Dutch national flag**](https://en.wikipedia.org/wiki/Dutch_national_flag_problem): sort an array of some 0,1,2 in O(n) 
+### [The Dutch national flag](https://en.wikipedia.org/wiki/Dutch_national_flag_problem)
+sort an array of some 0,1,2 in O(n) 
 
 - [0, i-1] < midElement
 - [i, j-1] = midElement
@@ -990,7 +1129,8 @@ two sum with link node
     ```
 
 
-**Merging with smaller auxiliary array**: given an array[2n], which is sorted from a[0] to a[n], and sorted from a[n+1] to a[2n]. you need to sort the entire array with O(n) space
+### Merging with smaller auxiliary array
+given an array[2n], which is sorted from a[0] to a[n], and sorted from a[n+1] to a[2n]. you need to sort the entire array with O(n) space
 
 solve:
 1. copy the first part to auxiliary array
@@ -1044,6 +1184,120 @@ solve:
         return 0;
     }
     ```
+
+### Taxicab numbers
+find items like `a^3+b^3=c^3+d^3`
+
+可以这么想，看成横纵 1 到 n 的矩阵，里边填写立方和。上三角和下三角的元素一样所以只考虑上三角。
+
+1. 遍历所有横纵坐标，用哈希表，出现过的立方和就输出一下，没出现过的就存起来
+2. 用堆存立方和（也可以是优先队列，我这里用最小堆，相当于立方和从小到大，最大堆也行，相当于从大到小）堆不空就反复尝试。另外用堆拓展的时候只往一个方向拓展，用两个就不对
+
+```cpp
+#include <unordered_map>
+#include "iostream"
+#include "vector"
+#include "queue"
+
+using namespace std;
+
+class taxinum {
+
+public:
+    int a, b, sum;
+
+    taxinum(int _a, int _b) : a(_a), b(_b), sum(a * a * a + b * b * b) {}
+
+    bool operator==(taxinum other) const {
+        return this->sum == other.sum;
+    }
+
+    bool operator<(taxinum other) const {
+        return this->sum < other.sum;
+    }
+
+    bool operator>(taxinum other) const {
+        return this->sum > other.sum;
+    }
+
+    friend ostream &operator<<(ostream &os, const taxinum &t) {
+        os << t.a << '+' << t.b << '=' << t.sum;
+        return os;
+    }
+
+
+};
+
+void testMinheap() {
+    priority_queue<taxinum, vector<taxinum>, greater<taxinum>> queue1;
+
+    int n = 30;
+    for (int i = 1; i <= n; i++)
+        queue1.push(taxinum(i, i));
+
+    taxinum oldPair(1, 1);
+    while (!queue1.empty()) {
+        taxinum newPair = queue1.top();
+        queue1.pop();
+
+        if (newPair.sum == oldPair.sum)
+            cout << oldPair << "-----" << newPair << endl;
+        if (newPair.b < n)
+            queue1.push(taxinum(newPair.a, newPair.b + 1));
+
+        oldPair = newPair;
+    }
+
+}
+
+void testHashmap() {
+    int n = 30;
+    unordered_map<int, pair<int, int>> table;
+    for (int i = 1; i <= n; i++)
+        for (int j = i; j <= n; j++) {
+            taxinum t(i, j);
+            int sum = t.sum;
+            if (table.contains(sum)) {
+                cout << i << ' ' << j << ' ' << table[sum].first << ' ' << table[sum].second << endl;
+            }
+            else {
+                table[sum] = {i, j};
+            }
+        }
+
+}
+
+void testMaxheap() {
+    priority_queue<taxinum, vector<taxinum>, less<taxinum>> queue1;
+
+    int n = 30;
+    for (int i = 1; i <= n; i++)
+        queue1.push(taxinum(i, i));
+
+    taxinum oldPair(1, 1);
+    while (!queue1.empty()) {
+        taxinum newPair = queue1.top();
+        queue1.pop();
+
+        if (newPair.sum == oldPair.sum)
+            cout << oldPair << "-----" << newPair << endl;
+        //一个方向就够了
+        if (newPair.b > 0)
+            queue1.push(taxinum(newPair.a, newPair.b - 1));
+//        if (newPair.a > 0)
+//            queue1.push(taxinum(newPair.a - 1, newPair.b));
+
+        oldPair = newPair;
+    }
+
+}
+
+int main() {
+    testMaxheap();
+    testHashmap();
+    return 0;
+}
+```
 
 ## codeforces
 

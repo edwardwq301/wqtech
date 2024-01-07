@@ -137,5 +137,27 @@ int main() {
 ```
 
 ## C++ Q&A
-- 为什么 C++ 没有 `interface` ? 有一种[说法](https://stackoverflow.com/questions/478725/why-is-the-oo-concept-interface-not-represented-by-a-keyword-in-c)是 C++ 支持多重继承，而 Java 不支持，所以就没设计关键字 
+为什么 C++ 没有 `interface` ? 
 
+有一种[说法](https://stackoverflow.com/questions/478725/why-is-the-oo-concept-interface-not-represented-by-a-keyword-in-c)是 C++ 支持多重继承，而 Java 不支持，所以就没设计关键字 
+
+---
+
+`unorder_map.earse()`，我们知道有一种移除方式是根据键移除，很自然想到这样的情况
+```cpp
+unordered_map<int, int> map;
+for (int i = 1; i <= 3; i++)
+    map[i] = 1;
+for (auto x : map) {
+    map[x.first]--;
+    if (map[x.second] == 0) {
+        cout << "erase " << x.first << endl;
+        map.erase(x.first);
+    }
+}
+```
+然后就死循环了，非常奇怪，但是不在循环里，一个个的移除就没问题。
+
+---
+
+`\n` 不会强制刷新，速度快；`endl` 强制刷新，速度慢

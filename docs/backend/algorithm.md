@@ -196,6 +196,54 @@ public class Union {
     }
     ```
 
+### 堆
+最大堆，（最小堆把符号变一下）
+
+```cpp
+class maxHeap {
+    vector<int> tree;
+    int N = 0;
+
+    //change bottom to top
+    void swim(int k) {
+        while (k > 1 && tree[k] > tree[k / 2]) {
+            swap(tree[k], tree[k / 2]);
+            k = k / 2;
+        }
+    }
+    //change top to down
+    void sink(int k) {
+        while (k * 2 <= N) {    //may have 4 node and k=2
+            int j = k * 2;
+            if (j < N && tree[j + 1] > tree[j]) j++;
+            if (tree[k] >= tree[j]) break;
+            swap(tree[k], tree[j]);
+            k = j;
+        }
+    }
+
+public:
+    maxHeap(int n) {
+        tree.resize(n + 1);
+    }
+
+
+    void add(int k) {
+        tree[++N] = k;
+        swim(N);
+    }
+
+    int delMax() {
+        int max = tree[1];
+        tree[1] = tree[N--];
+        sink(1);
+        return max;
+    }
+};
+```
+
+堆排序就相当于每次把最大元素放到结尾，个数减一，`sink(1)` 调整一下
+
 ## template
 
 vector删除特定元素 `nums.erase(remove(nums.begin(), nums.end(), val) ,nums.end());`
