@@ -1,4 +1,4 @@
-# python
+# Python
 
 - `sys.argv` 是从1开始，argv[0]是程序名
 - 如果只想在本文件中运行，不想在导入的时候运行，添加 `if __name__ == "__main__`
@@ -82,6 +82,73 @@ if p >= threshold:
     print("yes")
 else:
     print("no")
+```
+## socket demo
+- 服务器：创建 socket，bind, listen, accept
+- 客户端：创建 socket, connect
+
+还是用 Python 好，专注创建，不用在 C 的一头雾水中不知所措😋
+
+=== "server"
+
+    ```py
+    import socket
+    from threading import Thread
+
+    INET = socket.AF_INET
+    IP_PORT = ("127.0.0.1", 9999)
+    RECEIVE_SIZE = 1024
+
+
+    def acceptConnection(connection: socket, port):
+        while True:
+            receive_data = connection.recv(RECEIVE_SIZE).decode()
+            if (receive_data == "exit"):
+                break
+
+            connection.sendall((f"server receive {port}: "+receive_data).encode())
+
+        connection.close()
+
+
+    server_socket = socket.socket(INET)
+    server_socket.bind(IP_PORT)
+    server_socket.listen(1)
+
+    while True:
+        client_connection, client_port = server_socket.accept()
+        thread = Thread(target=acceptConnection, args=(
+            client_connection, client_port))
+        thread.start()
+
+    ```
+
+=== "client"
+
+```py
+import socket
+
+IP_PORT = ("127.0.0.1", 9999)
+RECEIVE_SIZE = 1024
+client_socket = socket.socket(socket.AF_INET)
+
+client_socket.connect(IP_PORT)
+
+while True:
+    message = input("client input: ").strip()
+    if not message:
+        continue
+    client_socket.sendall(message.encode())
+
+    print("get from server: ", client_socket.recv(
+        RECEIVE_SIZE).decode().strip())
+
+    if message == "exit":
+        print("client: finish!")
+        break
+
+client_socket.close()
+
 ```
 
 ## bad smell

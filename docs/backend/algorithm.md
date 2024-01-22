@@ -243,6 +243,29 @@ public:
 ```
 
 堆排序就相当于每次把最大元素放到结尾，个数减一，`sink(1)` 调整一下
+### 图
+[图的存储](https://blog.csdn.net/raelum/article/details/129108365)
+
+拓扑排序：dfs的结果逆序一下就是答案，或者每次找入度为零得点，用当前点更新别的点得入度
+```cpp
+bool marked[graph.v()];
+vector<int> toReverse;
+
+vector<int> topoSort() {
+    topoSortCore(0);
+    return reverse(toReverse.begin(), toReverse.end());
+}
+
+void topoSortCore(int vertex) {
+    marked[vertex] = true;
+    for (int v : vetex.adj())
+        if (!marked[v])
+            topoSortCore(v);
+    toReverse.push(vertex);
+}
+```
+
+求强连通分量：先对**逆图（边全反向）**求出拓扑排序的节点顺序，假如是 `3,2,1,4,6,7`，然后按着这个顺序对**原图** dfs 得强连通分量
 
 ## template
 
@@ -417,8 +440,6 @@ heap
     ```
 
 ## thought
-
-[图的存储](https://blog.csdn.net/raelum/article/details/129108365)
 
 ### Q: 为什么区间dp先枚举长度再枚举左端点
 

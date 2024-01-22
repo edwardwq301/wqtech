@@ -97,6 +97,7 @@ extra_javascript:
 
 plugins:
     - search:
+        separator: '[\s\u200b\-]'
     - git-revision-date-localized:
           type: iso_datetime
           timezone: Asia/Shanghai
