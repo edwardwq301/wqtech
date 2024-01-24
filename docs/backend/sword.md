@@ -2,9 +2,96 @@
 
 ## [正则表达式匹配](https://www.acwing.com/problem/content/28/)
 
-[solve](https://www.acwing.com/solution/content/3390/)
+明白了一部分，假设 i 指向 txt，j 指向 pat， `dp[i][j]` 表示前 i ， j 个字符（闭区间）
 
-??? "solve"
+`dp[i][j]=dp[i-1][j-1] if pat[j-1]=='.' or pat[j-1]==txt[i-1]`没什么好说的
+
+问题就在是 `*` 的时候，看了一些解释后我觉得最容易接受的是
+
+- `*` 之前的字符匹配 0 次：`dp[i][j]=dp[i][j-2]` eg: txt is a, pat is ab*
+- 匹配大于等于 1 次：
+    - 可以是把 txt 当前的字符删去，看前一位 `dp[i][j]=dp[i-1][j]` eg: abbbb, ab* 转变成 abbb, ab* ，缩短字符串
+    - 当删除的够多时，就是 a, ab* 变成 `dp[i][j]=dp[i][j-2]`
+    - 两者有一个成功就行，所以取或
+
+这个题不用“开头加空字符”的技巧更好，因为加了之后还要做预处理，我也没看明白为什么要做😥
+
+=== "前边不加空字符"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<vector<int>> dp;
+        bool isMatch(string txt, string pat) {
+            int txtSize = txt.size();
+            int patSize = pat.size();
+            dp = vector<vector<int>>(txtSize + 10, vector<int>(patSize + 10, 0));
+
+            dp[0][0] = 1;
+
+            for (int i = 0; i <= txtSize; i++) {
+                for (int j = 0; j <= patSize; j++) {
+                    if (i >= 1 && j >= 1 && (pat[j - 1] == '.' || pat[j - 1] == txt[i - 1])) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    }
+
+                    else if (j >= 1 && pat[j - 1] == '*') {
+                        if (i >= 1 && j >= 2 && (pat[j - 2] == '.' || pat[j - 2] == txt[i - 1]))
+                            dp[i][j] = dp[i - 1][j] || dp[i][j - 2];
+                        else if (j >= 2)
+                            dp[i][j] = dp[i][j - 2];
+                    }
+                }
+            }
+
+            return dp[txtSize][patSize];
+        }
+    };
+
+    ```
+
+=== "前边加空字符"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isMatch(string txt, string pat) {
+            txt = " " + txt;
+            pat = " " + pat;
+            int txtSize = txt.size();
+            int patSize = pat.size();
+            vector<vector<bool>> dp(txtSize, vector<bool>(patSize, false));
+            dp[0][0] = true;
+            for (int j = 1; j < patSize; j++) {
+                if (pat[j] == '*')
+                    dp[0][j] = dp[0][j - 2]; // 按题意p第一个元素不可能为'*'所以不必担心j越界
+            }
+            for (int i = 1; i < txtSize; i++) {
+                for (int j = 1; j < patSize; j++) {
+                    if (txt[i] == pat[j] || pat[j] == '.')
+                        dp[i][j] = dp[i - 1][j - 1];
+                    else if (pat[j] == '*') {
+                        if (txt[i] == pat[j - 1] || pat[j - 1] == '.') {
+                            dp[i][j] = dp[i][j - 2] || dp[i - 1][j];
+                        
+                        }
+                        else {
+                            dp[i][j] = dp[i][j - 2];
+                        }
+                    }
+                }
+            }
+            return dp[txtSize - 1][patSize - 1];
+        }
+    };
+    ```
+
+- [两种转移](https://leetcode.cn/problems/regular-expression-matching/solutions/295977/zheng-ze-biao-da-shi-pi-pei-by-leetcode-solution/comments/452279)
+- [缩短字符串](https://www.acwing.com/solution/content/3390/)
+
+这个是不好理解的，见[它的评论区](https://www.acwing.com/solution/content/3390/)第一条
+
+??? "out of date"
     ```cpp
     class Solution {
     public:

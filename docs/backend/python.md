@@ -84,8 +84,8 @@ else:
     print("no")
 ```
 ## socket demo
-- 服务器：创建 socket，bind, listen, accept
-- 客户端：创建 socket, connect
+- server: create socket, bind, listen, accept
+- client: create socket, connect
 
 还是用 Python 好，专注创建，不用在 C 的一头雾水中不知所措😋
 
@@ -125,31 +125,31 @@ else:
 
 === "client"
 
-```py
-import socket
+    ```py
+    import socket
 
-IP_PORT = ("127.0.0.1", 9999)
-RECEIVE_SIZE = 1024
-client_socket = socket.socket(socket.AF_INET)
+    IP_PORT = ("127.0.0.1", 9999)
+    RECEIVE_SIZE = 1024
+    client_socket = socket.socket(socket.AF_INET)
 
-client_socket.connect(IP_PORT)
+    client_socket.connect(IP_PORT)
 
-while True:
-    message = input("client input: ").strip()
-    if not message:
-        continue
-    client_socket.sendall(message.encode())
+    while True:
+        message = input("client input: ").strip()
+        if not message:
+            continue
+        client_socket.sendall(message.encode())
 
-    print("get from server: ", client_socket.recv(
-        RECEIVE_SIZE).decode().strip())
+        print("get from server: ", client_socket.recv(
+            RECEIVE_SIZE).decode().strip())
 
-    if message == "exit":
-        print("client: finish!")
-        break
+        if message == "exit":
+            print("client: finish!")
+            break
 
-client_socket.close()
+    client_socket.close()
 
-```
+    ```
 
 ## bad smell
 
