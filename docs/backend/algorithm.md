@@ -267,6 +267,56 @@ void topoSortCore(int vertex) {
 
 求强连通分量：先对**逆图（边全反向）**求出拓扑排序的节点顺序，假如是 `3,2,1,4,6,7`，然后按着这个顺序对**原图** dfs 得强连通分量
 
+### string 
+KMP:
+```cpp
+#include <algorithm>
+#include <bits/stdc++.h>
+#include <string>
+
+using namespace std;
+const int txtSize = 30;
+const int typeCnt = 26;
+
+int dfa[typeCnt][txtSize];
+
+void kmp(string pat) {
+    int patSize = pat.size();
+    dfa[pat[0] - 'a'][0] = 1;
+    for (int X = 0, j = 1; j < patSize; j++) {
+        for (int i = 0; i < typeCnt; i++)
+            dfa[i][j] = dfa[i][X];
+        dfa[pat[j] - 'a'][j] = j + 1;
+        X = dfa[pat[j] - 'a'][X];
+    }
+}
+
+int search(string txt, string pat) {
+    kmp(pat);
+    int i, j;
+    for (j = 0, i = 0; i < txt.size() && j < pat.size(); i++)
+        j = dfa[txt[i] - 'a'][j];
+    if (j == pat.size())
+        return i - j;
+    else
+        return -1;
+}
+
+
+
+void test() {
+    string pat = "baaa";
+    string txt = "ababaaabac";
+    kmp(pat);
+    cout << search(txt, pat);
+}
+
+int main() {
+    test();
+    return 0;
+}
+```
+
 ## template
 
 vector删除特定元素 `nums.erase(remove(nums.begin(), nums.end(), val) ,nums.end());`

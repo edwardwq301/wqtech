@@ -1,6 +1,92 @@
 # 剑指offer
 
 ## [正则表达式匹配](https://www.acwing.com/problem/content/28/)
+省流版：我觉得不管是递归还是动态规划，关键都在于那两个删除选择，记忆化递归和动态规划就是求解从前往后还是从后往前的区别
+
+---
+
+**递归**
+
+[题解](https://leetcode.cn/problems/regular-expression-matching/solutions/423167/javadi-gui-yi-bu-yi-bu-de-you-hua-dao-ji-bai-100yi/)
+
+- 假如 pat 为空，判断 txt 是否为空
+- 假如上边没进行判断，说明可以判断第一位，看第一位是 `.` 或者相等
+- 如果第二位是 `*` ，看两种可能，删除`pat第一个字符+*` ，（这种就不在乎第一位的是否成功，因为没参与匹配），或者`删除txt的第一个字符`，（pat的第一个字符参与匹配，因为是`*`作用了第一个字符）
+- 如果第二位不是 `*`，正常全移动一位
+
+=== "substr"
+
+    ```cpp
+    class Solution {
+        bool isMatch(string txt, string pat) {
+            if (pat.empty())
+                return txt.empty();
+            bool firstMatch = !txt.empty() && ((txt[0] == pat[0]) || pat[0] == '.');
+            if (pat.length() >= 2 && pat[1] == '*')
+                return isMatch(txt, pat.substr(2)) || (firstMatch && isMatch(txt.substr(1), pat));
+            return firstMatch && isMatch(txt.substr(1), pat.substr(1));
+        }
+    };
+    ```
+
+=== "update to index"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isMatch(string txt, string pat) {
+            return isMatchCore(txt, pat, 0, 0);
+        }
+        bool isMatchCore(string txt, string pat, int i, int j) {
+            if (j >= pat.size())
+                return i >= txt.size();
+            bool firstMatch = (i < txt.size()) && (pat[j] == '.' || txt[i] == pat[j]);
+            if (pat.size() - j >= 2 && pat[j + 1] == '*')
+                return isMatchCore(txt, pat, i, j + 2)
+                    || (firstMatch && isMatchCore(txt, pat, i + 1, j));
+
+            return firstMatch && isMatchCore(txt, pat, i + 1, j + 1);
+        }
+    };
+    ```
+
+因为可能查重复的，可以记忆化，另外 C++ 里只有 0 是 false，其他整数都是 true
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> dp;
+    bool isMatch(string txt, string pat) {
+        dp = vector(txt.size() + 10, vector<int>(pat.size() + 10));
+        return isMatchCore(txt, pat, 0, 0);
+    }
+
+    bool isMatchCore(string txt, string pat, int i, int j) {
+        if (j >= pat.size())
+            return i >= txt.size();
+        if (dp[i][j] != 0)
+            return dp[i][j]>0;
+        bool firstMatch = (i < txt.size()) && (pat[j] == '.' || txt[i] == pat[j]);
+        if (pat.size() - j >= 2 && pat[j + 1] == '*') {
+            int result =
+                isMatchCore(txt, pat, i, j + 2) || (firstMatch && isMatchCore(txt, pat, i + 1, j));
+
+            if (result == 1)
+                dp[i][j] = 1;
+            else
+                dp[i][j] = -1;
+            return result;
+        }
+        int result = firstMatch && isMatchCore(txt, pat, i + 1, j + 1);
+        dp[i + 1][j + 1] = result;
+        return result;
+    }
+};
+```
+
+---
+
+**动态规划**
 
 明白了一部分，假设 i 指向 txt，j 指向 pat， `dp[i][j]` 表示前 i ， j 个字符（闭区间）
 
@@ -11,12 +97,15 @@
 - `*` 之前的字符匹配 0 次：`dp[i][j]=dp[i][j-2]` eg: txt is a, pat is ab*
 - 匹配大于等于 1 次：
     - 可以是把 txt 当前的字符删去，看前一位 `dp[i][j]=dp[i-1][j]` eg: abbbb, ab* 转变成 abbb, ab* ，缩短字符串
-    - 当删除的够多时，就是 a, ab* 变成 `dp[i][j]=dp[i][j-2]`
+    - 或者是把下边的 `字符+*` 删除，变成 `dp[i][j]=dp[i][j-2]`
     - 两者有一个成功就行，所以取或
 
 这个题不用“开头加空字符”的技巧更好，因为加了之后还要做预处理，我也没看明白为什么要做😥
 
-=== "前边不加空字符"
+- [两种转移](https://leetcode.cn/problems/regular-expression-matching/solutions/295977/zheng-ze-biao-da-shi-pi-pei-by-leetcode-solution/comments/452279)
+- [缩短字符串](https://www.acwing.com/solution/content/3390/)
+
+=== "dp前边不加空字符"
 
     ```cpp
     class Solution {
@@ -50,7 +139,7 @@
 
     ```
 
-=== "前边加空字符"
+=== "dp前边加空字符"
 
     ```cpp
     class Solution {
@@ -86,12 +175,11 @@
     };
     ```
 
-- [两种转移](https://leetcode.cn/problems/regular-expression-matching/solutions/295977/zheng-ze-biao-da-shi-pi-pei-by-leetcode-solution/comments/452279)
-- [缩短字符串](https://www.acwing.com/solution/content/3390/)
-
-这个是不好理解的，见[它的评论区](https://www.acwing.com/solution/content/3390/)第一条
 
 ??? "out of date"
+
+    这个代码实现是不好理解的，见[它的评论区](https://www.acwing.com/solution/content/3390/)第一条
+
     ```cpp
     class Solution {
     public:
