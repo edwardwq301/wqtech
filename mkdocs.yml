@@ -106,11 +106,11 @@ plugins:
           exclude:
               - guide.md
               - index.md
-    - blog:
-          blog_dir: blog
-          blog_toc: false
-          archive_name: Archive
-          categories_toc: false
+    # - blog:
+    #       blog_dir: blog
+    #       blog_toc: false
+    #       archive_name: Archive
+    #       categories_toc: false
     # - rss:
     #     match_path: blog/posts/.*
     #     date_from_meta:
@@ -135,5 +135,5 @@ nav:
           Editor: tools/editor.md
           Linux: tools/linux.md
 
-    - Blog:
-          - blog/index.md
+    # - Blog:
+    #       - blog/index.md
