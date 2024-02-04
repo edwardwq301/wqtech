@@ -1,6 +1,6 @@
-site_name: WQ BLOG
+site_name: WQ book
 site_author: WQ
-site_description: WQ person thoughts
+site_description: WQ's notebook by mkdocs
 site_url: https://beautifulwq.github.io/wqtech
 
 repo_name: wqtech
@@ -128,12 +128,12 @@ nav:
           Java: backend/Java.md
           Python: backend/python.md
 
-    - Demo: guide.md
-
     - Tools:
           Git: tools/git.md
           Editor: tools/editor.md
           Linux: tools/linux.md
+
+    - Demo: guide.md
 
     # - Blog:
     #       - blog/index.md
