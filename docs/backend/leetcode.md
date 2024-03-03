@@ -210,6 +210,229 @@ bb|...a....|a
     };
     ```
 
+### 128 最长连续序列
+#### 哈希表
+一开始想的是哈希表记录出没出现，然后最大范围内遍历+ while 循环，超时了，后来改进成这样
+
+```cpp
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        int anw = 0;
+        if (nums.empty())
+            return 0;
+        map<int, bool> appear;
+        for (int x : nums)
+            appear[x] = true;
+        for (int x : nums) {
+            int len = 1;
+            while (appear[x - len])
+                len++;
+            anw = max(anw, len);
+        }
+        return anw;
+    }
+};
+```
+
+然后又超时了，看了答案后发现有很多冗余，比如说假如往回查(向小数)，4 就一定比 3 效果好，所以有 4 就不查 3
+
+```cpp
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        int anw = 1;
+        if (nums.empty())
+            return 0;
+        unordered_map<int, bool> appear;
+        for (int x : nums)
+            appear[x] = true;
+        for (int x : nums) {
+            int len = 1;
+            if (appear[x + 1])
+                continue;
+            while (appear[x - len])
+                len++;
+            anw = max(anw, len);
+        }
+        return anw;
+    }
+};
+```
+
+还可以往前查，有 3 就不查 4，但是这个表现不好，（我分析理论上应该差不多，实际可能是优化问题或者设计问题？）
+
+gpt 给出的答案是
+
+- 如果 nums 中升序多，往大了数快 `if (appear[x + 1]) continue;`
+- 如果 nums 降序多，往小数快 `if (appear[x + 1]) continue;`
+- 看起来有点合理
+
+> The performance difference could arise from the order in which the numbers are checked for consecutiveness. It depends on the distribution of numbers in the nums vector. If the numbers are more likely to be consecutive in increasing order, the first approach might perform better. Conversely, if the numbers are more likely to be consecutive in decreasing order, the second approach might be more efficient.
+
+??? "向大数"
+
+    ```cpp
+    class Solution {
+    public:
+        int longestConsecutive(vector<int>& nums) {
+            int anw = 1;
+
+            if (nums.empty())
+                return 0;
+            unordered_map<int, bool> appear;
+            for (int x : nums)
+                appear[x] = true;
+            for (int x : nums) {
+
+                int len = 1;
+                if(appear[x-1]) continue;
+                while (appear[x + len])
+                    len++;
+                anw = max(anw, len);
+            }
+
+            return anw;
+        }
+    };
+    ```
+
+#### 动态规划
+第二种解法：动态规划，感觉这个方法不看答案是不容易想出来的。
+
+```cpp
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_map<int, int> appear;
+        int anw = 0;
+
+        for (int x : nums) {
+            if (appear[x] == 0) {
+                int total_len = 1;
+                int left_len = appear[x - 1];
+                int right_len = appear[x + 1];
+                //eg: [1, 2, 3] 4 [5, 6]
+                total_len =total_len+ left_len + right_len;
+                appear[x - left_len] =appear[x]= appear[x + right_len] = total_len;
+                anw = max(anw, total_len);
+            }
+        }
+        return anw;
+    }
+};
+```
+
+#### 并查集
+第三种解法：并查集思想
+
+存下一个数，这样找到最远的数 right，right-x 就是答案，理论上存下一个和上一个差不多，但是存上一个就会超时
+
+```cpp
+class Solution {
+public:
+    unordered_map<int, int> map;
+
+    int findmap(int x) {
+        if (map.count(x)) {
+            map[x] = findmap(map[x]);// 路径压缩
+            return map[x];
+        }
+        else return x;
+    }
+
+    int longestConsecutive(vector<int> &nums) {
+        int anw = 0;
+        for (int x: nums) map[x] = x + 1;
+        for (int x: nums) {
+            int len = findmap(x) - x;
+            anw = max(anw, len);
+        }
+        return anw;
+    }
+};
+
+class Union {
+    static const int N = 10;
+
+    int root[N];
+    int size[N];
+public:
+    Union() {
+        for (int i = 0; i < N; i++) {
+            root[i] = i;
+            size[i] = 1;
+        }
+    }
+
+    void unionab(int a, int b) {
+        int root_a = get_root(a);
+        int root_b = get_root(b);
+        int atreeSize = size[root_a];
+        int btreeSize = size[root_b];
+
+        if (atreeSize < btreeSize) {
+            root[root_a] = root_b;
+            size[root_b] += atreeSize;
+        }
+        else {
+            root[root_b] = root_a;
+            size[root_a] += btreeSize;
+        }
+    }
+
+    int get_root(int x) {
+//        while (root[x] != x) {
+//            root[x]=root[root[x]];// this can short path
+//            x = root[x];
+//        }// 两种写法
+        if (root[x] != x)
+            root[x] = get_root(root[x]);
+        return x;
+    }
+
+    bool isConnected(int a, int b) {
+        return get_root(a) == get_root(b);
+    }
+
+    void print() {
+        for (int i = 0; i < N; ++i) {
+            printf("root %d is %d\n", i, root[i]);
+        }
+    }
+};
+```
+
+??? "TLE"
+
+    ```cpp
+    class Solution {
+    public:
+        unordered_map<int, int> map;
+
+        int findmap(int x) {
+            if (map.count(x)) {
+                map[x] = findmap(map[x]);
+                // 路径压缩
+                return map[x];
+            }
+            else return x;
+        }
+
+        int longestConsecutive(vector<int> &nums) {
+            int anw = 0;
+            for (int x: nums) map[x] = x - 1;
+            for (int x: nums) {
+                int len = x - findmap(x);
+                anw = max(anw, len);
+            }
+            return anw;
+        }
+    };
+
+    ```
+
+
 ### 229 多数元素2
 - 如果已经出现了，次数加一
 - 如果没出现
