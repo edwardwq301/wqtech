@@ -667,42 +667,50 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
 
 ??? "slove"
 
-    ```
+    ```cpp
     class Solution {
     public:
+        string preprocess(string s) {
+            string anw = "^";
+            for (char x: s) {
+                anw += '#';
+                anw += x;
+            }           //anw+='#'+x is wrong !
+            anw += "#$";
+            cout << anw << endl;
+            return anw;
+        }
+
         string longestPalindrome(string s) {
-            string todo = "";
+            if (s.empty()) return "";
+            string newstr = preprocess(s);
 
-            for (int i = 0; i < s.size(); i++)
-                todo += s[i], todo += '#';
-            todo = "^#" + todo;
-            todo += '$';
+            int center = 0, rightThresold = 0;
+            vector<int> len(newstr.size(), 1);
 
-            vector<int> p(todo.size(), 1);
-            int id = 0, maxid = 0;
-            for (int i = 1; i < todo.size(); i++) {
-                if (i < maxid) {
-                    p[i] = min(p[2 * id - i], maxid - i);
-                }
+            for (int i = 1; i < newstr.size(); ++i) { // while 中的 newstr[i-len[i]] i-len[i]>=0
+                int i_mirror = 2 * center - i;
+                if (i < rightThresold)
+                    len[i] = min(len[i_mirror], rightThresold - i);
 
-                while (todo[i - p[i]] == todo[i + p[i]])
-                    p[i]++;
-                if (p[i] + i > maxid) {
-                    maxid = i + p[i];
-                    id = i;
+                while (newstr[i + len[i]] == newstr[i - len[i]])
+                    len[i]++;
+
+                if (i + len[i] > rightThresold) {
+                    rightThresold = i + len[i];
+                    center = i;
                 }
             }
 
-
-            int st = 0, len = 0;
-            for (int i = 1; i < p.size() - 1; i++) {
-                if (p[i] > len) {
-                    st = i;
-                    len = p[i];
+            int begin_index = 0, maxlen = 0;
+            for (int i = 0; i < len.size(); ++i) {
+                if (len[i] > maxlen) {
+                    maxlen = len[i];
+                    begin_index = i;
                 }
             }
-            cout << st << ' ' << len;
-            return s.substr((st - len) / 2, len - 1);
+            cout << begin_index << maxlen;
+            return s.substr((begin_index - maxlen) / 2, maxlen - 1);
         }
     };
     ```
