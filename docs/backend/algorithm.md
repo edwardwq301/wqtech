@@ -2,9 +2,8 @@
 comments: true
 ---
 
-## data structure
 
-### sort
+## sort
 insert sort: In iteration i, swap a[i] with each larger entry to its left.
 
 ```cpp
@@ -54,6 +53,8 @@ void shellSort(vector<int> &todo) {
 
 knuth shuffle: in iteration i, swap a[i] and a[k] (random k in [0, i])
 
+非常奇怪，[课程视频链接](https://www.coursera.org/learn/algorithms-part1/lecture/12vcF?t=432)是第一种
+
 ```cpp
 void shuffle(vector<int> &todo) {
     int N = todo.size();
@@ -64,8 +65,33 @@ void shuffle(vector<int> &todo) {
 }
 ```
 
+网上大多是第二种，[维基百科](https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)给的和第一种不一样，挺奇怪的，不知道哪个对
 
-### 并查集
+```cpp
+void shuffle(vector<int>& todo){
+    for(int i= todo.size()-1;i>0;i--){
+        int k= rand() % (i+1)
+        swap(todo[i], todo[k])
+    }
+}
+```
+
+```txt
+wiki
+
+-- To shuffle an array a of n elements (indices 0..n-1):
+for i from n−1 down to 1 do
+     j ← random integer such that 0 ≤ j ≤ i
+     exchange a[j] and a[i]
+
+
+-- To shuffle an array a of n elements (indices 0..n-1):
+for i from 0 to n−2 do
+     j ← random integer such that i ≤ j < n
+     exchange a[i] and a[j]
+```
+
+## 并查集
 
 ```java
 public class Union {
@@ -196,7 +222,7 @@ public class Union {
     }
     ```
 
-### 堆
+## 堆
 最大堆，（最小堆把符号变一下）
 
 ```cpp
@@ -243,7 +269,8 @@ public:
 ```
 
 堆排序就相当于每次把最大元素放到结尾，个数减一，`sink(1)` 调整一下
-### 图
+
+## 图
 [图的存储](https://blog.csdn.net/raelum/article/details/129108365)
 
 拓扑排序：dfs的结果逆序一下就是答案，或者每次找入度为零得点，用当前点更新别的点得入度
@@ -267,8 +294,59 @@ void topoSortCore(int vertex) {
 
 求强连通分量：先对**逆图（边全反向）**求出拓扑排序的节点顺序，假如是 `3,2,1,4,6,7`，然后按着这个顺序对**原图** dfs 得强连通分量
 
-### string 
-KMP:
+## string 
+### 马拉车
+[讲解](https://www.zhihu.com/question/37289584/answer/465656849)
+
+```cpp
+class Solution {
+public:
+    string preprocess(string s) {
+        string anw = "^";
+        for (char x: s) {
+            anw += '#';
+            anw += x;
+        }           //anw+='#'+x is wrong !
+        anw += "#$";
+        cout << anw << endl;
+        return anw;
+    }
+
+    string longestPalindrome(string s) {
+        if (s.empty()) return "";
+        string newstr = preprocess(s);
+
+        int center = 0, rightThresold = 0;
+        vector<int> len(newstr.size(), 1);
+
+        for (int i = 1; i < newstr.size(); ++i) { // while 中的 newstr[i-len[i]] i-len[i]>=0
+            int i_mirror = 2 * center - i;
+            if (i < rightThresold)
+                len[i] = min(len[i_mirror], rightThresold - i);
+
+            while (newstr[i + len[i]] == newstr[i - len[i]])
+                len[i]++;
+
+            if (i + len[i] > rightThresold) {
+                rightThresold = i + len[i];
+                center = i;
+            }
+        }
+
+        int begin_index = 0, maxlen = 0;
+        for (int i = 0; i < len.size(); ++i) {
+            if (len[i] > maxlen) {
+                maxlen = len[i];
+                begin_index = i;
+            }
+        }
+        cout << begin_index << maxlen;
+        return s.substr((begin_index - maxlen) / 2, maxlen - 1);
+    }
+};
+```
+
+### KMP
 ```cpp
 #include <algorithm>
 #include <bits/stdc++.h>
@@ -314,6 +392,144 @@ void test() {
 int main() {
     test();
     return 0;
+}
+```
+
+
+## 数学
+### 求最大公因数
+辗转相除法，假如 `a=bx+y (a>b)`, k 是 a b 的公因子，y=a-bx=a%b，所以 k 也是 y 的因子，所以 k 是 a, b, a%b 的公因子，因为 k 任意，所以 a,b 的最大公因子也相等，可以用 a%b 缩小。另外假如 `a < b`，函数会调成 `gcd(b,a)`，又回到大数在第一个参数
+
+```cpp
+int gcd(int a, int b) {
+    if (b == 0) return a;
+    else return gcd(b, a % b);
+}
+```
+
+### 快速幂
+```cpp
+
+typedef long long LL;
+
+LL quick_power(int base, int power) {
+    LL anw = 1;
+    while (power > 0) {
+        if (power & 1)
+            anw *= base;
+        base *= base;
+        power >>= 1;
+    }
+    return anw;
+}
+LL quick_power_recursive(int base, int power) {
+    if (power == 0)
+        return 1;
+    else {
+        if (power & 1)
+            return base * quick_power_re(base, power - 1);
+        else {
+            LL anw = quick_power_re(base, power / 2);
+            return anw * anw;
+        }
+    }
+}
+```
+
+### 质数筛
+[埃氏筛](https://swtch.com/~rsc/thread/#:~:text=As%20another%20example%2C%20which%20Hoare%20credits%20to%20Doug%20McIlroy%2C%20consider%20the%20generation%20of%20all%20primes%20less%20than%20a%20thousand.%20The%20sieve%20of%20Eratosthenes%20can%20be%20simulated%20by%20a%20pipeline%20of%20processes%20executing%20the%20following%20pseudocode%3A)
+
+??? "例子"
+
+    ```cpp
+    #include <bits/stdc++.h>
+
+    using namespace std;
+    //埃氏筛未优化
+    vector<int> get_prime_core(vector<int>& anw, vector<int> source) {
+        if (!source.empty())
+            anw.push_back(source[0]);
+        else
+            return anw;
+        vector<int> todo;
+        for (int x : source) {
+            if (x % source[0] != 0) {
+                todo.push_back(x);
+            }
+        }
+        return get_prime_core(anw, todo);
+    }
+
+    vector<int> get_prime(int n) {
+        vector<int> anw;
+        vector<int> source(n - 1);
+        for (int i = 0, begin = 2; i < source.size(); i++, begin++)
+            source[i] = begin;
+        return get_prime_core(anw, source);
+    }
+
+
+    //埃氏筛优化
+    vector<int> get_prime_update_ei(int n) {
+        vector<bool> is_prime(n + 1, true);
+        vector<int> anw;
+
+        for (int i = 2; i <= n; i++) {
+            if (is_prime[i])
+                anw.push_back(i);
+            else
+                continue;
+            for (int id = i*2; id <= n; id += i)
+                is_prime[id] = false;
+        }
+        for (auto x : anw)
+            cout << x << ' ';
+        cout << endl
+            << anw.size();
+        return anw;
+    }
+
+
+    //线性筛
+    vector<int> get_prime_update_On(int n) {
+        vector<bool> is_prime(n + 1, true);
+        vector<int> anw;
+
+        for (int i = 2; i <= n; i++) {
+            if (is_prime[i])
+                anw.push_back(i);
+            for (int j = 0; anw[j] <= n / i; j++) {
+                is_prime[anw[j] * i] = false;
+                if (i % anw[j] == 0)
+                    break;
+            }
+        }
+
+        for (auto x : anw)
+            cout << x << ' ';
+        cout << endl
+            << anw.size();
+        return anw;
+    }
+
+    int main() {
+        int n = 20;
+        vector<int> anw = get_prime_update_On(n);
+
+        return 0;
+    }
+    ```
+
+### 进制转换
+除以基数取余（先得到的是低位）
+```cpp
+void change_base(int n, const int base) {
+    string anw;
+    do {
+        anw = to_string(n % base) + anw;
+        n /= base;
+    } while (n > 0);
+    cout << anw;
 }
 ```
 
@@ -658,148 +874,6 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
         return 0;
     }
     ```
-
-
-
-### manacher
-
-[讲解](https://www.zhihu.com/question/37289584/answer/465656849)
-
-??? "slove"
-
-    ```cpp
-    class Solution {
-    public:
-        string preprocess(string s) {
-            string anw = "^";
-            for (char x: s) {
-                anw += '#';
-                anw += x;
-            }           //anw+='#'+x is wrong !
-            anw += "#$";
-            cout << anw << endl;
-            return anw;
-        }
-
-        string longestPalindrome(string s) {
-            if (s.empty()) return "";
-            string newstr = preprocess(s);
-
-            int center = 0, rightThresold = 0;
-            vector<int> len(newstr.size(), 1);
-
-            for (int i = 1; i < newstr.size(); ++i) { // while 中的 newstr[i-len[i]] i-len[i]>=0
-                int i_mirror = 2 * center - i;
-                if (i < rightThresold)
-                    len[i] = min(len[i_mirror], rightThresold - i);
-
-                while (newstr[i + len[i]] == newstr[i - len[i]])
-                    len[i]++;
-
-                if (i + len[i] > rightThresold) {
-                    rightThresold = i + len[i];
-                    center = i;
-                }
-            }
-
-            int begin_index = 0, maxlen = 0;
-            for (int i = 0; i < len.size(); ++i) {
-                if (len[i] > maxlen) {
-                    maxlen = len[i];
-                    begin_index = i;
-                }
-            }
-            cout << begin_index << maxlen;
-            return s.substr((begin_index - maxlen) / 2, maxlen - 1);
-        }
-    };
-    ```
-
-### 质数筛
-
-[埃氏筛](https://swtch.com/~rsc/thread/#:~:text=As%20another%20example%2C%20which%20Hoare%20credits%20to%20Doug%20McIlroy%2C%20consider%20the%20generation%20of%20all%20primes%20less%20than%20a%20thousand.%20The%20sieve%20of%20Eratosthenes%20can%20be%20simulated%20by%20a%20pipeline%20of%20processes%20executing%20the%20following%20pseudocode%3A)
-
-??? "例子"
-
-    ```cpp
-    #include <bits/stdc++.h>
-
-    using namespace std;
-    //埃氏筛未优化
-    vector<int> get_prime_core(vector<int>& anw, vector<int> source) {
-        if (!source.empty())
-            anw.push_back(source[0]);
-        else
-            return anw;
-        vector<int> todo;
-        for (int x : source) {
-            if (x % source[0] != 0) {
-                todo.push_back(x);
-            }
-        }
-        return get_prime_core(anw, todo);
-    }
-
-    vector<int> get_prime(int n) {
-        vector<int> anw;
-        vector<int> source(n - 1);
-        for (int i = 0, begin = 2; i < source.size(); i++, begin++)
-            source[i] = begin;
-        return get_prime_core(anw, source);
-    }
-
-
-    //埃氏筛优化
-    vector<int> get_prime_update_ei(int n) {
-        vector<bool> is_prime(n + 1, true);
-        vector<int> anw;
-
-        for (int i = 2; i <= n; i++) {
-            if (is_prime[i])
-                anw.push_back(i);
-            else
-                continue;
-            for (int id = i; id <= n; id += i)
-                is_prime[id] = false;
-        }
-        for (auto x : anw)
-            cout << x << ' ';
-        cout << endl
-            << anw.size();
-        return anw;
-    }
-
-
-    //线性筛
-    vector<int> get_prime_update_On(int n) {
-        vector<bool> is_prime(n + 1, true);
-        vector<int> anw;
-
-        for (int i = 2; i <= n; i++) {
-            if (is_prime[i])
-                anw.push_back(i);
-            for (int j = 0; anw[j] <= n / i; j++) {
-                is_prime[anw[j] * i] = false;
-                if (i % anw[j] == 0)
-                    break;
-            }
-        }
-
-        for (auto x : anw)
-            cout << x << ' ';
-        cout << endl
-            << anw.size();
-        return anw;
-    }
-
-    int main() {
-        int n = 20;
-        vector<int> anw = get_prime_update_On(n);
-
-        return 0;
-    }
-    ```
-
 
 
 

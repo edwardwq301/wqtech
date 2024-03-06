@@ -210,6 +210,192 @@ bb|...a....|a
     };
     ```
 
+### 11 盛最多水的容器
+双指针移动短板，[正确性证明](https://leetcode.cn/problems/container-with-most-water/solutions/11491/container-with-most-water-shuang-zhi-zhen-fa-yi-do)
+
+ ```cpp
+class Solution {
+public:
+    int maxArea(vector<int> &height) {
+        int anw = 0;
+        int left = 0, right = height.size() - 1;
+        while (left < right) {
+            int area = min(height[left], height[right]) * (right - left);
+            anw = max(anw, area);
+            if (height[left] < height[right]) left++;
+            else right--;
+        }
+        return anw;
+    }
+};
+```
+
+### 42 接雨水
+威名远扬啊，手撕接雨水成为[招聘常态](https://www.nowcoder.com/feed/main/detail/6cc9f0f6b4bf44cca6bbfa520f969c6e)😅，希望不是最后茴香豆的茴有几种写法
+
+[题解](https://leetcode.cn/problems/trapping-rain-water/solutions/9112/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-w-8)
+
+**按列求**：什么时候本列 i 能放呢，会发现 `[0, i-1],[i+1, end]` 如果两区间都能找到比 i 高的，说明能发，而且能放 `min(a,b) - height[i]` （如果等于 i 的高度相当于放 0）。可以每次都找一遍左边和右边，但是这样浪费时间。之前有的 dp 题如果当前位置没有更好的就放本身。叫法好像是备忘录。可以用这个方法
+
+=== "初始版"
+
+    ```cpp
+    class Solution {
+    public:
+        int trap(vector<int> &height) {
+            int anw = 0;
+            int sz = height.size();
+            for (int i = 0; i < sz; ++i) {
+                int i_left_maxheight = height[i];
+                for (int k = 0; k < i; ++k)
+                    i_left_maxheight = max(i_left_maxheight, height[k]);
+
+                int i_right_maxheight = height[i];
+                for (int k = i + 1; k < sz; ++k)
+                    i_right_maxheight = max(i_right_maxheight, height[k]);
+
+                anw += min(i_left_maxheight, i_right_maxheight) - height[i];
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "改进成dp"
+
+    ```cpp
+    class Solution {
+    public:
+        int trap(vector<int> &height) {
+            int anw = 0;
+            int sz = height.size();
+            vector<int> left_maxheight(sz);
+            vector<int> right_maxheight(sz);
+            
+            left_maxheight[0] = height[0];
+            right_maxheight[sz - 1] = height[sz - 1];
+            
+            // 有大取大，没大取本身
+            for (int i = 1; i < sz; ++i) {
+                left_maxheight[i] = max(left_maxheight[i - 1], height[i]);
+            }
+            for (int i = sz - 2; i >= 0; --i) { 
+            // i should begin sz-2, not sz-1
+                right_maxheight[i] = max(right_maxheight[i + 1], height[i]);
+            }
+            for (int i = 0; i < sz; ++i) {
+                anw += min(left_maxheight[i], right_maxheight[i]) - height[i];
+            }
+            return anw;
+        }
+    };
+
+    ```
+
+**按列求双指针**：题解里 dp 优化成双指针没看明白，但是第一个评论很好，和 12 题有异曲同工之妙，但是这个双指针先理解 dp 会更好理解
+
+```cpp
+class Solution {
+public:
+    int trap(vector<int> &height) {
+        int anw = 0;
+        int sz = height.size();
+        int left = 0, right = sz - 1;
+        int leftMaxHeight = height[left], rightMaxHeight = height[right];
+
+        left++; // 左右边界不能存
+        right--;
+
+        while (left <= right) { // left=right 也是可能的答案
+            leftMaxHeight = max(leftMaxHeight, height[left]);
+            rightMaxHeight = max(rightMaxHeight, height[right]);
+            if (leftMaxHeight < rightMaxHeight) {
+                anw += leftMaxHeight - height[left];
+                left++;
+            }
+            else {
+                anw += rightMaxHeight - height[right];
+                right--;
+            }
+        }
+        return anw;
+    }
+};
+```
+
+
+**单调栈**：假如当前块比前一个低，说明会有雨水（下标入栈，因为后续会用到水平距离）；假如当前块比之前高，说明之前的雨水应该停下，进行计算
+
+计算过程：先取出比 height[i] 低的高度 bottom，再找 bottom 左侧的高度 leftheight， 在 heigh[i] 和 leftheight 两者取小，乘以水平距离
+
+```txt
+        x
+x       x
+xxxxxxxxx
+```
+
+ ```cpp
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int anw = 0;
+        stack<int> stack;
+        int current = 0;
+        int sz = height.size();
+        while (current < sz) {
+            while (!stack.empty() && height[current] > height[stack.top()]) {
+                int h = height[stack.top()];
+                stack.pop();
+                if (stack.empty())  
+                    break;
+                int minele = min(height[current], height[stack.top()]);
+                int distance = current - stack.top() - 1;
+                anw += distance * (minele - h);
+            }
+            stack.push(current);
+            current++;
+        }
+        return anw;
+    }
+};
+```
+
+### 124 二叉树中的最大路径和
+
+刚开始想到类似后序遍历，找到左子树和右子树的最大路径和，再和根加一起，方向是对的，但应该不是返回最大路径和，而是以 `root.left/right` 为一端的结果
+
+正解：处理当前节点，找到左子树和右子树的最大路径和 `left,right` 。动态更新 `anw` （看 `left, right` 有没有贡献，有贡献就加到 `sum`）。 另外 dfs 找的是子树（假如是左子树）为一端的结果。直接看代码可能更好理解
+
+??? "slove 124"
+
+    ```cpp
+    class Solution {
+    public:
+        int anw = -0x3f3f3f;
+        int maxPathSum(TreeNode * root) {
+            dfs(root);
+            return anw;
+        }
+        
+        int dfs(TreeNode * root) {
+            if (root == nullptr)
+                return 0;
+
+            int val = root->val;
+            int left = dfs(root->left);
+            int right = dfs(root->right);
+            if (left > 0)
+                val += left;
+            if (right > 0)
+                val += right;
+            anw = max(anw, val);
+
+            return max(root->val, max(left, right) + root->val);
+        }
+    };
+
+    ```
+
 ### 128 最长连续序列
 #### 哈希表
 一开始想的是哈希表记录出没出现，然后最大范围内遍历+ while 循环，超时了，后来改进成这样
@@ -498,6 +684,104 @@ public:
     };
     ```
 
+
+### 232 两个栈实现队列
+push 的时候好说，在 pop 的时候没有必要全倒腾，只有在输出栈为空的时候再倒腾就行了
+
+??? "solve"
+
+    ```cpp
+
+    class MyQueue {
+    private:
+        stack<int> inSt;
+        stack<int> outSt;
+    public:
+        MyQueue() {
+        }
+
+        void push(int x) {
+            inSt.push(x);
+        }
+
+        int pop() {
+            if (outSt.empty()) {
+                while (!inSt.empty()) {
+                    outSt.push(inSt.top());
+                    inSt.pop();
+                }
+            }
+            int x = outSt.top();
+            outSt.pop();
+            return x;
+        }
+
+        int peek() {
+            if (outSt.empty()) {
+                while (!inSt.empty()) {
+                    outSt.push(inSt.top());
+                    inSt.pop();
+                }
+            }
+            return outSt.top();
+        }
+
+        bool empty() {
+            return inSt.empty() && outSt.empty();
+        }
+    };
+    ```
+
+### 283 移动0
+比较好的做法是双指针，一个指向新的开始，一个找应该出现的下一位
+
+```cpp
+class Solution {
+public:
+    void moveZeroes(vector<int> &nums) {
+        int choose = 0;
+        for (int new_begin = 0; new_begin < nums.size(); ++new_begin) {
+            while (choose < nums.size() && !nums[choose]) choose++;
+            if (choose < nums.size())
+                nums[new_begin] = nums[choose++];
+            else {
+                while (new_begin<nums.size())
+                    nums[new_begin++]=0;
+                break;
+            }
+        }
+    }
+};
+```
+
+不太好的做法是互换，遇到一个 0，就找下一个非 0，进行互换，没有非零就结束，但是需要检查 `[1, 0]` 这种
+
+```cpp
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+
+        int next = 0;
+        while (next < nums.size() && nums[next] != 0)
+            next++;     // find first 0
+        while (next < nums.size() && nums[next] == 0)
+            next++;     // find first positive num after first 0
+
+        for (int new_start = 0; new_start < nums.size(); ++new_start) {
+            if (nums[new_start] == 0) {
+                while (next < nums.size() && nums[next] == 0)
+                    next++;
+                if (next >= nums.size())
+                    break;
+                else
+                    swap(nums[new_start], nums[next]);
+            }
+        }
+    }
+};
+```
+
+
 ### 739 每日温度
 2024-01-03 看到公众号发的，当时有个朦胧的思路，想到用单调栈，然后发现力扣曾经交过这个题，复习一下
 
@@ -564,89 +848,6 @@ public:
 ```
 
 做出来了，feel good🥰
-
-### 124 二叉树中的最大路径和
-
-刚开始想到类似后序遍历，找到左子树和右子树的最大路径和，再和根加一起，方向是对的，但应该不是返回最大路径和，而是以 `root.left/right` 为一端的结果
-
-正解：处理当前节点，找到左子树和右子树的最大路径和 `left,right` 。动态更新 `anw` （看 `left, right` 有没有贡献，有贡献就加到 `sum`）。 另外 dfs 找的是子树（假如是左子树）为一端的结果。直接看代码可能更好理解
-
-??? "slove 124"
-
-    ```cpp
-    class Solution {
-    public:
-        int anw = -0x3f3f3f;
-        int maxPathSum(TreeNode * root) {
-            dfs(root);
-            return anw;
-        }
-        
-        int dfs(TreeNode * root) {
-            if (root == nullptr)
-                return 0;
-
-            int val = root->val;
-            int left = dfs(root->left);
-            int right = dfs(root->right);
-            if (left > 0)
-                val += left;
-            if (right > 0)
-                val += right;
-            anw = max(anw, val);
-
-            return max(root->val, max(left, right) + root->val);
-        }
-    };
-
-    ```
-
-### 232 两个栈实现队列
-push 的时候好说，在 pop 的时候没有必要全倒腾，只有在输出栈为空的时候再倒腾就行了
-
-??? "solve"
-
-    ```cpp
-
-    class MyQueue {
-    private:
-        stack<int> inSt;
-        stack<int> outSt;
-    public:
-        MyQueue() {
-        }
-
-        void push(int x) {
-            inSt.push(x);
-        }
-
-        int pop() {
-            if (outSt.empty()) {
-                while (!inSt.empty()) {
-                    outSt.push(inSt.top());
-                    inSt.pop();
-                }
-            }
-            int x = outSt.top();
-            outSt.pop();
-            return x;
-        }
-
-        int peek() {
-            if (outSt.empty()) {
-                while (!inSt.empty()) {
-                    outSt.push(inSt.top());
-                    inSt.pop();
-                }
-            }
-            return outSt.top();
-        }
-
-        bool empty() {
-            return inSt.empty() && outSt.empty();
-        }
-    };
-    ```
 
 ### 第K大的数
 
@@ -933,10 +1134,10 @@ $$
 **核心**：
 下标和内容一起做指向
 
-| 下标 | 0 | 1 | 3 | 2 | 4       |
-|------|---|---|---|---|---------|
-| 内容 | 1 | 3 | 2 | 4 | 2(成环) |
-| 节点 | 1 | 3 | 2 | 4 | 2       |
+| 下标 | 0   | 1   | 3   | 2   | 4       |
+| ---- | --- | --- | --- | --- | ------- |
+| 内容 | 1   | 3   | 2   | 4   | 2(成环) |
+| 节点 | 1   | 3   | 2   | 4   | 2       |
 
 然后就和[环形链表2](https://leetcode.cn/problems/linked-list-cycle-ii/description/)一个做法，判环找入口
 

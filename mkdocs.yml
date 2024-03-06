@@ -98,14 +98,14 @@ extra_javascript:
 plugins:
     - search:
         separator: '[\s\u200b\-]'
-    - git-revision-date-localized:
-          type: iso_datetime
-          timezone: Asia/Shanghai
-          locale: en
-          enable_creation_date: true
-          exclude:
-              - guide.md
-              - index.md
+    # - git-revision-date-localized:
+    #       type: iso_datetime
+    #       timezone: Asia/Shanghai
+    #       locale: en
+    #       enable_creation_date: true
+    #       exclude:
+    #           - guide.md
+    #           - index.md
     # - blog:
     #       blog_dir: blog
     #       blog_toc: false
@@ -133,7 +133,7 @@ nav:
           Editor: tools/editor.md
           Linux: tools/linux.md
 
-    - Demo: guide.md
+    - Mkdocs: guide.md
 
     # - Blog:
     #       - blog/index.md
