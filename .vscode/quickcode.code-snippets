@@ -9,7 +9,7 @@
     "insert code block": {
         "scope": "md,markdown",
         "prefix": "```cpp",
-        "body": [" ```cpp", "$1", "```", "$2"],
+        "body": ["```cpp", "$1", "```", "$2"],
         "description": "code block"
     }
 }

@@ -213,7 +213,7 @@ bb|...a....|a
 ### 11 盛最多水的容器
 双指针移动短板，[正确性证明](https://leetcode.cn/problems/container-with-most-water/solutions/11491/container-with-most-water-shuang-zhi-zhen-fa-yi-do)
 
- ```cpp
+```cpp
 class Solution {
 public:
     int maxArea(vector<int> &height) {
@@ -235,7 +235,7 @@ public:
 
 [题解](https://leetcode.cn/problems/trapping-rain-water/solutions/9112/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-w-8)
 
-**按列求**：什么时候本列 i 能放呢，会发现 `[0, i-1],[i+1, end]` 如果两区间都能找到比 i 高的，说明能发，而且能放 `min(a,b) - height[i]` （如果等于 i 的高度相当于放 0）。可以每次都找一遍左边和右边，但是这样浪费时间。之前有的 dp 题如果当前位置没有更好的就放本身。叫法好像是备忘录。可以用这个方法
+**按列求**：什么时候本列 i 能放呢，会发现 `[0, i-1],[i+1, end]` 如果两区间都能找到比 i 高的，说明能放，而且能放 `min(a,b) - height[i]` （如果等于 i 的高度相当于放 0）。可以每次都找一遍左边和右边，但是这样浪费时间。之前有的 dp 题如果当前位置没有更好的就放本身。叫法好像是备忘录。可以用这个方法
 
 === "初始版"
 
@@ -334,7 +334,7 @@ x       x
 xxxxxxxxx
 ```
 
- ```cpp
+```cpp
 class Solution {
 public:
     int trap(vector<int>& height) {
