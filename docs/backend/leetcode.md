@@ -230,6 +230,108 @@ public:
 };
 ```
 
+### 15 三数之和
+先排序，双指针，从 i+1 和 end 找，问题在于去重，比如用例 `[-1,0,1,2,-1,-4]`, `[-2,0,0,2,2]`；由于找的时候是从 `[i+1, end]` 找，第一个判定就是 `nums[i] == nums[i-1]`,网上的题解都是 left 和下一位比是否重复，最后在 left++，我觉得这样很容易忘 left++，不如直接用两个变量 left_used, right_used 记录，不用最后再 left++，这样好一些。另外还可以提前判定是否结束，`nums[i]>0`
+
+难度不是很大，但是细节比较多
+
+=== "变量"
+
+    ```cpp
+    class Solution {
+    public:
+        void test() {
+            vector<int> origin = {-2, 0, 0, 2, 2};
+            auto anw = threeSum(origin);
+            for (auto x : anw) {
+                for (auto y : x)
+                    cout << y << ' ';
+                cout << endl;
+            }
+        }
+
+        vector<vector<int>> threeSum(vector<int>& nums) {
+            vector<vector<int>> anw;
+            sort(nums.begin(), nums.end());
+
+            for (int i = 0; i < nums.size(); ++i) {
+                if (nums[i] > 0)
+                    break;
+                if (i >= 1 && nums[i - 1] == nums[i])
+                    continue;
+
+                int left = i + 1, right = nums.size() - 1;
+
+                while (left < right) {
+                    int left_use = nums[left], right_use = nums[right];
+                    int sum = left_use + right_use;
+                    if (sum > -1 * nums[i])
+                        right--;
+                    else if (sum < -1 * nums[i])
+                        left++;
+                    else {
+                        anw.emplace_back(vector<int>{nums[i], left_use, right_use});
+                        while (left < right && nums[left] == left_use)
+                            left++;
+                        while (left < right && nums[right] == right_use)
+                            right--;
+                    }
+                }
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "不用变量"
+
+    ```cpp
+    class Solution {
+    public:
+        void test() {
+            vector<int> origin = {-2, 0, 0, 2, 2};
+            auto anw = threeSum(origin);
+            for (auto x: anw) {
+                for (auto y: x)
+                    cout << y << ' ';
+                cout << endl;
+            }
+        }
+
+        vector<vector<int>> threeSum(vector<int> &nums) {
+            vector<vector<int>> anw;
+            sort(nums.begin(), nums.end());
+
+            for (int i = 0; i < nums.size(); ++i) {
+                if (nums[i] > 0) break;
+                if (i >= 1 && nums[i - 1] == nums[i])
+                    continue;
+
+                int left = i + 1, right = nums.size() - 1;
+
+                while (left < right) {
+                    int sum = nums[left] + nums[right];
+                    if (sum > -1 * nums[i])
+                        right--;
+                    else if (sum < -1 * nums[i])
+                        left++;
+                    else {
+                        anw.emplace_back(vector<int>{nums[i], nums[left], nums[right]});
+                        while (left < right && nums[left] == nums[left + 1])
+                            left++;
+                        left++;
+                        while (left < right && nums[right] == nums[right - 1])
+                            right--;
+                        right--;
+                    }
+                }
+            }
+            return anw;
+        }
+    };
+    ```
+
+
 ### 42 接雨水
 威名远扬啊，手撕接雨水成为[招聘常态](https://www.nowcoder.com/feed/main/detail/6cc9f0f6b4bf44cca6bbfa520f969c6e)😅，希望不是最后茴香豆的茴有几种写法
 
@@ -324,7 +426,7 @@ public:
 ```
 
 
-**单调栈**：假如当前块比前一个低，说明会有雨水（下标入栈，因为后续会用到水平距离）；假如当前块比之前高，说明之前的雨水应该停下，进行计算
+**单调栈**：假如当前块比前一个低，说明会有雨水（下标入栈，因为后续会用到水平距离）；假如当前块比之前高，说明之前的雨水应该停下，进行计算。（一行按部分求）
 
 计算过程：先取出比 height[i] 低的高度 bottom，再找 bottom 左侧的高度 leftheight， 在 heigh[i] 和 leftheight 两者取小，乘以水平距离
 
@@ -337,23 +439,47 @@ xxxxxxxxx
 ```cpp
 class Solution {
 public:
-    int trap(vector<int>& height) {
+    void test() {
+        vector<int> height = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+        cout << trap(height);
+    }
+
+    int trap(vector<int> &height) {
         int anw = 0;
+        int len = height.size();
         stack<int> stack;
-        int current = 0;
-        int sz = height.size();
-        while (current < sz) {
-            while (!stack.empty() && height[current] > height[stack.top()]) {
-                int h = height[stack.top()];
+        for (int i = 0; i < len; ++i) {
+            while (!stack.empty() && height[i] > height[stack.top()]) {
+                int haveWaterIndex = stack.top();
                 stack.pop();
-                if (stack.empty())  
-                    break;
-                int minele = min(height[current], height[stack.top()]);
-                int distance = current - stack.top() - 1;
-                anw += distance * (minele - h);
+
+                if (stack.empty()) break;
+
+                int possibleHeight = min(height[i], height[stack.top()]);
+                int waterHeight = possibleHeight - height[haveWaterIndex];
+                int distance = i - stack.top() - 1;
+                anw += waterHeight * distance;
             }
-            stack.push(current);
-            current++;
+            stack.push(i);
+        }
+        return anw;
+    }
+};
+```
+
+### 53 最大子数组和
+经典 dp 题。无后效性，我的理解是只看它和它之前的事情，不看后边的，可以化简问题；`dp[i]` 表示以 i 为结尾的最大子数组和，所以 `dp[i]=max(dp[i-1]+nums[i], nums[i])` ，优化空间的话不是 anw=max(anw+nums[i], nums[i]), 因为这样求出来的是 dp[end] ，不是 dp[1..end] 中的最大值。用另一个 sum 记录就好了
+
+```cpp
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int sum = 0;
+        int anw = nums[0];
+        const int sz = nums.size();
+        for (int i = 0; i < sz; ++i) {
+            sum = max(sum + nums[i], nums[i]);
+            anw = max(anw, sum);
         }
         return anw;
     }
@@ -618,6 +744,60 @@ public:
 
     ```
 
+### 189 轮转数组
+线性代数：在想我的事情？😋
+
+$$(a^Tb^T)^T=ba$$
+
+矩阵的转置或者求逆有上边的性质，可以发现字符串的逆序也符合这个性质。逆序映射转置，单射函数，先分别逆序，再全部逆序即可。
+
+细节处理：轮转 k 个相当于把前 size-k 个数放到最后，当 k=size 相当于前 0 个放到最后，就是原样不动，所以 `if k > nums.size k = k % nums.size`
+
+=== "24ms"
+
+    ```cpp
+    class Solution {
+    public:
+        void test() {
+            vector<int> te = {1, 2, 3, 4, 5, 6, 7};
+            rotate(te, 3);
+        }
+        void rotate(vector<int>& nums, int k) {
+            k %= nums.size();
+            reverse(nums.begin(), nums.begin() + nums.size() - k);
+            reverse(nums.begin() + nums.size() - k, nums.end());
+            reverse(nums.begin(), nums.end());
+            return;
+        }
+    };
+    ```
+
+=== "7ms"
+
+    ```cpp
+    class Solution {
+    public:
+        void test() {
+            vector<int> te = {1, 2, 3, 4, 5, 6, 7};
+            rotate(te, 3);
+        }
+
+
+        void rotate(vector<int> &nums, int k) {
+
+            if (k <= nums.size()) {
+                reverse(nums.begin(), nums.begin() + nums.size() - k);
+                reverse(nums.begin() + nums.size() - k, nums.end());
+                reverse(nums.begin(), nums.end());
+                return;
+            }
+            else {
+                rotate(nums, k - nums.size());
+            }
+        }
+    };
+    ```
+
 
 ### 229 多数元素2
 - 如果已经出现了，次数加一
@@ -731,6 +911,30 @@ push 的时候好说，在 pop 的时候没有必要全倒腾，只有在输出�
         }
     };
     ```
+
+### 238 除自身以外数组的乘积
+前缀和思路，这个是前缀乘和后缀乘。
+
+```cpp
+class Solution {
+public:
+    vector<int> productExceptSelf(vector<int> &nums) {
+        int sz = nums.size();
+        vector<int> anw(sz, 1);
+        int right_mul=1;
+        for (int i = 1; i < sz; ++i) {
+            anw[i]=anw[i-1]*nums[i-1];
+        }
+        for(int i=sz-2;i>=0;--i){
+            right_mul*=nums[i+1];
+            anw[i]=anw[i]*right_mul;
+        }
+        return anw;
+    }
+};
+```
+
+
 
 ### 283 移动0
 比较好的做法是双指针，一个指向新的开始，一个找应该出现的下一位

@@ -273,6 +273,63 @@ public:
 
 这个题做完了，可以尝试[搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/description/)
 
+2024/3/8 感觉压力比较大的时候只会背板子了😥
+
+```cpp
+class Solution {
+public:
+    void test() {
+        vector<int> te = {4, 5, 6, 7, 0, 1, 2};
+        cout << search(te, 0);
+    }
+
+    int binsearchLeftBottom(vector<int> &nums, int target, int lo, int hi) {
+        int left = lo, right = hi;
+        while (left < right) {
+            int mid = left + right >> 1;
+            if (nums[mid] >= target) right = mid;
+            else left = mid + 1;
+        }
+        return left;
+    }
+
+    int binsearchRightBottom(vector<int> &nums, int target, int lo, int hi) {
+        int left = lo, right = hi;
+        while (left < right) {
+            int mid = left + right + 1 >> 1;
+            if (nums[mid] >= target) left = mid;
+            else right = mid - 1;
+        }
+        return left;
+    }
+
+    int search(vector<int> &nums, int target) {
+        if (nums[nums.size() - 1] >= nums[0]) {
+            int index=binsearchLeftBottom(nums, target, 0, nums.size()-1);
+            if(nums[index]!=target)
+                return -1;
+            else return index;
+        }
+        int leftMax = binsearchRightBottom(nums, nums[0], 0, nums.size() - 1);
+        if (target == nums[leftMax])return leftMax;
+        else if (target >= nums[0]) {
+            int index = binsearchLeftBottom(nums, target, 0, leftMax);
+            if (nums[index] != target) return -1;
+            else return index;
+        }
+        else {
+            int index = binsearchLeftBottom(nums, target, leftMax + 1, nums.size() - 1);
+            if (nums[index] != target) return -1;
+            else return index;
+        }
+
+    }
+};
+```
+
+
+---
+
 1. 先找从 `nums[0]` 升序的最后一位 upId
 2. 如果 `target>=num[0]` 从 `[0, upId]` 二分找，否则从 `[upId+1, len-1]` 找
 3. trick：二分查找时开始就越界直接返回 -1
