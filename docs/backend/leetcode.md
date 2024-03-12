@@ -744,6 +744,11 @@ public:
 
     ```
 
+### 155 最小栈
+用一个辅助栈存最小值，push 如果 `val <= minst.top` push 进，不然跳过，假如说是 5， 3， 4 这个例子，只要 3 不从真实栈出来，无论后面 4 怎么进出真实栈都不改变最小值。但如果又来一个 3 就要进辅助栈，是为了弹出后来的 3 时，辅助栈最小值还是 3（之前先来的那个）
+
+另外为什么不是所有数字的单调栈？还是 5， 3， 4 这个例子，当 4 从真实栈弹出的时候是不能操作到单调栈的 `|| 5 4 3 (`
+
 ### 189 轮转数组
 线性代数：在想我的事情？😋
 
@@ -981,6 +986,48 @@ public:
                     swap(nums[new_start], nums[next]);
             }
         }
+    }
+};
+```
+
+
+### 394 字符串解码
+看起来挺简单的，做起来就不是一回事了。直接背下来，另外不要一次处理太多，比如看到一个数字不要再开 while 处理，不然的话在下标上就会很难处理。
+
+```cpp
+class Solution {
+public:
+    string decodeString(string s) {
+
+        // 存的是接下来的串应该重复多少次，和上一次处理结果
+        stack<pair<int, string>> st;
+        int num = 0;
+        string current_process;
+        for (char i: s) {
+            if (i >= '0' && i <= '9') {
+                num *= 10;
+                num += (i - '0');
+            }
+            else if (i == '[') {
+                st.emplace(num, current_process);
+                num = 0;
+                current_process.clear();
+            }
+            else if (i == ']') {
+                int n = st.top().first;
+                // n指示的是current的循环次数，不是last_result的
+                string last_result = st.top().second;
+                st.pop();
+                for (int k = 0; k < n; k++)
+                    last_result.append(current_process);
+                
+                current_process = last_result;
+            }
+            else {
+                current_process += i;
+            }
+        }
+        return current_process;
     }
 };
 ```

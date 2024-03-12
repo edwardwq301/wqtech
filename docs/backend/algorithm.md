@@ -273,6 +273,245 @@ public:
 ## 图
 [图的存储](https://blog.csdn.net/raelum/article/details/129108365)
 
+### 无向图
+- dfs 求路径
+- dfs 进入顺序，完成顺序（后序），逆完成顺序
+- 求连通分量
+- 二分图
+
+```cpp
+#include "wq.h"
+
+const int vertexCnt = 10;
+
+class Graph {
+public:
+    int V;
+    int E;
+    vector<int> adj[vertexCnt];
+
+    Graph(int vCnt, int eCnt) {
+        this->V = vCnt;
+        this->E = eCnt;
+        for (int i = 0; i < eCnt; ++i) {
+            int a, b;
+            cin >> a >> b;
+            addEdge(a, b);
+        }
+    }
+
+    void addEdge(int a, int b) {
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+};
+
+class DepthFirstPaths {
+
+    bool marked[vertexCnt];
+    int edgeTo[vertexCnt];
+    int start;
+public:
+    DepthFirstPaths(const Graph &g, int start) {
+        this->start = start;
+        dfs(g, start);
+    }
+
+    void dfs(const Graph &g, int v) {
+        marked[v] = true;
+        for (int u: g.adj[v]) {
+            if (!marked[u]) {
+                edgeTo[u] = v;
+                dfs(g, u);
+            }
+        }
+    }
+
+    bool havePathTo(int v) {
+        return marked[v];
+    }
+
+    vector<int> pathTo(int v) {
+        vector<int> path;
+        if (!havePathTo(v)) return path;
+        for (int x = v; x != start; x = edgeTo[x])
+            path.push_back(x);
+        path.push_back(start);
+        reverse(path.begin(), path.end());
+        return path;
+    }
+};
+
+class DepthFirstOrder {
+
+    bool marked[vertexCnt];
+
+public:
+    vector<int> pre;
+    vector<int> post;
+    stack<int> reversePost_stack;
+    vector<int> reverstpost_vec;
+
+    explicit DepthFirstOrder(const Graph &g) {
+        for (int v = 0; v < g.V; ++v)
+            if (!marked[v])
+                dfs(g, v);
+
+        reverse(reverstpost_vec.begin(), reverstpost_vec.end());
+    }
+
+
+private:
+    void dfs(const Graph &g, int s) {
+
+        pre.push_back(s);
+
+        marked[s] = true;
+        for (int w: g.adj[s])
+            if (!marked[w])
+                dfs(g, w);
+
+        post.push_back(s);
+        reversePost_stack.push(s);
+        reverstpost_vec.push_back(s);
+    }
+};
+
+
+// 无向图连通分量
+class CC {
+    bool marked[vertexCnt];
+    int id[vertexCnt];
+    int count = 0;
+public:
+    explicit CC(const Graph &g) {
+        // vertex begin from 0
+        for (int s = 0; s < g.V; s++) {
+            if (!marked[s]) {
+                dfs(g, s);
+                count++;
+            }
+        }
+    }
+
+    bool isconnected(int u, int v) {
+        return id[v] == id[u];
+    }
+
+    int idof(int v) { return id[v]; }
+
+    int countOfCC() const { return count; }
+
+private:
+    void dfs(const Graph &g, int v) {
+        marked[v] = true;
+        id[v] = count;
+        for (int t: g.adj[v]) {
+            if (!marked[t]) {
+                dfs(g, t);
+            }
+        }
+    }
+};
+
+class Cycle {
+    bool marked[vertexCnt];
+    bool haveCycle;
+
+public:
+    Cycle(const Graph &g) {
+        for (int s = 0; s < g.V; ++s)
+            if (!marked[s])
+                dfs(g, s, s);
+    }
+
+    bool hasCycle() const { return haveCycle; }
+
+private:
+    void dfs(const Graph &g, int v, int u) {
+        marked[v] = true;
+        for (int w: g.adj[v]) {
+            if (!marked[w])
+                dfs(g, w, v);
+            else if (w != u) haveCycle = true;
+        }
+    }
+
+};
+
+class TwoColor {
+    bool marked[vertexCnt];
+    bool color[vertexCnt];
+    bool isTwoColorable = true;
+public:
+    bool isTwocolorable() const { return isTwoColorable; }
+
+    explicit TwoColor(const Graph &g) {
+        for (int s = 0; s < g.V; ++s)
+            if (!marked[s])
+                dfs(g, s);
+    }
+
+private:
+    void dfs(const Graph &g, int v) {
+        marked[v] = true;
+        for (int u: g.adj[v]) {
+            if (!marked[u]) {
+                color[u] = !color[v];
+                dfs(g, u);
+            }
+            else if (color[v] == color[u]) isTwoColorable = false;
+        }
+    }
+
+};
+
+void test() {
+
+    Graph undirected(6, 6);
+//    DepthFirstPaths path(undirected, 1);
+//    vector<int> pathto4 = path.pathTo(4);
+//    cout << "path to 4 is ";
+//    for (int x: pathto4)
+//        cout << x << ' ';
+//    cout << endl;
+
+//    CC cc(undirected);
+//    cout << cc.countOfCC();
+
+//    Cycle cycle(undirected);
+//    cout << cycle.hasCycle();
+
+//    TwoColor cantwocolor(undirected);
+//    cout << cantwocolor.isTwocolorable();
+
+    DepthFirstOrder order(undirected);
+    cout << setw(30) << std::left << "dfs order: ";
+    for (int x: order.pre) cout << x << ' ';
+    cout << endl;
+
+    cout << setw(30) << "dfs complete order: ";
+    for (int x: order.post) cout << x << ' ';
+    cout << endl;
+
+    cout << setw(30) << "dfs complete reverse order:";
+    for (int x: order.reverstpost_vec) cout << x << ' ';
+    cout << endl;
+    while (!order.reversePost_stack.empty()) {
+        cout << order.reversePost_stack.top() << ' ';
+        order.reversePost_stack.pop();
+    }
+    cout << endl;
+}
+
+int main() {
+    test();
+    return 0;
+}
+```
+
+
 拓扑排序：dfs的结果逆序一下就是答案，或者每次找入度为零得点，用当前点更新别的点得入度
 ```cpp
 bool marked[graph.v()];
@@ -293,6 +532,8 @@ void topoSortCore(int vertex) {
 ```
 
 求强连通分量：先对**逆图（边全反向）**求出拓扑排序的节点顺序，假如是 `3,2,1,4,6,7`，然后按着这个顺序对**原图** dfs 得强连通分量
+
+
 
 ## string 
 ### 马拉车
@@ -671,39 +912,6 @@ mergesort
     }
     ```
 
-heap
-??? "stl"
-    ```cpp
-    #include "bits/stdc++.h"
-
-    using namespace std;
-
-    vector<int> heap;
-
-    int main() {
-        int n;
-        cin >> n;
-        while (n--) {
-            int op;
-            cin >> op;
-            if (op == 1) {
-                int x;
-                cin >> x;
-                heap.push_back(x);
-                push_heap(heap.begin(), heap.end(), greater<int>());
-    //            make_heap(heap.begin(), heap.end(), greater<int>());
-            }
-            else if (op == 2)
-                cout << heap.front() << endl;
-            else {
-                pop_heap(heap.begin(), heap.end(), greater<int>());
-                heap.pop_back();
-            }
-
-        }
-        return 0;
-    }
-    ```
 
 ## thought
 
