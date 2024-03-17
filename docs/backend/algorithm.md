@@ -18,6 +18,23 @@ void insertSort(vector<int> &todo) {
 }
 ```
 
+我看国内挺多都是先一直在赋值，最后放正确位置
+
+```cpp
+void insertionSort(std::vector<int>& arr) {
+    int n = arr.size();
+    for (int i = 1; i < n; ++i) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+```
+
 select sort: In iteration i, swap a[i] with proper item.
 
 ```cpp
