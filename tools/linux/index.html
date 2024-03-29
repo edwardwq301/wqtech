@@ -22,7 +22,7 @@
       
       
       <link rel="icon" href="../../image/gode.jpg">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.15">
     
     
       
@@ -655,6 +655,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#io" class="md-nav__link">
+    <span class="md-ellipsis">
+      IO
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cheatsheet" class="md-nav__link">
     <span class="md-ellipsis">
       cheatsheet
@@ -744,6 +753,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#io" class="md-nav__link">
+    <span class="md-ellipsis">
+      IO
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cheatsheet" class="md-nav__link">
     <span class="md-ellipsis">
       cheatsheet
@@ -792,14 +810,23 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># if you want to allow password authentication</span>
 </span></code></pre></div></p>
 <p>part3：重启 ssh 服务 <code>sudo systemctl restart ssh</code></p>
-<p>另外我发现还有些<strong>注意</strong>
-- <code>authorized_keys</code> 要能被 wqq 自己读
-- <code>/home/wqq</code> 别人不能有写的权限，就是 user group other 中的 other 不能有 w 权限</p>
+<p>另外我发现还有些<strong>注意</strong></p>
+<ul>
+<li><code>authorized_keys</code> 要能被 wqq 自己读</li>
+<li><code>/home/wqq</code> 别人不能有写的权限，就是 user group other 中的 other 不能有 w 权限</li>
+</ul>
 <p>出错了还可以翻日志</p>
-<p>Ubuntu, Debian:
-- SSH server logs: <code>/var/log/auth.log</code>
-- SSH client logs: <code>/var/log/syslog</code></p>
+<p>Ubuntu, Debian:</p>
+<ul>
+<li>SSH server logs: <code>/var/log/auth.log</code></li>
+<li>SSH client logs: <code>/var/log/syslog</code></li>
+</ul>
 <p>eg: <code>Mar 17 14:06:36 ub sshd[15869]: Authentication refused: bad ownership or modes for directory /home/wqq</code></p>
+<h2 id="io">IO</h2>
+<p>同步（拷贝）IO：假如是同步的 read，直到读完（内核空间拷到用户空间） read 才返回，</p>
+<p>异步（拷贝）IO：read 直接返回，真正拷贝完会使用回调函数通知用户</p>
+<p>eg： 烧水同步，一直看水开了再干别的；烧水异步，水开了会响铃，告诉我开了</p>
+<p><a href="https://www.cyhone.com/articles/reunderstanding-of-non-blocking-io/">参考</a></p>
 <h2 id="cheatsheet">cheatsheet</h2>
 <ul>
 <li><code>adduser</code> is more convenient than <code>useradd</code></li>
@@ -863,7 +890,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["header.autohide", "navigation.sections", "navigation.tracking", "navigation.tabs", "navigation.top", "navigation.indexes", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
+      <script src="../../assets/javascripts/bundle.bd41221c.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       
