@@ -804,6 +804,37 @@ $$(a^Tb^T)^T=ba$$
     ```
 
 
+### 215 数组中的第K个最大元素
+快速选择，经典题目。
+
+普通快排：每次快排后 `[lo,j]` 的元素是 `<=x` 的，`[j+1,hi]` 的元素是 `>=x` 的，当 `lo==hi` 就是答案。要找第 k 大，直接数组弄成降序，寻找下标为 k-1 的元素
+
+```cpp
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        return quick(nums, 0, nums.size() - 1, k - 1);
+    }
+
+    int quick(vector<int>& nums, int lo, int hi, int k) {
+        if (lo >= hi)
+            return nums[k];
+        int i = lo - 1, j = hi + 1;
+        int x = nums[lo + hi >> 1];
+        while (i < j) {
+            do i++; while (nums[i] > x);
+            do j--; while (nums[j] < x);
+            if (i < j)
+                swap(nums[i], nums[j]);
+        }
+        if (k <= j)
+            return quick(nums, lo, j, k);
+        else
+            return quick(nums, j + 1, hi, k);
+    }
+};
+```
+
 ### 229 多数元素2
 - 如果已经出现了，次数加一
 - 如果没出现
@@ -990,6 +1021,29 @@ public:
 };
 ```
 
+
+### 347 前 K 个高频元素
+哈希表记录出现次数，用最大堆挑出答案
+
+```cpp
+class Solution {
+public:
+    unordered_map<int, int> map;
+    priority_queue<pair<int, int>, vector<pair<int, int>>> pq;
+
+    vector<int> topKFrequent(vector<int> &nums, int k) {
+        vector<int> anw;
+        for (int x: nums) map[x]++;
+        for (auto item: map)pq.emplace(item.second, item.first);
+        for (int i = 0; i < k; ++i) {
+            auto item = pq.top();
+            pq.pop();
+            anw.push_back(item.second);
+        }
+        return anw;
+    }
+};
+```
 
 ### 394 字符串解码
 看起来挺简单的，做起来就不是一回事了。直接背下来，另外不要一次处理太多，比如看到一个数字不要再开 while 处理，不然的话在下标上就会很难处理。
