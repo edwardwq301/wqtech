@@ -552,6 +552,233 @@ void topoSortCore(int vertex) {
 
 
 
+### 有向图
+有向图判断有没有环路
+
+```cpp
+class DirectedGraph {
+public:
+    int V;
+    int E;
+    vector<int> adj[N];
+
+    DirectedGraph(int Vcnt) : V(Vcnt) {}
+
+    DirectedGraph(int Vcnt, int Ecnt) : V(Vcnt), E(Ecnt) {}
+
+    void addEdge(int from, int to) { adj[from].push_back(to); }
+
+};
+
+class DirectedCycle {
+    bool marked[N] = {false};
+    bool onStack[N] = {false};
+    int edgeTo[N] = {0};
+
+    bool hasCycle() { return !cycle.empty(); }
+
+public:
+    stack<int> cycle;
+
+    DirectedCycle(const DirectedGraph &G) {
+        for (int v = 0; v < G.V; ++v) {
+            if (!marked[v]) dfs(G, v);
+        }
+    }
+
+    void dfs(const DirectedGraph &G, int v) {
+        onStack[v] = true;
+        marked[v] = true;
+        for (int w: G.adj[v])
+            if (hasCycle()) return;
+            else if (!marked[w]) {
+                edgeTo[w] = v;
+                dfs(G, w);
+            }
+            else if (onStack[w]) {
+                for (int x = v; x != w; x = edgeTo[x])
+                    cycle.push(x);
+
+                cycle.push(w);
+                cycle.push(v);
+            }
+        onStack[v] = false;
+    }
+
+    stack<int> getCycle() { return cycle; }
+};
+```
+
+单源最短路 迪杰斯特拉
+
+```cpp
+
+struct OutEdge {
+    int to, weight;
+
+    bool operator<(OutEdge other) const { return this->weight > other.weight; }
+
+};
+
+class WeightDirectedGraph {
+    int E;
+public:
+
+    int V;
+
+    WeightDirectedGraph(int Vcnt) : V(Vcnt) {}
+
+    WeightDirectedGraph(int Vcnt, int Ecnt) : V(Vcnt), E(Ecnt) {}
+
+    vector<OutEdge> adjs[N];
+
+    void addEdge(int from, int to, int weight) {
+        adjs[from].push_back({to, weight});
+    }
+};
+
+
+class DijkSP {
+    vector<int> dis;
+    vector<int> pathTo;
+public:
+    DijkSP(const WeightDirectedGraph &G, int src) {
+        pathTo = vector<int>(G.V);
+        dis = vector<int>(N, 0x3f3f3f3f);
+        priority_queue<OutEdge> pq; // minheap
+        vector<bool> marked(G.V, false);
+        dis[src] = 0;
+        pq.push({0, 0});
+
+        while (!pq.empty()) {
+            int temV = pq.top().to;
+            pq.pop();
+            if (marked[temV]) continue;
+            marked[temV] = true;
+            for (auto adj: G.adjs[temV]) {
+                int u = adj.to;
+                int disVtoU = adj.weight;
+                if (dis[temV] + disVtoU < dis[u]) {
+                    dis[u] = dis[temV] + disVtoU;
+                    pathTo[u] = temV;
+                }
+                pq.push({u, dis[u]});
+            }
+        }
+    }
+
+    vector<int> getDis() { return dis; }
+
+    vector<int> getPath() { return pathTo; }
+};
+
+
+void test() {
+    WeightDirectedGraph g(3, 3);
+    g.addEdge(0, 1, 1);
+    g.addEdge(1, 2, 1);
+    g.addEdge(0, 2, 10);
+    DijkSP sp(g, 0);
+    auto dis = sp.getDis();
+    for (int x: dis) cout << x << ' ';
+    cout << endl;
+    dis = sp.getPath();
+    for (int x: dis) cout << x << ' ';
+}
+
+int main() {
+    test();
+    return 0;
+}
+```
+
+### 最小生成树
+克鲁斯卡尔
+
+```cpp
+class Edge {
+    int a, b;
+public:
+    int w;
+
+    Edge(int u, int v, int weight) : a(u), b(v), w(weight) {}
+
+    int other(int x) { return x == a ? b : a; }
+
+    int either() { return a; }
+
+    bool operator<(Edge other) const {
+        return this->w > other.w;
+    }
+};
+
+class EdgeWeightGraph {
+public:
+    vector<Edge> list;
+    int E, V;
+
+    EdgeWeightGraph(int Vcnt, int Ecnt) : V(Vcnt), E(Ecnt) {}
+
+    void addEdge(int a, int b, int w) {
+        list.emplace_back(a, b, w);
+    }
+};
+
+class UnionFind {
+    int root[N];
+    int sz[N];
+
+public:
+    UnionFind() { for (int i = 0; i < N; ++i)root[i] = i, sz[i] = 1; }
+
+    void unionTwo(int a, int b) {
+        int ra = getRoot(a), rb = getRoot(b);
+        if (sz[ra] < sz[rb]) {
+            root[ra] = rb;
+            sz[rb] += sz[ra];
+        }
+        else {
+            root[rb] = ra;
+            sz[ra] += sz[rb];
+        }
+    }
+
+    bool connected(int a, int b) {
+        return getRoot(a) == getRoot(b);
+    }
+
+    int getRoot(int a) {
+        while (a != root[a]) {
+            root[a] = root[root[a]];
+            a = root[a];
+        }
+        return a;
+    }
+};
+
+class KruskalMST {
+    queue<Edge> mst;
+    priority_queue<Edge, vector<Edge>> pq;
+    UnionFind uf;
+public:
+    KruskalMST(const EdgeWeightGraph &G) {
+        for (auto x: G.list)pq.push(x);
+
+        while (!pq.empty() && mst.size() < G.V - 1) {
+            Edge e = pq.top();
+            pq.pop();
+            int v = e.either(), w = e.other(v);
+            if (uf.connected(v, w)) continue;
+            uf.unionTwo(v, w);
+            mst.push(e);
+        }
+    }
+
+    queue<Edge> getMST() { return mst; }
+};
+```
+
+
 ## string 
 ### 马拉车
 [讲解](https://www.zhihu.com/question/37289584/answer/465656849)

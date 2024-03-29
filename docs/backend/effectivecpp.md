@@ -10,9 +10,12 @@ reference：
 
 const pointer
 
-- `const`在`*`左边，所指物为`const` （指针可以不同时间指向不同物体，但是物体内容不能改变）
-- `const`在`*`右边，指针为`const` （指针一直指向一个物体，但是物体内容可改变）
+从右往左读，遇到 `*` 替换成 a point to 
 
+- `const int * p`: p is a pointer to int const
+- `int const * p`: p is a pointer to const int
+
+一句话概括： `*` 前修饰的被指向对象， `*` 后是修饰指针。[来源](https://pengfeixc.com/blogs/clang/const-pointer-and-pointer-to-const)
 
 ```cpp
 char p1[] = "hello";
