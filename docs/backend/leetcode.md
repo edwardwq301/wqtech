@@ -486,6 +486,92 @@ public:
 };
 ```
 
+### 55 跳跃游戏
+这个题直接翻译也行，看代码
+
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int> &nums) {
+        if (nums.size() == 1) return true;
+        
+        int canReachMaxIndex = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (canReachMaxIndex >= i)
+                canReachMaxIndex = max(canReachMaxIndex, i + nums[i]);
+            else return false;
+        }
+        return true;
+    }
+};
+```
+
+### 45 跳跃游戏2
+上来没想到太好的方法，用暴力也过了，但明显不是好的解法。
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int> &nums) {
+        vector<int> step(nums.size(), INT_MAX);
+        step[0] = 0;
+        int canGoMaxIndex = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (canGoMaxIndex >= i) {
+                canGoMaxIndex = max(canGoMaxIndex, i + nums[i]);
+                for (int spread = i + 1; spread <= i + nums[i] && spread < nums.size(); ++spread)
+                    step[spread] = min(step[spread], step[i] + 1);
+            }
+        }
+        return step[nums.size() - 1];
+    }
+};
+```
+
+看[题解](https://leetcode.cn/problems/jump-game-ii/solutions/2566727/dai-ma-sui-xiang-lu-leetcode-45tiao-yue-h2u1r)发现其实不用全存，每次存到到边界需要几步就行了，人话就是：border 之内(包含 border)几步可达，结合代码更好理解
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int> &nums) {
+        if(nums.size()==1) return 0;
+
+        int canGoMaxIndex=0,step=0;
+        int broder=0;
+        for(int i=0;i<nums.size();++i){
+            canGoMaxIndex= max(canGoMaxIndex,i+nums[i]);
+            if(i == broder){
+                broder=canGoMaxIndex;
+                step++;
+                if(canGoMaxIndex>=nums.size()-1)  return step;
+            }
+        }
+        return step;
+    }
+};
+```
+
+### 121 买卖股票1
+相当于求 a[j]-a[i] 的最大值（j>i）
+
+暴力就是双重循环，但是其实可以一个循环，利用无后效性，当我们扫到下标为 i 的元素时，只要有 a[0..i-1] 的最小值就好了，而这个最小值可以在扫到 i 之前就在维护
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int hold = INT_MAX; // 可以简化判断·
+        int anw = 0;
+        for (int price : prices) {
+            if (hold < price)
+                anw = max(anw, price - hold);
+            hold = min(hold, price);
+        }
+        return anw;
+    }
+};
+```
+
 ### 124 二叉树中的最大路径和
 
 刚开始想到类似后序遍历，找到左子树和右子树的最大路径和，再和根加一起，方向是对的，但应该不是返回最大路径和，而是以 `root.left/right` 为一端的结果
