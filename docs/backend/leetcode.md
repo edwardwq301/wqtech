@@ -7,7 +7,7 @@ comment: true
 ### 倒水
 有一个容量为8, 5, 3的桶，其中8为满，5和3为空，只能倒满和倒空，想一个办法得到4的水
 
-bfs，注意搜过的状态不在搜，但是为什么这个类只能存到上一步不能存到上上步，很奇怪，求指点🥰
+bfs，注意搜过的状态不在搜，但是为什么这个类只能存到上一步不能存到上上步，待解决
 
 ??? "slove"
 
@@ -332,6 +332,58 @@ public:
     ```
 
 
+### 31 下一个排列
+[题解](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-)
+
+```cpp
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        if (nums.size() == 1)
+            return;
+        if (nums.size() == 2) {
+            swap(nums[0], nums[1]);
+            return;
+        }
+        int k = nums.size() - 2;
+        while (k >= 0 && nums[k] >= nums[k + 1]) // 从右往左找第一个严格升序
+            k--;
+        if (k >= 0) { // 判断不是全降序 [3,2,1]
+            int n = nums.size() - 1;
+            while (nums[n] <= nums[k] && n > k)  // 从右往左找第一个严格大于nums[k]
+                n--;
+            cout << k << ' ' << n;
+            swap(nums[n], nums[k]);
+        }
+
+        sort(nums.begin() + k + 1, nums.end());
+    }
+};
+```
+
+### 41 缺失的第一个正数
+先给出结论，答案会是在 `[1, nums.size+1]` 中
+
+也就是说只要把大小在 `[1,nums.size]` 的数字放到对应的第几位，最后查一遍就能找到答案
+
+```cpp
+class Solution {
+public:
+    int firstMissingPositive(vector<int> &nums) {
+        int sz = nums.size();
+        for (int i = 0; i < sz; ++i) {
+            while (nums[i] >= 1 && nums[i] <= sz &&
+                   nums[i] != nums[nums[i] - 1])
+                swap(nums[i], nums[nums[i] - 1]);
+        }
+        for (int i = 0; i < sz; ++i) {
+            if (nums[i] != i+1) return i + 1;
+        }
+        return sz + 1;
+    }
+};
+```
+
 ### 42 接雨水
 威名远扬啊，手撕接雨水成为[招聘常态](https://www.nowcoder.com/feed/main/detail/6cc9f0f6b4bf44cca6bbfa520f969c6e)😅，希望不是最后茴香豆的茴有几种写法
 
@@ -480,6 +532,112 @@ public:
         for (int i = 0; i < sz; ++i) {
             sum = max(sum + nums[i], nums[i]);
             anw = max(anw, sum);
+        }
+        return anw;
+    }
+};
+```
+
+### 55 跳跃游戏
+这个题直接翻译也行，看代码
+
+```cpp
+class Solution {
+public:
+    bool canJump(vector<int> &nums) {
+        if (nums.size() == 1) return true;
+        
+        int canReachMaxIndex = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (canReachMaxIndex >= i)
+                canReachMaxIndex = max(canReachMaxIndex, i + nums[i]);
+            else return false;
+        }
+        return true;
+    }
+};
+```
+
+### 45 跳跃游戏2
+上来没想到太好的方法，用暴力也过了，但明显不是好的解法。
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int> &nums) {
+        vector<int> step(nums.size(), INT_MAX);
+        step[0] = 0;
+        int canGoMaxIndex = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (canGoMaxIndex >= i) {
+                canGoMaxIndex = max(canGoMaxIndex, i + nums[i]);
+                for (int spread = i + 1; spread <= i + nums[i] && spread < nums.size(); ++spread)
+                    step[spread] = min(step[spread], step[i] + 1);
+            }
+        }
+        return step[nums.size() - 1];
+    }
+};
+```
+
+看[题解](https://leetcode.cn/problems/jump-game-ii/solutions/2566727/dai-ma-sui-xiang-lu-leetcode-45tiao-yue-h2u1r)发现其实不用全存，每次存到到边界需要几步就行了，人话就是：border 之内(包含 border)几步可达，结合代码更好理解
+
+```cpp
+class Solution {
+public:
+    int jump(vector<int> &nums) {
+        if(nums.size()==1) return 0;
+
+        int canGoMaxIndex=0,step=0;
+        int broder=0;
+        for(int i=0;i<nums.size();++i){
+            canGoMaxIndex= max(canGoMaxIndex,i+nums[i]);
+            if(i == broder){
+                broder=canGoMaxIndex;
+                step++;
+                if(canGoMaxIndex>=nums.size()-1)  return step;
+            }
+        }
+        return step;
+    }
+};
+```
+
+### 118 杨辉三角
+难度不大，问题在于空间
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> generate(int numRows) {
+        vector<vector<int>> ret(numRows);
+        for (int i = 0; i < numRows; ++i) {
+            ret[i].resize(i + 1);
+            ret[i][0] = ret[i][i] = 1;
+            for (int j = 1; j < i; ++j) {
+                ret[i][j] = ret[i - 1][j] + ret[i - 1][j - 1];
+            }
+        }
+        return ret;
+    }
+};
+```
+
+### 121 买卖股票1
+相当于求 a[j]-a[i] 的最大值（j>i）
+
+暴力就是双重循环，但是其实可以一个循环，利用无后效性，当我们扫到下标为 i 的元素时，只要有 a[0..i-1] 的最小值就好了，而这个最小值可以在扫到 i 之前就在维护
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int hold = INT_MAX; // 可以简化判断·
+        int anw = 0;
+        for (int price : prices) {
+            if (hold < price)
+                anw = max(anw, price - hold);
+            hold = min(hold, price);
         }
         return anw;
     }
@@ -804,6 +962,86 @@ $$(a^Tb^T)^T=ba$$
     ```
 
 
+### 198 打家劫舍
+开始想的不对，不用标记上一个偷没偷，直接取就行了
+
+=== "空间On"
+
+    ```cpp
+    class Solution {
+    public:
+        int rob(vector<int> &nums) {
+            if(nums.empty()) return 0;
+            if(nums.size()==1) return nums[0];
+            vector<int>dp(nums.size(),0);
+            dp[0]=nums[0];
+            dp[1]=max(nums[1],nums[0]);
+
+            for (int i = 2; i <nums.size() ; ++i) {
+                dp[i]= max(dp[i-1],dp[i-2]+nums[i]);
+            }
+            return dp[nums.size()-1];
+        }
+    };
+    ```
+
+=== "O1"
+
+```cpp
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+        int size = nums.size();
+        if (size == 1) {
+            return nums[0];
+        }
+        int first = nums[0], second = max(nums[0], nums[1]);
+        for (int i = 2; i < size; i++) {
+            int temp = second;
+            second = max(first + nums[i], second);
+            first = temp;
+        }
+        return second;
+    }
+};
+```
+
+### 213 打家劫舍2
+看成是 0-n-1 和 1-n 两部分
+
+```cpp
+
+class Solution {
+public:
+    int rob(vector<int> &nums) {
+        if (nums.size() == 1) return nums[0];
+        if (nums.size() == 2) return max(nums[1], nums[0]);
+
+        int anw0 = choose(nums, 0, nums.size() - 2);
+        int anw1 = choose(nums, 1, nums.size() - 1);
+      //  cout <<anw0<<' ' << anw1;
+        return max(anw0, anw1);
+    }
+
+    int choose(vector<int> &nums, int begin, int end) {
+        vector<int> anw(end - begin + 1);
+        anw[0] = nums[begin];
+        anw[1] = max(nums[begin], nums[begin + 1]);
+        if (begin == 1)
+            for (int i = 2; i < anw.size(); i++)
+                anw[i] = max(anw[i - 1], anw[i - 2] + nums[i + 1]);
+        else {
+            for (int i = 2; i < anw.size(); i++)
+                anw[i] = max(anw[i - 1], anw[i - 2] + nums[i]);
+        }
+        return anw[anw.size() - 1];
+    }
+};
+```
+
 ### 215 数组中的第K个最大元素
 快速选择，经典题目。
 
@@ -841,64 +1079,58 @@ public:
     - 桶还能放，就放到桶里
     - 没有多余的桶，所有的次数减一
 
-可能有出现在数组靠后的元素，会占到桶里，所以重新统计一次（桶的个数多于 1）
+可能有出现在数组靠后的元素，会占到桶里，所以重新统计一次（桶的个数多于 1）,或者抵消了一部分正确数字次数 `eg:[2, 2, 1, 3]`
 
 桶的个数：假如说要找超过 `n/k` 个的元素，桶的个数就是 `k-1` 。假如取 `x` 个， `x*(n/k) <= n  ---> x <= k` ，又因为超过 `n/k` ，所以取 `k-1`
 
-??? "slove"
+```cpp
+class Solution {
+public:
+    //first 存数字，second 存出现次数
+    pair<int, int> bucket[2];
 
-    ```cpp
-    class Solution {
-    public:
-        //first 存数字，second 存出现次数
-        pair<int, int> anw[2];
-        int cnt = 0;
+    void write(int x) { 
+        // item 取引用，因为要修改里边的元素,不然的话里边的值不变
+        for (auto &item: bucket)
+            if (item.first == x) {
+                item.second++;
+                return;
+            }
+        for (auto &item: bucket)
+            if (item.second == 0) {
+                item.first = x;
+                item.second = 1;
+                return;
+            }
+        for (auto &item: bucket)
+            item.second--;
+       
+    }
 
-        void write(int x) {
-            if (anw[0].first == x ) {
-                anw[0].second++;
-                return;
-            }
-            else if (anw[1].first == x ) {
-                anw[1].second++;
-                return;
-            }
-            else if (anw[0].second == 0) {
-                anw[0].first = x;
-                anw[0].second = 1;
-                return;
-            }
-            else if (anw[1].second == 0) {
-                anw[1].first = x;
-                anw[1].second = 1;
-                return;
-            }
-            else {
-                anw[0].second--;
-                anw[1].second--;
-            }
+    vector<int> majorityElement(vector<int> &nums) {
+        bucket[0].first = bucket[1].first = INT_MAX;
+        for (auto x: nums) {
+            write(x);
         }
-        vector<int> majorityElement(vector<int> & nums) {
-            anw[0].first = anw[1].first = INT_MAX;
-            for (auto x : nums) {
-                write(x);
-            }
-            vector<int> res;
-            anw[0].second = anw[1].second = 0;
-            for (auto x : nums) {
-                if (x == anw[0].first)
-                    anw[0].second++;
-                else if (x == anw[1].first)
-                    anw[1].second++;
-            }
-            if (anw[0].second > nums.size() / 3)
-                res.push_back(anw[0].first);
-            if (anw[1].second > nums.size() / 3)
-                res.push_back(anw[1].first);
-            return res;
+
+        vector<int> res;
+        bucket[0].second = bucket[1].second = 0;
+
+        for (auto x: nums) {
+            if (x == bucket[0].first)
+                bucket[0].second++;
+            else if (x == bucket[1].first)
+                bucket[1].second++;
         }
-    };
-    ```
+        if (bucket[0].second > nums.size() / 3)
+            res.push_back(bucket[0].first);
+        if (bucket[1].second > nums.size() / 3)
+            res.push_back(bucket[1].first);
+        return res;
+    }
+};
+```
+
 
 
 ### 232 两个栈实现队列
@@ -1022,6 +1254,47 @@ public:
 ```
 
 
+### 287 寻找重复数
+
+以[1,3,4,2,2]为例，如果有相同数字，相当于会存在一个环
+
+**核心**：
+下标和内容一起做指向
+
+| 下标 | 0   | 1   | 3   | 2   | 4       |
+| ---- | --- | --- | --- | --- | ------- |
+| 内容 | 1   | 3   | 2   | 4   | 2(成环) |
+| 节点 | 1   | 3   | 2   | 4   | 2       |
+
+然后就和[环形链表2](https://leetcode.cn/problems/linked-list-cycle-ii/description/)一个做法，判环找入口
+
+```C++
+class Solution {
+public:
+    vector<int> num;
+
+    int next(int x) { return num[x]; }
+
+    int findDuplicate(vector<int> &nums) {
+        num = nums;
+        int slow = 0;
+        int fast = 0;
+        do {
+            slow = next(slow);
+            fast = next(next(fast));
+        } while (slow != fast);
+
+        fast = 0;
+        while (fast != slow) {
+            fast = next(fast);
+            slow = next(slow);
+        }
+        return fast;
+    }
+};
+```
+
+
 ### 347 前 K 个高频元素
 哈希表记录出现次数，用最大堆挑出答案
 
@@ -1086,6 +1359,138 @@ public:
 };
 ```
 
+
+### 402 移掉K位数字
+假如只要删 1 位 `4321,2341,4231` 很容就看出答案应该删除 4
+
+周姓室友直觉很敏锐啊，如果当前处理的那一位前边有比它大的，大的就应该删除，很自然的想到看前边的状态就用栈。这个题就是单调栈（或者说是从前到后选的时候尽量选一些小的数字，比如 `2341` 选 4 不选 1）
+
+还有一些细节
+
+- 前导零，最开始做法是把 0 也压栈，最后一起处理，另一种是在循环时就处理（什么时候不能入栈呢，就是栈为空且当前处理为 0，反过来就是什么时候能入栈）
+- 空间，开始是用 `anw= x+ anw` 然后 MLE 了，用 `anw += x` 加 `reverse` 就不会
+- 可能没删除够，就弹栈
+
+=== "primary"
+
+    ```cpp
+    class Solution {
+    public:
+        string removeKdigits(string num, int k) {
+
+            if (k >= num.size()) return "0";
+
+            stack<char> st;
+            int removedCnt = 0;
+            for (char x: num) {
+                while (!st.empty() && st.top() > x && removedCnt < k) {
+                    st.pop();
+                    removedCnt++;
+                }
+                st.push(x);
+            }
+
+            while (removedCnt < k) { // 防止没删除够
+                st.pop();
+                removedCnt++;
+            }
+
+            string anw;
+            while (!st.empty()) {
+                anw += st.top();
+                st.pop();
+            }
+
+            std::reverse(anw.begin(), anw.end());
+
+            int begin = 0; // 删除前导零
+            while (begin < anw.size() && anw[begin] == '0') begin++;
+            anw = anw.substr(begin);
+
+            if (anw.empty() || anw[0] == '0') return "0";
+            return anw;
+        }
+    };
+    ```
+
+=== "better"
+
+    ```cpp
+    class Solution {
+    public:
+        string removeKdigits(string num, int k) {
+
+            if (k >= num.size()) return "0";
+
+            stack<char> st;
+            int removedCnt = 0;
+            for (char x: num) {
+                while (!st.empty() && st.top() > x && removedCnt < k) {
+                    st.pop();
+                    removedCnt++;
+                }
+                if (!st.empty() || x != '0')
+                    st.push(x);
+            }
+
+            while (removedCnt < k&&!st.empty()) {
+                st.pop();
+                removedCnt++;
+            }
+
+            string anw;
+            while (!st.empty()) {
+                anw += st.top();
+                st.pop();
+            }
+            std::reverse(anw.begin(), anw.end());
+
+            if (anw.empty()) return "0";
+            return anw;
+        }
+    };
+    ```
+
+### 438 找到字符串中所有字母异位词
+滑动窗口
+
+```cpp
+class Solution {
+public:
+    map<char, int> cnt;
+    map<char, int> should;
+
+    bool check(const string& p) {
+        for (auto item : should) {
+            if (cnt[item.first] != item.second)
+                return false;
+        }
+        return true;
+    }
+
+    vector<int> findAnagrams(string s, string p) {
+        for (char x : p)
+            should[x]++;
+
+        vector<int> anw;
+        int left, right;
+        for (left = 0, right = 0; right < s.size(); right++) {
+            cnt[s[right]]++;
+            while (right - left + 1 > p.size()) { // 长度超了就缩小
+                cnt[s[left]]--;
+                left++;
+            }
+            if (right - left + 1 == p.size() && check(p)) { // 找到了答案
+                anw.push_back(left);
+                // 下边可有可无
+                // cnt[s[left]]--;  
+                // left++;
+            }
+        }
+        return anw;
+    }
+};
+```
 
 ### 739 每日温度
 2024-01-03 看到公众号发的，当时有个朦胧的思路，想到用单调栈，然后发现力扣曾经交过这个题，复习一下
@@ -1153,6 +1558,132 @@ public:
 ```
 
 做出来了，feel good🥰
+
+
+### 1475 商品折扣后最终价格
+这个题和 739 是一个类型，假设 `[4,8,3,7]`，可以用 3 更新前边的 4，8，也就是当前的值比前边的小，就出栈之前内容并更新。
+
+完全可以先复制一份一模一样的，更新的话能更新好之前的。不能更新的也是本身。要不然就是最后再全部出栈
+
+```cpp
+class Solution {
+public:
+    vector<int> finalPrices(vector<int> &prices) {
+        vector<int> anw=prices; // 复制构造函数
+        stack<int> st;
+        for (int i = 0; i < prices.size(); i++) {
+            while (!st.empty() && prices[i] <= prices[st.top()]) {
+                int pre_anw_index = st.top();
+                st.pop();
+                anw[pre_anw_index] = prices[pre_anw_index] - prices[i];
+            }
+            st.push(i);
+        }
+      
+        return anw;
+    }
+};
+```
+
+??? "全部出栈"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> finalPrices(vector<int> &prices) {
+            vector<int> anw(prices.size(), 0);
+            stack<int> st;
+            for (int i = 0; i < prices.size(); i++) {
+                while (!st.empty() && prices[i] <= prices[st.top()]) {
+                    int pre_anw_index = st.top();
+                    st.pop();
+                    anw[pre_anw_index] = prices[pre_anw_index] - prices[i];
+                }
+                st.push(i);
+            }
+            while (!st.empty()) {
+                int pre_anw_index = st.top();
+                st.pop();
+                anw[pre_anw_index] = prices[pre_anw_index];
+            }
+            return anw;
+        }
+    };
+    ```
+
+
+### 763 划分字母区间
+最开始没什么想法，然后仔细读题，发现相同字母都在一个区间，然后连了一下同一个字母的最前和最后，发现可以看成合并区间那道题
+
+```cpp
+class Solution {
+public:
+
+    unordered_map<char, pair<int, int>> dic;
+
+    bool canMerge(pair<int, int> a, pair<int, int> b) {
+        if (a.first > b.second || a.second < b.first)
+            return false;
+        else return true;
+    }
+
+    vector<int> partitionLabels(string s) {
+        int sz = s.size();
+        for (int i = 0; i < sz; ++i) {
+            if (dic.count(s[i])) {
+                dic[s[i]].first = min(dic[s[i]].first, i);
+                dic[s[i]].second = max(dic[s[i]].second, i);
+            }
+            else {
+                dic[s[i]] = {i, i};
+            }
+        }
+
+        vector<int> anw;
+        pair<int, int> broder = {0, 0};
+
+        for (char x: s) {
+            if (canMerge(dic[x], broder)) {
+                broder.first = min(broder.first, dic[x].first);
+                broder.second = max(broder.second, dic[x].second);
+            }
+            else {
+                anw.push_back(broder.second - broder.first + 1);
+                broder = dic[x];
+            }
+        }
+        // don't forget push the last border
+        anw.push_back(broder.second-broder.first+1);
+        return anw;
+    }
+};
+```
+
+过了之后发现时间有点落后，看题解，说的是如果 **i == 当前字母出现的最远位置**，说明找到一个区间，![题解图片](https://pic.leetcode.cn/1683277847-xxagyB-image.png)
+
+```cpp
+class Solution {
+public:
+    vector<int> partitionLabels(string s) {
+        unordered_map<char, int> dic;
+        int sz = s.size();
+        for (int i = 0; i < sz; ++i) {
+            dic[s[i]] = max(dic[s[i]], i);
+        }
+
+        int left = 0, right = 0;
+        vector<int> anw;
+        for (int i = 0; i < sz; ++i) {
+            right = max(right, dic[s[i]]);
+            if (i == right) {
+                anw.push_back(right - left + 1);
+                left = i + 1;
+            }
+        }
+        return anw;
+    }
+};
+```
 
 ### 第K大的数
 
@@ -1429,47 +1960,6 @@ $$
     ```
 
 
-
-### 寻找重复数 要求O(1)空间
-
-[transport](https://leetcode.cn/problems/find-the-duplicate-number/description/)
-
-以[1,3,4,2,2]为例，如果有相同数字，相当于会存在一个环
-
-**核心**：
-下标和内容一起做指向
-
-| 下标 | 0   | 1   | 3   | 2   | 4       |
-| ---- | --- | --- | --- | --- | ------- |
-| 内容 | 1   | 3   | 2   | 4   | 2(成环) |
-| 节点 | 1   | 3   | 2   | 4   | 2       |
-
-然后就和[环形链表2](https://leetcode.cn/problems/linked-list-cycle-ii/description/)一个做法，判环找入口
-
-??? slove
-    ```C++
-    class Solution {
-    public:
-        int findDuplicate(vector<int>& nums) {
-            int low=0,fast=0;
-            //go 1step 2step
-            low=nums[low];
-            fast=nums[nums[fast]];
-            while (low!=fast){
-                low=nums[low];
-                fast=nums[nums[fast]];
-            }
-            //fast goto begin node
-            fast=0;
-            while (low!=fast){
-                low=nums[low];
-                fast=nums[fast];
-            }
-            return fast;
-            
-        }
-    };
-    ```
 
 
 ### [最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
@@ -1787,7 +2277,7 @@ public:
 
     ```
 
-## interesting question
+
 ### Decimal dominants
 Given an array with n keys, design an algorithm to find all values that occur more than  n/10 times. The expected running time of your algorithm should be linear. [题解](https://www.cnblogs.com/evasean/p/7273857.html) 这个让我联想到莫尔投票法的一个题[力扣169](https://leetcode.cn/problems/majority-element/description/)
 
@@ -1827,7 +2317,51 @@ two sum with link node
     };
     ```
 
-### [The Dutch national flag](https://en.wikipedia.org/wiki/Dutch_national_flag_problem)
+### 75 颜色分类
+
+=== "dutchFlag"
+
+    ```cpp
+    class Solution {
+    public:
+        void sortColors(vector<int> &nums) {
+            // num 0 is red, 1 is white, 2 is blue
+            int red = 0, white = 0, blue = nums.size() - 1;
+            while (white <= blue) {
+                if (nums[white] == 0) {
+                    swap(nums[white], nums[red]);
+                    red++;
+                    white++; // white red 都指向0，两者互换后都前进
+                }
+                else if (nums[white] == 2) {
+                    swap(nums[white], nums[blue]);
+                    blue--;
+                }
+                else white++;
+            }
+        }
+    };
+    ```
+
+=== "刷油漆"
+
+    ```cpp
+    class Solution {
+    public:
+    void sortColors(vector<int> &nums) {
+        int l0 = 0, l1 = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            int value = nums[i];
+            nums[i] = 2;
+            if (value <= 1) nums[l1++] = 1;
+            if (value == 0) nums[l0++] = 0;
+        }
+    }
+    };
+    ```
+
+The Dutch national flag. [wikipedia](https://en.wikipedia.org/wiki/Dutch_national_flag_problem)
+
 sort an array of some 0,1,2 in O(n) 
 
 - [0, i-1] < midElement
@@ -1835,27 +2369,24 @@ sort an array of some 0,1,2 in O(n)
 - [j, k] unsorted
 - [k+1, end] >midElement
 
-
-??? "solve"
-
-    ```cpp
-    void dutchFlag(vector<int>&todo){
-        int N=todo.size();
-        int low=0,mid=0,high=N-1;
-        while (mid<=high){
-            if(todo[mid]==0){
-                swap(todo[low],todo[mid]);
-                low++;
-                mid++;
-            }
-            else if(todo[mid]==2){
-                swap(todo[mid],todo[high]);
-                high--;
-            }
-            else mid++;
+```cpp
+void dutchFlag(vector<int>&todo){
+    int N=todo.size();
+    int low=0,mid=0,high=N-1;
+    while (mid<=high){
+        if(todo[mid]==0){
+            swap(todo[low],todo[mid]);
+            low++;
+            mid++;
         }
+        else if(todo[mid]==2){
+            swap(todo[mid],todo[high]);
+            high--;
+        }
+        else mid++;
     }
-    ```
+}
+```
 
 
 ### Merging with smaller auxiliary array

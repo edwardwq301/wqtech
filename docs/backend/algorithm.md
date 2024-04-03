@@ -50,7 +50,7 @@ void selectSort(vector<int> &todo) {
 }
 ```
 
-shell sort: in select sort, some item should move lots step while just move step by step. so we move some item by long distance and shrink the distance 
+shell sort: in insertion sort, some item should move lots step while just move step by step. so we move some item by long distance and shrink the distance 
 
 ```cpp
 void shellSort(vector<int> &todo) {
@@ -65,6 +65,23 @@ void shellSort(vector<int> &todo) {
         }
         h = h / 3;
     }
+}
+```
+
+bubble sort: 每轮冒泡结束的有序部分是全局有序，插入排序（insert sort）是局部有序
+
+```cpp
+void BubbleSort (vector < int >&num){
+    for (int i = 0; i < num.size (); i++){
+        bool flag = false;
+        for (int j = num.size () - 1; j > i; j--)
+            if (num[j - 1] > num[j]){
+                swap (num[j - 1], num[j]);
+                flag = true;
+            }
+        if (flag == false)
+            return;
+        }
 }
 ```
 
