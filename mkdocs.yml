@@ -1,10 +1,10 @@
 site_name: WQ book
 site_author: WQ
 site_description: WQ's notebook by mkdocs
-site_url: https://beautifulwq.github.io/wqtech
+site_url: https://edwardwq301.github.io/wqtech
 
 repo_name: wqtech
-repo_url: https://github.com/beautifulwq/wqtech
+repo_url: https://github.com/edwardwq301/wqtech
 
 copyright: '<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-NC 4.0</a>'
 
