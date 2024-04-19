@@ -849,6 +849,79 @@ public:
 ```
 
 ### KMP
+出自编译原理那本龙书（汉化第二版 86 页）
+
+下面都是**从 1 开始计数**
+1. 先构造这样的函数表示 $$b_1b_2..b_{f(s)}$$ 既是整个 pattern 的 s 位真前缀，也是 s 位真后缀，两者相同。
+
+2. 当匹配 s 个字母成功，s+1 个字母失败时，将 pattern 移动 s-f(s) 位 
+
+```txt
+no          1 2 3 4 5 6
+word        a b a b x       // fail on no.5, and move 4-2=2 char
+pattern     a b a b a b
+f(s)        0 0 1 2 3 1
+
+---
+word        a b a b x
+pattern         a b a b a b
+
+```
+
+实现
+```cpp
+#include "vector"
+#include "string"
+#include"iostream"
+
+using namespace std;
+
+vector<int> SolveLose(string pattern) {
+    vector<int> lose(pattern.size(), 0);
+    for (int slow = 0, fast = 1; fast < pattern.size(); fast++) {
+        while (slow > 0 && pattern[slow] != pattern[fast]) slow = lose[slow - 1];
+        if (pattern[slow] == pattern[fast]) {
+            slow++;
+            lose[fast] = slow;
+        }
+        else lose[fast] = 0;
+    }
+
+    // for (int x: lose)cout << x << ' ';
+    return lose;
+}
+
+void Search(string word, string pat) {
+    auto lose = SolveLose(pat);
+    int w = 0, p = 0;
+    while (w < word.size()) {
+        if (word[w] == pat[p]) {
+            w++;
+            p++;
+        }
+        else if (p > 0) p = lose[p - 1];
+        else w++;
+
+        if (p == pat.size()) {
+            cout << w - pat.size() << ' ';
+            p = lose[p - 1];
+        }
+    }
+
+}
+
+int main() {
+    int n, m;
+    string pat, word;
+    cin >> n >> pat >> m >> word;
+    Search(word, pat);
+    return 0;
+}
+```
+
+#### 红皮书
+待续
+
 ```cpp
 #include <algorithm>
 #include <bits/stdc++.h>

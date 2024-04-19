@@ -332,6 +332,86 @@ public:
     ```
 
 
+### 17 电话号码组合
+典型回溯
+
+```cpp
+class Solution {
+public:
+    unordered_map<char, vector<char>> orders;
+    vector<string> anw;
+    string res;
+
+    vector<string> letterCombinations(string digits) {
+        if(digits.empty()) return vector<string>{};
+        setting();
+        dfs(digits, 0);
+        return anw;
+    }
+
+    void dfs(const string& digits, int now_index) {
+        if (now_index == digits.size()) {
+            anw.push_back(res);
+        }
+        for (int i = 0; i < orders[digits[now_index]].size(); i++) {
+            res.push_back(orders[digits[now_index]][i]);
+            dfs(digits, now_index + 1);
+            res.pop_back();
+        }
+    }
+
+    void setting() {
+        orders['2'] = {'a', 'b', 'c'};
+        orders['3'] = {'d', 'e', 'f'};
+        orders['4'] = {'g', 'h', 'i'};
+        orders['5'] = {'j', 'k', 'l'};
+        orders['6'] = {'m', 'n', 'o'};
+        orders['7'] = {'p', 'q', 'r', 's'};
+        orders['8'] = {'t', 'u', 'v'};
+        orders['9'] = {'w', 'x', 'y', 'z'};
+    }
+};
+```
+
+### 22 括号生成
+最开始想的是在当前基础前边加 `()`，后边加 `()`，包裹当前 `(cur)`。然后错了，因为少了 `(())(())` 这种。
+
+还得是一次拼接一个 `(` 或者 `)`
+
+```cpp
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        dfs(n, n);
+        return anw;
+    }
+
+    vector<string> anw;
+    string res;
+
+    void dfs(int left_can_use, int right_can_use) {
+        if (!left_can_use && !right_can_use) {
+            anw.push_back(res);
+            return;
+        }
+
+        // 一定不存在正确的匹配 )(((((
+        if (left_can_use > right_can_use) return; 
+        
+        if (left_can_use > 0) {
+            res.push_back('(');
+            dfs(left_can_use - 1, right_can_use);
+            res.pop_back();
+        }
+        if (right_can_use > 0) {
+            res.push_back(')');
+            dfs(left_can_use, right_can_use - 1);
+            res.pop_back();
+        }
+    }
+};
+```
+
 ### 31 下一个排列
 [题解](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-)
 
@@ -357,6 +437,43 @@ public:
         }
 
         sort(nums.begin() + k + 1, nums.end());
+    }
+};
+```
+
+### 39 组合总和
+和 78 子集有点像，都是前边有些不选，从当前开始选，也是回溯
+
+```cpp
+class Solution {
+public:
+    vector<int> res;
+    vector<vector<int>> anw;
+    int target;
+    int now_sum;
+
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        this->target = target;
+        std::sort(candidates.begin(), candidates.end());
+        dfs(candidates, 0);
+        return anw;
+    }
+
+    void dfs(vector<int>& nums, int begin_index) {
+        if (now_sum == target) {
+            anw.push_back(res);
+            return;
+        } else if (now_sum > target || begin_index >= nums.size()) {
+            return;
+        }
+
+        for (int i = begin_index; i < nums.size(); i++) {
+            res.push_back(nums[i]);
+            now_sum += nums[i];
+            dfs(nums, i); // 这个地方是 i 不是 begin_index
+            now_sum -= nums[i];
+            res.pop_back();
+        }
     }
 };
 ```
@@ -519,6 +636,45 @@ public:
 };
 ```
 
+### 51 N皇后
+难点主要在怎么判断斜着，发现 y+x 对应右上到左下，y-x 对应从左上到右下，但是 y-x 有可能是负的，就加 n 调成非负，也可以用哈希表
+
+```cpp
+class Solution {
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        martix = vector<string>(n, string(n, '.'));
+        dfs(0, n);
+        return anw;
+    }
+
+    vector<vector<string>> anw;
+    vector<string> martix;
+    bool cols[10] = {false};
+    bool left_to_right[20] = {false};
+    bool right_to_left[20] = {false};
+
+    void dfs(int row, int n) {
+        if (row == n) {
+            anw.push_back(martix);
+            return;
+        }
+        for (int col = 0; col < n; col++) {
+            if (!cols[col] &&
+                !right_to_left[col + row] &&
+                !left_to_right[col - row + n]) {
+
+                cols[col] = right_to_left[col + row] = left_to_right[col - row + n] = true;
+                martix[row][col] = 'Q';
+                dfs(row + 1, n);
+                martix[row][col] = '.';
+                cols[col] = right_to_left[col + row] = left_to_right[col - row + n] = false;
+            }
+        }
+    }
+};
+```
+
 ### 53 最大子数组和
 经典 dp 题。无后效性，我的理解是只看它和它之前的事情，不看后边的，可以化简问题；`dp[i]` 表示以 i 为结尾的最大子数组和，所以 `dp[i]=max(dp[i-1]+nums[i], nums[i])` ，优化空间的话不是 anw=max(anw+nums[i], nums[i]), 因为这样求出来的是 dp[end] ，不是 dp[1..end] 中的最大值。用另一个 sum 记录就好了
 
@@ -599,6 +755,113 @@ public:
             }
         }
         return step;
+    }
+};
+```
+
+### 78 子集
+回溯没想出来，可以一个一个放，在上次的结果的每一项加一个新数。比如 `[1,2,3]` 的子集是在 `[1,2]` 的子集基础上每项都加 `3`
+
+```cpp
+class Solution {
+public:
+    vector<int> res;
+    vector<vector<int>> anw;
+
+    vector<vector<int>> subsets(vector<int> &nums) {
+        res={};
+        anw.push_back(res);
+        for (int num: nums) {
+            auto last=anw;
+            for(auto item:last){
+                item.push_back(num);
+                anw.push_back(item);
+            }
+        }
+        return anw;
+    }
+};
+```
+
+[回溯](https://leetcode.cn/problems/subsets/solutions/2566767/dai-ma-sui-xiang-lu-leetcode78zi-ji-by-c-yujc)
+
+![回溯树](https://pic.leetcode.cn/1674874362-hBHNCS-image.png)
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> anw;
+    vector<int> res;
+
+    vector<vector<int>> subsets(vector<int> &nums) {
+        dfs(nums, 0);
+        return anw;
+    }
+
+    void dfs(vector<int> &nums, int begin_choose_index) {
+        anw.push_back(res);
+
+        if (begin_choose_index == nums.size()) {
+            return;
+        }
+        for (int i = begin_choose_index; i < nums.size(); i++) {
+            res.push_back(nums[i]);
+            dfs(nums, i + 1);
+            res.pop_back();
+        }
+    }
+};
+```
+
+### 79 单词搜索
+dfs
+
+```cpp
+class Solution {
+public:
+    string target;
+    string now;
+    vector<vector<bool>> used;
+    int dx[4] = {0, 0, -1, 1};
+    int dy[4] = {1, -1, 0, 0};
+
+    bool exist(vector<vector<char>> &board, string word) {
+        target = word;
+        used = vector<vector<bool>>(board.size(),
+                                    vector<bool>(board[0].size(), false));
+        for (int i = 0; i < board.size(); i++)
+            for (int j = 0; j < board[0].size(); j++) {
+                bool anw = dfs(now, 0, i, j, board);
+                if (anw)
+                    return true;
+            };
+        return false;
+    }
+
+    bool dfs(string& now, int posi, int x, int y, vector<vector<char>> &board) {
+
+        if (target[posi] != board[x][y])
+            return false;
+
+        now += board[x][y];
+        used[x][y] = true;
+
+        if (now == target)
+            return true;
+
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i], ny = y + dy[i];
+            if (nx >= 0 && nx < board.size() &&
+                ny >= 0 && ny < board[0].size() &&
+                !used[nx][ny])
+                if (dfs(now, posi + 1, nx, ny, board))
+                    return true;
+        }
+
+        now.pop_back();
+        used[x][y] = false;
+
+        return false;
     }
 };
 ```
@@ -901,6 +1164,47 @@ public:
     };
 
     ```
+
+### 131 分割回文串
+和 78 子集有点像，但是子集那个是路上全收集，这个部分收集
+
+```cpp
+class Solution {
+public:
+    vector<vector<string>> partition(string s) {
+        dfs(0, s);
+        return anw;
+    }
+
+    vector<vector<string>> anw;
+    vector<string> res;
+
+    void dfs(int begin_index, const string s) {
+        if (begin_index == s.size()) {
+            anw.push_back(res);
+            return;
+        }
+        for (int i = begin_index; i < s.size(); i++) {
+            string substr = s.substr(begin_index, i - begin_index + 1);
+            if (isSim(substr))
+                res.push_back(substr);
+            else
+                continue;
+            dfs(i + 1, s);
+            res.pop_back();
+        }
+    }
+
+    bool isSim(const string s) {
+        for (int i = 0; i < s.size() / 2; i++) {
+            if (s[i] != s[s.size() - 1 - i])
+                return false;
+        }
+        return true;
+    }
+};
+
+```
 
 ### 155 最小栈
 用一个辅助栈存最小值，push 如果 `val <= minst.top` push 进，不然跳过，假如说是 5， 3， 4 这个例子，只要 3 不从真实栈出来，无论后面 4 怎么进出真实栈都不改变最小值。但如果又来一个 3 就要进辅助栈，是为了弹出后来的 3 时，辅助栈最小值还是 3（之前先来的那个）
@@ -1491,6 +1795,105 @@ public:
     }
 };
 ```
+
+### 560 和为 K 的子数组
+开始以为是滑动窗口，但是带负数，做不出来，提示有前缀和，之后暴力找的
+
+```cpp
+class Solution {
+public:
+    int subarraySum(vector<int> &nums, int k) {
+
+        vector<int> prefix(nums.size() , 0);
+        prefix[0] = nums[0];
+        for (int i = 1; i < prefix.size(); i++) {
+            prefix[i] = prefix[i - 1] + nums[i];
+        }
+
+       int anw=0;
+        for(int i=0;i<prefix.size();i++){
+            if(prefix[i]==k) anw++;
+            for(int r=i+1;r<prefix.size();r++){
+                if(prefix[r]-prefix[i]==k) anw++;
+            }
+        }
+        return anw;
+    }
+};
+```
+
+看了题解，前缀和加哈希表，每次相当于找 `prefix[j]-prefix[i]=k, j>i` 进行移项后 `prefix[j]-k=prefix[i], j>i` 可以看成两数之和那道题，非常的巧妙
+
+为了解决 `prefix[j] = k` 的情况 ` eg: [1, 0] k = 1`，有两种方法
+
+1. 上来就记录 `mp[0] = 1`
+2. 循环内特判
+
+=== "未优化"
+
+    ```cpp
+    class Solution {
+    public:
+        int subarraySum(vector<int> &nums, int k) {
+
+            vector<int> prefix(nums.size(), 0);
+            prefix[0] = nums[0];
+            for (int i = 1; i < prefix.size(); i++) {
+                prefix[i] = prefix[i - 1] + nums[i];
+            }
+            unordered_map<int, int> mp;
+            mp[0] = 1;
+            int anw = 0;
+            for (int i = 0; i < prefix.size(); i++) {
+                if (mp.find(prefix[i] - k) != mp.end())
+                    anw += mp[prefix[i] - k];
+                mp[prefix[i]]++;
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "优化1"
+
+    ```cpp
+    class Solution {
+    public:
+        int subarraySum(vector<int> &nums, int k) {
+            int anw=0,sum=0;
+            unordered_map<int,int>mp;
+            mp[0]=1;
+            for(int num:nums){
+                sum+=num;
+                if(mp.find(sum-k)!=mp.end())
+                    anw+=mp[sum-k];
+                mp[sum]++;
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "优化2"
+
+    ```cpp
+    class Solution {
+    public:
+        int subarraySum(vector<int> &nums, int k) {
+            int anw=0,sum=0;
+            unordered_map<int,int>mp;
+        //  mp[0]=1;  // 不进行 mp[0]=1 就特判
+            for(int num:nums){
+                sum+=num;
+                if(sum==k) anw++;
+                if(mp.find(sum-k)!=mp.end()) // 这行没有也行，因为没有的项结果为0
+                    anw+=mp[sum-k];
+                mp[sum]++;
+            }
+            return anw;
+        }
+    };
+    ```
 
 ### 739 每日温度
 2024-01-03 看到公众号发的，当时有个朦胧的思路，想到用单调栈，然后发现力扣曾经交过这个题，复习一下
@@ -2561,118 +2964,119 @@ int main() {
 
 ## codeforces
 
-### [lakes](https://codeforces.com/contest/1829/problem/E)
+### lakes
+[链接](https://codeforces.com/contest/1829/problem/E)
 
-??? "lakes"
+这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
 
-    这个题在于剪枝，有的不用再dfs了，不然超时。假如（1，1）和（1，2）联通，dfs（1，1）和dfs（1，2）是一个结果。
-    ```C++
-    #include <cstring>
-    #include "iostream"
+```cpp
+#include <cstring>
+#include "iostream"
 
-    using namespace std;
-    const int N = 1010;
-    int gra[N][N];
-    int n, m;
-    int total;
-    int dx[4] = {0, 0, -1, 1};
-    int dy[4] = {1, -1, 0, 0};
-    bool visited[N][N];
+using namespace std;
+const int N = 1010;
+int gra[N][N];
+int n, m;
+int total;
+int dx[4] = {0, 0, -1, 1};
+int dy[4] = {1, -1, 0, 0};
+bool visited[N][N];
 
 
-    int dfs(int a, int b) {
-        visited[a][b] = true;
-        if (gra[a][b] == 0) return 0;
-        int anw = gra[a][b];
+int dfs(int a, int b) {
+    visited[a][b] = true;
+    if (gra[a][b] == 0) return 0;
+    int anw = gra[a][b];
 
-        for (int i = 0; i < 4; i++) {
-            int nx = a + dx[i];
-            int ny = b + dy[i];
-            if (nx >= 1 && nx <= n && ny >= 1 && ny <= m
-                && gra[nx][ny] > 0 && visited[nx][ny] == false) { anw += dfs(nx, ny); }
-        }
-        return anw;
+    for (int i = 0; i < 4; i++) {
+        int nx = a + dx[i];
+        int ny = b + dy[i];
+        if (nx >= 1 && nx <= n && ny >= 1 && ny <= m
+            && gra[nx][ny] > 0 && visited[nx][ny] == false) { anw += dfs(nx, ny); }
     }
+    return anw;
+}
 
-    void solve() {
+void solve() {
 
-        int fin = 0;
-        cin >> n >> m;
+    int fin = 0;
+    cin >> n >> m;
 
-        for (int i = 1; i <= n; i++)
-            for (int j = 1; j <= m; j++)
-                cin >> gra[i][j];
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            cin >> gra[i][j];
 
 
-        memset(visited, 0, sizeof visited);
-        for (int i = 1; i <= n; i++)
-            for (int j = 1; j <= m; j++) {
-                if (gra[i][j] != 0 && visited[i][j] == false) {
+    memset(visited, 0, sizeof visited);
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++) {
+            if (gra[i][j] != 0 && visited[i][j] == false) {
 
-                    fin = max(dfs(i, j), fin);
-                }
+                fin = max(dfs(i, j), fin);
             }
-        cout << fin << endl;
+        }
+    cout << fin << endl;
 
-    }
+}
 
-    int main() {
+int main() {
 
-        cin >> total;
-        while (total--)
-            solve();
-        return 0;
-    }
+    cin >> total;
+    while (total--)
+        solve();
+    return 0;
+}
 
-    ```
+```
 
-### [Hits Different](https://codeforces.com/contest/1829/problem/G)
+### Hits Different
+[链接](https://codeforces.com/contest/1829/problem/G)
 
 [前缀和动画讲解](https://usaco.guide/silver/more-prefix-sums?lang=cpp#2d-prefix-sums)
 
-??? "solve"
+非常巧妙啊，转成前缀和,详情可以见相应英文题解
 
-    非常巧妙啊，转成前缀和,详情可以见相应英文题解
-    ```C++
-    #include "iostream"
+```cpp
+#include "iostream"
 
-    using namespace std;
+using namespace std;
 
-    typedef long long  llint;
-    llint anw[2050000];
-    llint gra[2029][2029];
-    llint cur = 1;
+typedef long long  llint;
+llint anw[2050000];
+llint gra[2029][2029];
+llint cur = 1;
 
-    void solve() {
-        llint x;
-        cin >> x;
-        cout << anw[x] << endl;
-    }
+void solve() {
+    llint x;
+    cin >> x;
+    cout << anw[x] << endl;
+}
 
-    int main() {
-        ios::sync_with_stdio(false);
-        cin.tie(nullptr);
-        int n;
-        for (int i = 1; i <= 2023; i++)
-            for (int j = i; j >= 1; j--) {
-                gra[j][i - j + 1] = gra[j - 1][i - j + 1] + gra[j][i - j + 1 - 1]
-                                    - gra[j - 1][i - j + 1 - 1]
-                                    + cur * cur;
-                anw[cur] = gra[j][i - j + 1];
-                cur++;
-            }
-        cin >> n;
-        while (n--)
-            solve();
-        return 0;
-    }
-    ```
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int n;
+    for (int i = 1; i <= 2023; i++)
+        for (int j = i; j >= 1; j--) {
+            gra[j][i - j + 1] = gra[j - 1][i - j + 1] + gra[j][i - j + 1 - 1]
+                                - gra[j - 1][i - j + 1 - 1]
+                                + cur * cur;
+            anw[cur] = gra[j][i - j + 1];
+            cur++;
+        }
+    cin >> n;
+    while (n--)
+        solve();
+    return 0;
+}
+```
 
-### [Distinct Split](https://codeforces.com/contest/1791/problem/D)
+### Distinct Split
+[链接](https://codeforces.com/contest/1791/problem/D)
 
-??? slove
-    1. 一次遍历统计出所有字母的出现次数
-    2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
-    3. 统计所有字母，进行加和；
-    巧妙在相当于并行处理2个字符串，想不出来😥 
+1. 一次遍历统计出所有字母的出现次数
+2. 从前往后开始算，给pre分一个字母，就在该字母出现总数-1
+3. 统计所有字母，进行加和；
+
+巧妙在相当于并行处理2个字符串，想不出来😥 
 
