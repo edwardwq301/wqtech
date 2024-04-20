@@ -2221,6 +2221,61 @@ public:
 };
 ```
 
+### 199 二叉树的右视图
+观察到答案是每层的最后一个
+
+```cpp
+class Solution {
+public:
+    vector<int> rightSideView(TreeNode* root) {
+
+        vector<int> anw;
+        if (root == nullptr)
+            return anw;
+        queue<TreeNode*> qu;
+        qu.push(root);
+        while (!qu.empty()) {
+            int k = qu.size();
+            for (int i = 0; i < k; i++) {
+                TreeNode* item = qu.front();
+                qu.pop();
+                if (i == k - 1)
+                    anw.push_back(item->val);
+                if (item->left)
+                    qu.push(item->left);
+                if (item->right)
+                    qu.push(item->right);
+            }
+        }
+        return anw;
+    }
+};
+```
+
+dfs：根右左，如果答案个数和层数（从 0 开始）相同，放入
+
+```cpp
+class Solution {
+public:
+    vector<int> anw;
+
+    vector<int> rightSideView(TreeNode *root) {
+
+        if (root == nullptr) return anw;
+        dfs(root, 0);
+        return anw;
+    }
+
+    void dfs(TreeNode *root, int depth) {
+        if (root == nullptr) return;
+        if (depth == anw.size()) anw.push_back(root->val);
+
+        dfs(root->right, depth + 1);
+        dfs(root->left, depth + 1);
+    }
+};
+```
+
 ### 213 打家劫舍2
 看成是 0-n-1 和 1-n 两部分
 
@@ -2285,6 +2340,49 @@ public:
 };
 ```
 
+### 225 两个队列实现栈
+每次放的时候先放到辅助队列，把主队列的内容全导入辅助，在把辅助队列导入主队列
+
+或者放的时候先放到主队列，出的时候先把前 n-1 个放到辅助队列，弹出答案，再把辅助队列内容挪回主队列
+
+```cpp
+class MyStack {
+public:
+    queue<int> que;
+    queue<int> aux;
+
+    MyStack() {
+
+    }
+
+    void push(int x) {
+        aux.push(x);
+        while (!que.empty()) {
+            aux.push(que.front());
+            que.pop();
+        }
+        swap(que, aux);
+    }
+    
+    int pop() {
+        int r = que.front();
+        que.pop();
+        return r;
+    }
+    
+    int top() {
+        int r = que.front();
+        return r;
+    }
+    
+    bool empty() {
+        return que.empty();
+    }
+};
+
+
+```
+
 ### 229 多数元素2
 - 如果已经出现了，次数加一
 - 如果没出现
@@ -2345,6 +2443,34 @@ public:
 
 
 
+### 230 二叉搜索树第k个元素
+中序遍历时统计个数
+
+```cpp
+class Solution {
+public:
+    int kthSmallest(TreeNode *root, int k) {
+
+        this->k = k;
+        dfs(root);
+        return anw;
+    }
+
+    int k, anw, cnt;
+
+    void dfs(TreeNode *root) {
+        if (root == nullptr) return;
+        dfs(root->left);
+        cnt++;
+        if (cnt == k) {
+            anw = root->val;
+            return;
+        }
+        dfs(root->right);
+    }
+};
+```
+
 ### 232 两个栈实现队列
 push 的时候好说，在 pop 的时候没有必要全倒腾，只有在输出栈为空的时候再倒腾就行了
 
@@ -2391,6 +2517,23 @@ push 的时候好说，在 pop 的时候没有必要全倒腾，只有在输出�
         }
     };
     ```
+
+### 236 二叉树的最近公共祖先
+只感觉出是后序遍历（当时红皮书图论看有没有环），但是在祖先是本身和上边节点卡了
+
+```cpp
+class Solution {
+public:
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
+        // 找到就返回一个，所以最上层
+        if (root == nullptr || root == q | root == p) return root;
+        TreeNode *left = lowestCommonAncestor(root->left, p, q);
+        TreeNode *right = lowestCommonAncestor(root->right, p, q);
+        if (left && right) return root;
+        else left ? left : right;
+    }
+};
+```
 
 ### 238 除自身以外数组的乘积
 前缀和思路，这个是前缀乘和后缀乘。
@@ -2710,6 +2853,36 @@ public:
     };
     ```
 
+### 437 路径总和
+
+```cpp
+class Solution {
+public:
+    unordered_map<long long, int> map;
+    int anw = 0;
+
+    int pathSum(TreeNode *root, int targetSum) {
+        map[0] = 1;
+        dfs(root, 0, targetSum);
+        return anw;
+    }
+
+    void dfs(TreeNode *root, long long sum, int targetSum) {
+        if (root == nullptr) return;
+        
+        sum += root->val;
+        if (map.count(sum - targetSum))
+            anw += map[sum - targetSum];
+            
+        map[sum]++;
+        dfs(root->left, sum, targetSum);
+        dfs(root->right, sum, targetSum);
+        map[sum]--;
+
+    }
+};
+```
+
 ### 438 找到字符串中所有字母异位词
 滑动窗口
 
@@ -2747,6 +2920,29 @@ public:
             }
         }
         return anw;
+    }
+};
+```
+
+### 543 二叉树的直径
+后序遍历找到左子树的最大深度，右子树的最大深度，加起来就是当前节点为根的直径，有可能不经过根节点，所以用全局变量
+
+```cpp
+class Solution {
+public:
+    int anw = 0;
+    int diameterOfBinaryTree(TreeNode* root) {
+        if (root == nullptr) return 0;
+        dfs(root);
+        return anw;
+    }
+
+    int dfs(TreeNode* root) {
+        if (root == nullptr) return 0;
+        int left = dfs(root->left);
+        int right = dfs(root->right);
+        anw = max(anw, left + right);
+        return max(left, right) + 1;
     }
 };
 ```
