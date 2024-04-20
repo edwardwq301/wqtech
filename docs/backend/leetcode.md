@@ -2,8 +2,6 @@
 comment: true
 ---
 
-## leetcode
-
 ### 倒水
 有一个容量为8, 5, 3的桶，其中8为满，5和3为空，只能倒满和倒空，想一个办法得到4的水
 
@@ -694,6 +692,77 @@ public:
 };
 ```
 
+### 54 螺旋矩阵
+这个好像之前抄过的，现在能写出来了😋，但是空间开的多
+
+```cpp
+class Solution {
+public:
+
+    int m, n;
+    vector<vector<bool>> visited;
+
+    vector<int> spiralOrder(vector<vector<int>> &matrix) {
+        m = matrix.size();
+        n = matrix[0].size();
+        visited = vector<vector<bool>>(m, vector<bool>(n, false));
+        vector<int> anw(m * n, 0);
+        pair<int, int> move[4];
+        move[0] = {0, 1};
+        move[1] = {1, 0};
+        move[2] = {0, -1};
+        move[3] = {-1, 0};
+
+        for (int x = 0, y = 0, cnt = 0, mv = 0; cnt < matrix.size() * matrix[0].size();) {
+            visited[x][y] = true;
+            anw[cnt++] = matrix[x][y];
+            int nx = x + move[mv].first;
+            int ny = y + move[mv].second;
+            if (isvalid(nx, ny)) x = nx, y = ny;
+            else {
+                mv = (mv + 1) % 4;
+                x += move[mv].first;
+                y += move[mv].second;
+            }
+        }
+        return anw;
+    }
+
+    bool isvalid(int x, int y) {
+        return x >= 0 && x < m && y >= 0 && y < n && !visited[x][y];
+    }
+};
+```
+
+优化，只用 4 个变量维护上下左右的界限，死循环放，只要边界非法说明放完了，返回即可
+
+```cpp
+class Solution {
+public:
+
+    vector<int> spiralOrder(vector<vector<int>> &matrix) {
+        vector<int> anw;
+        if (matrix.empty()) return anw;
+
+        int up = 0, down = matrix.size()-1, left = 0, right = matrix[0].size() - 1;
+        while (true) {
+            for (int i = left; i <= right; i++)anw.push_back(matrix[up][i]);
+            if (++up > down) break;
+
+            for (int i = up; i <= down; i++)anw.push_back(matrix[i][right]);
+            if (--right < left) break;
+
+            for (int i = right; i >= left; i--) anw.push_back(matrix[down][i]);
+            if (--down < up) break;
+
+            for (int i = down; i >= up; i--)anw.push_back(matrix[i][left]);
+            if (++left > right) break;
+        }
+        return anw;
+    }
+};
+```
+
 ### 55 跳跃游戏
 这个题直接翻译也行，看代码
 
@@ -755,6 +824,164 @@ public:
             }
         }
         return step;
+    }
+};
+```
+
+### 73 矩阵置0
+- 第一种用集合存对应的行、列，最后集中置零
+- 第二种用第一行，第一列做标记，（先记录第一行，第一列要不要置0），假如 `martix[i][j] = 0`，那么 `martix[i][0] = martix[0][j] = 0` （打上置零标记），最后集中处理
+
+=== "set"
+
+    ```cpp
+    class Solution {
+    public:
+        set<int> rows, cols;
+
+        void setZeroes(vector<vector<int>> &matrix) {
+            for (int row = 0; row < matrix.size(); row++) {
+                for (int col = 0; col < matrix[0].size(); col++)
+                    if (matrix[row][col] == 0) {
+                        rows.insert(row);
+                        cols.insert(col);
+                    }
+            }
+            for(int row:rows){
+                for(int & item : matrix[row])
+                    item=0;
+            }
+            for(int col:cols)
+            {
+                for(auto & i : matrix){
+                    i[col]=0;
+                }
+            }
+        }
+    };
+    ```
+
+=== "flag"
+
+    ```cpp
+    class Solution {
+    public:
+
+        void setZeroes(vector<vector<int>> &matrix) {
+            // 检查第 0 行 第 0 列
+            int col0_flag = false, row0_flag = false;
+            for (int item_row0: matrix[0])
+                if (!item_row0) {
+                    row0_flag = true;
+                    break;
+                }
+            for (auto &i: matrix)
+                if (!i[0]) {
+                    col0_flag = true;
+                    break;
+                }
+            
+            // 检查中间
+            for (int row = 1; row < matrix.size(); row++)
+                for (int col = 1; col < matrix[0].size(); col++)
+                    if (!matrix[row][col]) {
+                        matrix[row][0] = matrix[0][col] = 0;
+                    }
+            // 修改中间
+            for (int i = 1; i < matrix.size(); i++) {
+                if (matrix[i][0] == 0)
+                    for (int k = 1; k < matrix[0].size(); k++)
+                        matrix[i][k] = 0;
+            }
+            for (int i = 1; i < matrix[0].size(); i++) {
+                if (matrix[0][i] == 0)
+                    for (int k = 1; k < matrix.size(); k++)
+                        matrix[k][i] = 0;
+            }
+
+            // 处理第 0 行 第 0 列
+            if (col0_flag)
+                for (auto &i: matrix) 
+                    i[0] = 0;
+            if (row0_flag)
+                for (int &i: matrix[0])
+                    i = 0;
+        }
+    };
+    ```
+
+### 76 最小覆盖字串
+有滑动窗口的提示，想起来是不是很难，但是写起来就容易超时。
+
+思路：如果找到了一个覆盖，就更新答案，再把左指针移动到不能覆盖的地方
+
+注意：每次移动一个字母的距离，不要把非答案字母用 while 全跳过，这样容易出问题
+
+```cpp
+class Solution {
+public:
+    unordered_map<char, int> cnt;
+    unordered_map<char, int> should;
+
+    string minWindow(string s, string t) {
+        if (t.size() > s.size()) return "";
+
+        pair<int, int> anw = {INT_MAX, INT_MAX};
+        for (char x: t) should[x]++;
+
+        int left = 0, right = 0;
+        while (right < s.size()) {
+            if (should[s[right]] > 0) cnt[s[right]]++;
+            right++;
+            while (check()) {
+                if (right - left < anw.second) anw = {left, right - left};
+                if (should[s[left]] > 0) cnt[s[left]]--;
+                left++;
+            }
+        }
+
+        cout << anw.first << ' ' << anw.second;
+        if (anw.first == INT_MAX) return "";
+        return s.substr(anw.first, anw.second);
+    }
+
+    bool check() {
+        for (auto item: should) {
+            if (cnt[item.first] < item.second) return false;
+        }
+        return true;
+    }
+
+};
+```
+
+优化
+
+```cpp
+class Solution {
+public:
+    unordered_map<char, int> letterNeed;
+
+    string minWindow(string s, string t) {
+        if (t.size() > s.size()) return "";
+
+        pair<int, int> anw = {INT_MAX, INT_MAX};
+        for (char x: t) letterNeed[x]++;
+
+        int cnt = 0;
+        for (int left = 0, right = 0; right < s.size(); right++) {
+            letterNeed[s[right]]--;  // 上来就减不判断
+            if (letterNeed[s[right]] >= 0) cnt++; // 非答案字母此时为 -1 
+            while (cnt == t.size()) {
+                if (right - left + 1 < anw.second) anw = {left, right - left + 1};
+                letterNeed[s[left]]++;
+                if (letterNeed[s[left]] > 0) cnt--; // 非答案字母此时为 0
+                left++;
+            }
+        }
+
+        if (anw.second == INT_MAX) return "";
+        else return s.substr(anw.first, anw.second);
     }
 };
 ```
@@ -1508,6 +1735,34 @@ public:
 
 
 
+### 239 滑动窗口最大值
+最开始想到的是窗口新进的值更大，那么窗口里所有比它小的都不是答案了，看提示发现是双端队列存候选答案，不是答案不用存。这也是单调队列（可以相等元素）的一个应用
+
+```cpp
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int> &nums, int k) {
+
+        deque<int> deque;
+        vector<int> anw;
+        for (int right = 0, left = 0; right < nums.size(); right++) {
+            while (!deque.empty() && nums[right] > deque.back()) {
+                deque.pop_back();
+            }
+            deque.push_back(nums[right]);
+
+            if (right - left + 1 > k) {
+                if (nums[left] == deque.front()) deque.pop_front();
+                left++;
+            }
+            if (right-left+1 == k)
+                anw.push_back(deque.front());
+        }
+        return anw;
+    }
+};
+```
+
 ### 283 移动0
 比较好的做法是双指针，一个指向新的开始，一个找应该出现的下一位
 
@@ -2088,6 +2343,96 @@ public:
 };
 ```
 
+### 1658 将 x 减到 0 的最小操作数
+反转问题，相当于找一段长度尽可能大的连续子数组，`子数组之和等于整个数组和 - x`
+
+```cpp
+class Solution {
+public:
+    int minOperations(vector<int> &nums, int x) {
+
+        int anw = nums.size()+1; // 防止答案是整个数组
+
+        int total_sum = 0;
+        for (const int &num: nums) total_sum += num;
+        int target = total_sum - x;
+        if(target<0) return -1;
+
+        int window_sum = 0;
+        for (int left = 0, right = 0; right < nums.size(); right++) {
+            window_sum += nums[right];
+
+            if (window_sum < target) continue;
+            while (window_sum > target) {
+                window_sum -= nums[left];
+                left++;
+            }
+            if (window_sum == target) {
+                anw = min(anw, int(nums.size() - (right - left + 1)));
+            }
+        }
+        if (anw == nums.size()+1) return -1;
+        else return anw;
+    }
+};
+```
+
+### 1953 工作最大周数
+好比插空，最大值 max_element,剩下的为 rest。
+
+- 如果 `rest <= max_element - 1` 合法的有 `2*rest+1`
+- 如果 `rest > max_element - 1` 说明都能完成，因为假如先从大到小排序，从前到后插空都能插进去。`eg: [5, 4, 3]`
+
+```cpp
+class Solution {
+public:
+    long long numberOfWeeks(vector<int> &milestones) {
+        long long max_ele= *std::max_element(milestones.begin(), milestones.end());
+        long long rest=0;
+        for(int x:milestones) rest+=x;
+        rest-=max_ele;
+        if(rest<=max_ele-1) return 2 * rest + 1;
+        else return max_ele + rest;
+    }
+};
+```
+
+### 2335 装满杯子
+正确方法是每次取剩余水最多的两个，直到只剩一杯水
+
+```cpp
+class Solution {
+public:
+    int fillCups(vector<int>& amount) {
+        sort(amount.begin(),amount.end());
+        if(amount[1]==0) return amount[2];
+        amount[1]--;amount[2]--;
+        return 1+fillCups(amount);
+    }
+};
+```
+
+直接算：从小到大排序为 a, b, c
+
+- `c >= a + b` 结果为 c
+- `c < a + b` ，多出来的为 deta
+    - 如果 deta 为偶数，经过 `deta/2` 次后， `a'+b' = c`，结果为 `deta/2 + c`。
+    - 如果 deta 为奇数，操作 `(deta-1)/2` 次后，`a'+ b'= c + 1` 结果为 `(deta-1)/2 + c + 1`
+
+```cpp
+class Solution {
+public:
+    int fillCups(vector<int>& amount) {
+        sort(amount.begin(), amount.end());
+        int a = amount[0], b = amount[1], c = amount[2];
+        if (c >= a + b)
+            return c;
+        else
+            return (a + b - c + 1) / 2 + c;
+    }
+};
+```
+
 ### 第K大的数
 
 [链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
@@ -2365,8 +2710,7 @@ $$
 
 
 
-### [最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
-
+### 最短无序连续子数组
 **双指针**
 
 - 找出升序，降序的区间，中间就是无序。
@@ -2461,8 +2805,7 @@ $$
     ```
 
 
-### [最长上升子序列](https://www.acwing.com/problem/content/description/897/)
-
+### 最长上升子序列
 1. dp $O(n^2)$ , `dp[i]=max(dp[i],dp[j]+1) when a[i]>a[j],`
 2. dp+贪心，每次找 `x<=anw[i]`的左端点更新
 3. 记忆化搜索
@@ -2528,7 +2871,7 @@ $$
     }
     ```
 
-### [数组中的逆序对](https://www.acwing.com/problem/content/description/61/)
+### 数组中的逆序对
 
 - 归并排序，注意循环的边界是 `l r`不是 **0**
 - 套模板会空间多一点但是直观，优化一下相当于不停在求子问题
@@ -2609,8 +2952,7 @@ public:
 };
 ```
 
-### [编辑距离](https://leetcode.cn/problems/edit-distance/)
-
+### 编辑距离
 [题解](https://leetcode.cn/problems/edit-distance/solutions/2468072/dai-ma-sui-xiang-lu-72-bian-ji-ju-chi-by-or3j/)
 
 可以优化成O(M)
@@ -2961,8 +3303,6 @@ int main() {
     return 0;
 }
 ```
-
-## codeforces
 
 ### lakes
 [链接](https://codeforces.com/contest/1829/problem/E)
