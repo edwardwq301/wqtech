@@ -304,6 +304,184 @@ public:
 
 堆排序就相当于每次把最大元素放到结尾，个数减一，`sink(1)` 调整一下
 
+## 树
+中序遍历二叉树，非递归双色法。好处是只要逆序遍历顺序就行，例如：先序遍历，代码改成 `st.push(root.right,false), st.push(root.left,true), st.push(root,false)`。 [教程](https://leetcode.cn/problems/binary-tree-inorder-traversal/solutions/25220/yan-se-biao-ji-fa-yi-chong-tong-yong-qie-jian-ming)
+
+??? "双色标记"
+
+    ```cpp
+    class Solution {
+    public:
+
+        vector<int> inorderTraversal(TreeNode *root) {
+            vector<int> anw;
+
+            if (root == nullptr) return anw;
+
+            stack<pair<TreeNode *, bool>> st;
+            st.push(make_pair(root, false));
+            while (!st.empty()) {
+                auto [node, color] = st.top();
+                st.pop();
+                if (node == nullptr) {
+                    cout << "null" << endl;
+                    continue;
+                }
+                if (color) {
+                    anw.emplace_back(node->val);
+                    cout << "anw " << node->val << endl;
+                    continue;
+                }
+                else {
+                    st.push(make_pair(node->right, false));
+                    st.push(make_pair(node, true));
+                    st.push(make_pair(node->left, false));
+                    cout << "push right " << node->val << " push left" << endl;
+                }
+            }
+            return anw;
+
+        }
+    };
+    ```
+
+
+Morris 遍历
+用先往左子树走的模板说明前序遍历
+
+```cpp
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode *root) {
+        vector<int> anw;
+        if(root== nullptr) return anw;
+        TreeNode*now=root;
+        while (now){
+            TreeNode* mirros=now->left;
+            if(mirros== nullptr) { 
+                // 可以看成访问到根节点/没有左子树的节点，不管哪种访问，根节点值一定要加
+                anw.push_back(now->val);
+                now=now->right;
+                continue;
+            }
+            // 下边都是有子树的情况
+            while (mirros->right&&mirros->right!=now)mirros=mirros->right;
+            if(mirros->right== nullptr){ 
+                // 第一次经过节点 A，前序在这里加入
+                anw.push_back(now->val);
+                mirros->right=now;
+                now=now->left;
+            }
+            else{ // 第二次经过节点 A，中序在这里加入
+                mirros->right= nullptr;
+                now=now->right;
+            }
+        }
+        return anw;
+    }
+};
+```
+
+[后序解释](https://leetcode.cn/problems/binary-tree-postorder-traversal/solutions/1132883/morrisbian-li-suan-fa-jie-xi-qian-xu-bia-dt2x)：获取根右左的顺序，最后反转，建立指针的时候和前中序遍历不一样
+
+
+=== "前序"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> preorderTraversal(TreeNode *root) {
+            vector<int> anw;
+            if (root == nullptr) return anw;
+            TreeNode *now = root;
+            while (now) {
+                TreeNode *mirrs = now->left;
+                if (mirrs == nullptr) {
+                    anw.push_back(now->val);
+                    now = now->right;
+                    continue;
+                }
+                while (mirrs->right && mirrs->right != now) mirrs = mirrs->right;
+                if (mirrs->right == nullptr) {
+                    anw.push_back(now->val);
+                    mirrs->right = now;
+                    now = now->left;
+                }
+                else {
+                    mirrs->right = nullptr;
+                    now = now->right;
+                }
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "中序"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> inorderTraversal(TreeNode *root) {
+            vector<int> anw;
+            if (root == nullptr) return anw;
+            TreeNode *now = root;
+            while (now) {
+                TreeNode *mirrs = now->left;
+                if (mirrs == nullptr) {
+                    anw.push_back(now->val);
+                    now = now->right;
+                    continue;
+                }
+                while (mirrs->right && mirrs->right != now) mirrs = mirrs->right;
+                if (mirrs->right == nullptr) {
+                    mirrs->right = now;
+                    now = now->left;
+                }
+                else {
+                    mirrs->right = nullptr;
+                    anw.push_back(now->val);
+                    now = now->right;
+                }
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "后序"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<int> postorderTraversal(TreeNode *root) {
+            vector<int> res;
+            if (root == nullptr) return res;
+            TreeNode *now = root;
+            while (now) {
+                TreeNode *mirrs = now->right;
+                if (mirrs == nullptr) {
+                    res.push_back(now->val);
+                    now = now->left;
+                    continue;
+                }
+                while (mirrs->left && mirrs->left != now) mirrs = mirrs->left;
+                if (mirrs->left == nullptr) {
+                    res.push_back(now->val);
+                    mirrs->left = now;
+                    now = now->right;
+                }
+                else {
+                    mirrs->left = nullptr;
+                    now = now->left;
+                }
+            }
+            std::reverse(res.begin(), res.end());
+            return res;
+        }
+    };
+    ```
+
 ## 图
 [图的存储](https://blog.csdn.net/raelum/article/details/129108365)
 

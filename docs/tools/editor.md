@@ -12,13 +12,18 @@ categories:
 ## C++
 早日远离M$C++，早日获得新生😋
 
-使用clangd打开或关闭函数参数提示(inlay hints)
-
-`ctrl+shift+p;clangd:toggle inlay hints`
-
 - [教程](https://zhangjk98.xyz/vscode-c-and-cpp-develop-and-debug-setting/)
 - [可能遇到的问题及解决](https://www.cnblogs.com/zjutzz/p/15303480.html#34-clangd-%E6%89%93%E5%BC%80%E6%88%96%E5%85%B3%E9%97%AD%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E6%8F%90%E7%A4%BAinlay-hints)
 
+关闭函数参数提示(inlay hints) `ctrl+shift+p;clangd:toggle inlay hints`
+
+智能补全不把参数填入 [源链接](https://stackoverflow.com/questions/76004921/how-can-i-disable-parameter-auto-completion-when-selecting-a-suggested-function)，在 `setting.json` 加入 
+
+```
+"clangd.arguments": [
+    "--function-arg-placeholders=0"
+],
+```
 
 ??? tip "过时版"
 

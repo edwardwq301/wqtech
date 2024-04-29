@@ -410,6 +410,194 @@ public:
 };
 ```
 
+### 23 合并k个链表
+[题解](https://leetcode.cn/problems/merge-k-sorted-lists/solutions/2384305/liang-chong-fang-fa-zui-xiao-dui-fen-zhi-zbzx)
+
+第一种，每次挑一个答案，如果后面还有节点，有可能是下一个答案，用最小堆存
+
+```cpp
+class Solution {
+public:
+    ListNode *mergeKLists(vector<ListNode *> &lists) {
+        auto cmp = [](ListNode *a, ListNode *b) {
+            return a->val > b->val;
+        };
+        priority_queue<ListNode *, vector<ListNode *>, decltype(cmp)> pq;
+        for (auto item: lists) {
+            if (item) pq.push(item);
+        }
+        ListNode dummy(0);
+        ListNode *cur = &dummy;
+        while (!pq.empty()) {
+            auto item = pq.top();
+            pq.pop();
+            if (item->next) { pq.push(item->next); }
+            cur->next = item;
+            cur = cur->next;
+        }
+        return dummy.next;
+    }
+};
+```
+
+第二种，类似归并，两两合并有序链表
+
+```cpp
+class Solution {
+public:
+    ListNode *mergeKLists(vector<ListNode *> &lists) {
+        if(lists.empty()) return nullptr;
+        return mergePart(lists, 0, lists.size() - 1);
+    }
+
+    ListNode *mergePart(vector<ListNode *> &lists, int left, int right){
+        if (left >= right) return lists[left];
+        int mid = left + right >> 1;
+        auto leftHead = mergePart(lists, left, mid);
+        auto rightHead = mergePart(lists, mid + 1, right);
+        return mergeTwoList(leftHead, rightHead);
+    }
+
+    ListNode *mergeTwoList(ListNode *a, ListNode *b) {
+        ListNode dummy(0);
+        ListNode *cur = &dummy;
+        while (a && b) {
+            if (a->val < b->val) {
+                cur->next = a;
+                a = a->next;
+            }
+            else {
+                cur->next = b;
+                b = b->next;
+            }
+            cur = cur->next;
+        }
+        cur->next = a ? a : b;
+        return dummy.next;
+    }
+};
+```
+
+### 24 两两交换链表
+
+=== "非递归"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode* swapPairs(ListNode* head) {
+            ListNode* dummy = new ListNode(0);
+            dummy->next = head;
+            ListNode* n0 = dummy;
+            ListNode* n1 = head;
+            while (n1 && n1->next) { // 有两个点来互换
+                ListNode* n2 = n1->next;
+                ListNode* n3 = n2->next;
+
+                n0->next = n2;
+                n2->next = n1;
+                n1->next = n3;
+                n0 = n1;
+                n1 = n3;
+            }
+            return dummy->next;
+        }
+    };
+    ```
+
+=== "递归"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode * swapPairs(ListNode * head) {
+            if (head == nullptr || head->next == nullptr) // 要求有两个点来互换
+                return head;
+
+            ListNode * n1 = head;
+            ListNode * n2 = n1->next;
+            ListNode * n3 = swapPairs(n2->next);
+            
+            n1->next = n3;
+            n2->next = n1;
+            return n2;
+        }
+    };
+    ```
+
+### 25 k个一组反转链表
+链表操作还是非递归符合直觉
+
+=== "非递归"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode *reverseKGroup(ListNode *head, int k) {
+            ListNode *newHead = new ListNode(0);
+            newHead->next = head;
+            ListNode *n0 = newHead;
+            ListNode *n1 = n0->next;
+
+            while (n0) {
+                ListNode *nk = n0;
+                for (int cnt = 0; cnt < k; cnt++) {
+                    // nk 并不能为空，如果为空说明不足 k 个来反转
+                    if (nk->next) nk = nk->next; 
+                    else return newHead->next;
+                }
+                ListNode *nkp1 = nk->next;  // nkp1 是 nk 下一个点 nk plus 1
+
+                n0->next = rev(n1, nullptr, k);
+                n1->next = nkp1;
+
+                n0 = n1;
+                n1 = nkp1;
+            }
+            return newHead->next;
+        }
+
+        // 正常反转链表
+        ListNode *rev(ListNode *now, ListNode *pre, int k) {
+            if (now == nullptr || k == 0)
+                return pre;
+            ListNode *ne = now->next;
+            now->next = pre;
+            return rev(ne, now, k - 1);
+        }
+    };
+    ```
+
+=== "递归"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode * reverseKGroup(ListNode * head, int k) {
+            if(head == nullptr) return nullptr;
+            ListNode * n1 = head;
+            ListNode * nkp1 = n1;
+            for (int i = 0; i < k; i++) {
+                if (nkp1) nkp1 = nkp1->next;
+                else return head;
+            }
+
+            nkp1 = reverseKGroup(nkp1, k);
+            ListNode * nk = rev(head, nullptr,k); // 不能和下一句调换，先因为先反转内部，最后改 n1 指向
+            n1->next = nkp1;
+            return nk;
+        }
+
+        ListNode * rev(ListNode * now, ListNode * pre, int k) {
+            if (now == nullptr || k == 0)
+                return pre;
+            ListNode * ne = now->next;
+            now->next = pre;
+            return rev(ne, now, k - 1);
+        }
+    };
+    ```
+
 ### 31 下一个排列
 [题解](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-)
 
@@ -630,6 +818,27 @@ public:
             stack.push(i);
         }
         return anw;
+    }
+};
+```
+
+### 48 旋转图像
+线性代数：在想我的事情？😋
+
+矩阵转置后做竖直轴对称
+
+```cpp
+class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+
+        for(int i=0;i<matrix.size();i++)
+            for(int j=i+1;j<matrix[i].size();j++)
+                swap(matrix[i][j],matrix[j][i]);
+
+        for(int i=0;i<matrix.size();i++)
+            for(int j=0;j<matrix.size()/2;j++)
+                swap(matrix[i][j],matrix[i][matrix.size()-1-j]);
     }
 };
 ```
@@ -1093,6 +1302,133 @@ public:
 };
 ```
 
+### 94 二叉树中序遍历
+今天看到一个[好理解的非递归方法](https://leetcode.cn/problems/binary-tree-inorder-traversal/solutions/25220/yan-se-biao-ji-fa-yi-chong-tong-yong-qie-jian-ming)
+
+```cpp
+class Solution {
+public:
+
+    vector<int> inorderTraversal(TreeNode *root) {
+        vector<int> anw;
+
+        if (root == nullptr) return anw;
+
+        stack<pair<TreeNode *, bool>> st;
+        st.push(make_pair(root, false));
+        while (!st.empty()) {
+            auto [node, color] = st.top();
+            st.pop();
+            if (node == nullptr) {
+                cout << "null" << endl;
+                continue;
+            }
+            if (color) {
+                anw.emplace_back(node->val);
+                cout << "anw " << node->val << endl;
+                continue;
+            }
+            else {
+                st.push(make_pair(node->right, false));
+                st.push(make_pair(node, true));
+                st.push(make_pair(node->left, false));
+                cout << "push right " << node->val << " push left" << endl;
+            }
+        }
+        return anw;
+    }
+};
+```
+
+### 99 恢复二叉搜索树
+- 中序遍历的结果序列中，第一个逆序对 AB 的 A 是待换元素
+- 如果有第二个逆序对，第二个逆序对 CD 的 D 是待换元素
+- 如果没有第二个逆序对，就是 AB 互换
+- 为什么这么说，可以写一个升序序列然后换其中的两个位置
+
+[java 题解](https://leetcode.cn/problems/recover-binary-search-tree/solutions/271778/san-chong-jie-fa-xiang-xi-tu-jie-99-hui-fu-er-cha-)
+
+```java
+class Solution {
+    //用两个变量x，y来记录需要交换的节点
+    private TreeNode x = null;
+    private TreeNode y = null;
+    private TreeNode pre = null;
+    public void recoverTree(TreeNode root) {
+        dfs(root);
+        //如果x和y都不为空，说明二叉搜索树出现错误的节点，将其交换
+        if(x!=null && y!=null) {
+            int tmp = x.val;
+            x.val = y.val;
+            y.val = tmp;
+        }
+    }
+	
+    //中序遍历二叉树，并比较上一个中序遍历节点(pre)和当前节点的值，如果pre的值大于当前节点值，则记录下这两个节点
+    private void dfs(TreeNode node) {
+        if(node==null) {
+            return;
+        }
+        dfs(node.left);
+        if(pre==null) {
+            pre = node;
+        }
+        else {
+            if(pre.val>node.val) {
+                if(x==null) x = pre;
+                y = node;
+            }
+            pre = node;
+        }
+        dfs(node.right);
+    }
+}
+```
+
+Mirros 遍历
+
+```cpp
+class Solution {
+public:
+    void recoverTree(TreeNode * root) {
+        TreeNode * now = root;
+        TreeNode * pre = nullptr;
+        TreeNode * x = nullptr;
+        TreeNode * y = nullptr;
+
+        while (now) {
+            TreeNode * mirros = now->left;
+            if (mirros == nullptr) {
+                if (pre && pre->val > now->val) {
+                    if (x == nullptr) x = pre;
+                    y = now;
+                }
+                pre = now;
+                now = now->right;
+                continue;
+            }
+            while (mirros->right && mirros->right != now) {
+                mirros = mirros->right;
+            }
+            if (mirros->right == nullptr) {
+                mirros->right = now;
+                now = now->left;
+            }
+            else {
+                if (pre && pre->val > now->val) {
+                    if (x == nullptr) x = pre;
+                    y = now;
+                }
+                mirros->right = nullptr;
+                pre = now;
+                now = now->right;
+            }
+        }
+        if (x && y) swap(x->val, y->val);
+    }
+};
+```
+
 ### 118 杨辉三角
 难度不大，问题在于空间
 
@@ -1433,6 +1769,351 @@ public:
 
 ```
 
+### 138 随机链表复制
+第一种，用哈希表
+
+```cpp
+class Solution {
+public:
+    unordered_map<Node *, Node *> mp;
+    Node * copyRandomList(Node * head) {
+        Node * dummy = new Node(0);
+        Node * now = dummy;
+        Node * h = head;
+       
+        while (h) {
+            now->next = new Node(h->val);
+            mp[h] = now->next;
+            h = h->next;
+            now = now->next;
+        }
+
+        h = head;
+        now = dummy->next;
+        while (h) {
+            now->random = mp[h->random];
+            now = now->next;
+            h = h->next;
+        }
+        return dummy->next;
+    }
+};
+```
+
+第二种[题解](https://leetcode.cn/problems/copy-list-with-random-pointer/solutions/295083/liang-chong-shi-xian-tu-jie-138-fu-zhi-dai-sui-ji-)
+
+用虚拟节点，防止原链表只有一个点。
+
+```cpp
+class Solution {
+public:
+    Node *copyRandomList(Node *head) {
+        if (head == nullptr)
+            return nullptr;
+        auto h = head;
+        auto now = head;
+        while (h) {
+            now = new Node(h->val);
+            now->next = h->next;
+            h->next = now;
+            h = h->next->next;
+        }
+
+        h = head;
+        while (h) {
+            if (h->random)
+                h->next->random = h->random->next;
+            h = h->next->next;
+        }
+
+        h = head;
+        Node *dummy = new Node(0);
+        dummy->next=head;
+        now = dummy;
+
+        while (h) {
+            now->next = h->next;
+            h->next = h->next->next;
+            now = now->next;
+            h = h->next;
+        }
+        return dummy->next;
+    }
+};
+```
+
+
+### 146 LRU 缓存
+双向链表加哈希表，靠近头的是最近使用的。每次操作先检查有没有，有的话就**先删除它与左右的联系再调到头部**（不然的话链表的指向就乱了）。理解起来难度不大，但是写起来太容易出错了。
+
+=== "1 ed"
+
+    ```cpp
+    class MyNode {
+    public:
+        MyNode* prev;
+        MyNode* next;
+        int val;
+        int key;
+
+        MyNode(int _val) : val(_val) {}
+
+        MyNode(int _key, int _val) : key(_key), val(_val) {}
+    };
+
+    class LRUCache {
+    public:
+        unordered_map<int, MyNode*> map;
+        MyNode* dummy;
+        int cap;
+        LRUCache(int capacity) {
+            cap = capacity;
+            dummy = new MyNode(0);
+            dummy->next = dummy;
+            dummy->prev = dummy;
+        }
+
+        int get(int key) {
+            if (map.find(key) == map.end())
+                return -1;
+            auto item = map[key];
+            removeRelationship(item);
+            setToFront(item);
+            return item->val;
+        }
+
+        void put(int key, int value) {
+            if (map.find(key) == map.end()) {
+                auto item = new MyNode(key, value);
+                map[key] = item;
+                setToFront(item);
+
+                if (map.size() > cap) {
+                    auto todel = dummy->prev;
+                    map.erase(todel->key);
+                    removeRelationship(todel);
+                    delete todel;
+                }
+            } 
+            else {
+                removeRelationship(map[key]);
+                setToFront(map[key]);
+                map[key]->val = value;
+            }
+        }
+
+        void removeRelationship(MyNode* item) {
+            item->prev->next = item->next;
+            item->next->prev = item->prev;
+        }
+
+        void setToFront(MyNode* item) {
+            item->next = dummy->next;
+            item->prev = dummy;
+            item->next->prev = item;
+            item->prev->next = item;
+        }
+    };
+    ```
+
+=== "better"
+
+    ```cpp
+    class mynode {
+    public:
+        int key, value;
+        mynode *left;
+        mynode *right;
+
+        mynode(int val) : value(val) {}
+
+        mynode(int k, int v) : key(k), value(v) {}
+    };
+
+    class LRUCache {
+    public:
+        unordered_map<int, mynode *> map;
+        mynode *dummy;
+        int cap;
+
+        LRUCache(int capacity) {
+            cap = capacity;
+            dummy = new mynode(0);
+            dummy->left = dummy;
+            dummy->right = dummy;
+        }
+
+        int get(int key) {
+            auto item = getNode(key);
+            return item ? item->value : -1;
+        }
+
+        void put(int key, int value) {
+            auto item = getNode(key);
+            if (item != nullptr) {
+                item->value = value;
+                return;
+            }
+            else {
+                item = new mynode(key, value);
+                map[key] = item;
+                setToFront(item);
+
+                if (map.size() > cap) {
+                    auto delNode = dummy->left;
+                    delRelationship(delNode);
+                    map.erase(delNode->key);
+                    delete delNode;
+                }
+            }
+
+        }
+
+        mynode *getNode(int key) {
+            if (map.find(key) == map.end()) return nullptr;
+            auto item = map[key];
+            delRelationship(item);
+            setToFront(item);
+            return item;
+        }
+
+        void delRelationship(mynode *item) {
+            item->left->right = item->right;
+            item->right->left = item->left;
+        }
+
+        void setToFront(mynode *item) {
+            item->left = dummy;
+            item->right = dummy->right;
+            item->left->right = item;
+            item->right->left = item;
+        }
+    };
+    ```
+
+### 148 排序链表
+归并排序
+
+```cpp
+class Solution {
+public:
+    ListNode *sortList(ListNode *head) {
+        if (head == nullptr) return nullptr; // 特判原链表为空
+
+        if (head->next == nullptr) return head;  // 归并终止
+
+        ListNode *left = head;
+        ListNode *leftPartEnd = getLeftPartEnd(head);
+        ListNode *right = leftPartEnd->next;
+        leftPartEnd->next = nullptr;
+
+        left = sortList(left);
+        right = sortList(right);
+        return merge(left, right);
+
+    }
+
+    // 奇数个节点返回中间，偶数个节点返回左部分的最后一个
+    ListNode *getLeftPartEnd(ListNode *head) {
+        ListNode *slow = head;
+        ListNode *fast = head->next;
+        while (fast && fast->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        return slow;
+    }
+
+    ListNode *merge(ListNode *left, ListNode *right) {
+        ListNode dummy(0);
+        ListNode *cur = &dummy;
+        while (left && right) {
+            if (left->val < right->val) {
+                cur->next = left;
+                left = left->next;
+            }
+            else {
+                cur->next = right;
+                right = right->next;
+            }
+            cur = cur->next;
+        }
+        if (left) cur->next = left;
+        else cur->next = right;
+        return dummy.next;
+    }
+
+};
+```
+
+
+第二种，每次从头排序的长度为 1, 2, 4 ...
+
+```cpp
+class Solution {
+public:
+    ListNode *sortList(ListNode *head) {
+
+        int length = getLength(head);
+        ListNode dummy(0);
+        dummy.next = head;
+        
+        for (int i = 1; i < length; i*=2) {
+            ListNode *sortedTail = &dummy;
+            ListNode *cur = sortedTail->next;
+            while (cur) {
+                ListNode *left = cur;
+                ListNode *right = cut(left, i);
+                cur = cut(right, i);
+                ListNode *newSortedHead = merge(left, right);
+                sortedTail->next = newSortedHead;
+                while (sortedTail->next) sortedTail = sortedTail->next;
+            }
+        }
+        return dummy.next;
+    }
+
+    ListNode *merge(ListNode *left, ListNode *right) {
+        ListNode dummy(0);
+        ListNode *cur = &dummy;
+        while (left && right) {
+            if (left->val < right->val) {
+                cur->next = left;
+                left = left->next;
+            }
+            else {
+                cur->next = right;
+                right = right->next;
+            }
+            cur = cur->next;
+        }
+        if (left) cur->next = left;
+        else cur->next = right;
+        return dummy.next;
+    }
+
+    ListNode *cut(ListNode *head, int cnt) {
+        for (int i = 1; i < cnt && head; i++) {
+            head = head->next;
+        }
+        if (!head) return nullptr;
+
+        ListNode *ne = head->next;
+        head->next = nullptr;
+        return ne;
+    }
+
+    int getLength(ListNode *head) {
+        int cnt = 0;
+        while (head) {
+            cnt++;
+            head = head->next;
+        }
+        return cnt;
+    }
+};
+```
+
 ### 155 最小栈
 用一个辅助栈存最小值，push 如果 `val <= minst.top` push 进，不然跳过，假如说是 5， 3， 4 这个例子，只要 3 不从真实栈出来，无论后面 4 怎么进出真实栈都不改变最小值。但如果又来一个 3 就要进辅助栈，是为了弹出后来的 3 时，辅助栈最小值还是 3（之前先来的那个）
 
@@ -1759,6 +2440,25 @@ public:
                 anw.push_back(deque.front());
         }
         return anw;
+    }
+};
+```
+
+### 240 搜索二维矩阵
+从右上角往左边和下边看是二叉树
+
+```cpp
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+
+        int row=0,col=matrix[0].size()-1;
+        while (row>=0&&row<matrix.size()&&col>=0&& col<matrix[0].size()){
+            if(matrix[row][col]==target) return true;
+            else if(matrix[row][col]<target) row++;
+            else col--;
+        }
+        return false;
     }
 };
 ```
@@ -2217,6 +2917,72 @@ public:
 
 做出来了，feel good🥰
 
+
+### 904 水果成篮
+就是找一段区间尽可能长，区间内只有两种元素
+
+用滑动窗口
+
+```cpp
+class Solution {
+public:
+    int totalFruit(vector<int> &fruits) {
+
+        int anw = 0;
+        unordered_map<int, int> pick;
+
+        for (int left = 0, right = 0; right < fruits.size(); right++) {
+            pick[fruits[right]]++;
+
+            while (pick.size() > 2) {
+                pick[fruits[left]]--;
+                if (pick[fruits[left]] == 0) pick.erase(fruits[left]);
+                left++;
+            }
+
+            anw = max(anw, right - left + 1);
+        }
+        return anw;
+    }
+};
+```
+
+不太好的想法：最开始用两个桶，有空桶就放到里面，没有空桶且当前值不在桶里，更新一个桶，问题在于哪个：最近上一次访问的水果种类的桶是不能更新的
+
+这个不好在于更新 left 是反复往左的，比较慢
+
+```cpp
+class Solution {
+public:
+    int totalFruit(vector<int> &fruits) {
+
+        int anw = 0;
+        int res = 0;
+        int pick[2] = {-1, -1};
+        for (int left = 0, right = 0; right < fruits.size(); right++) {
+            if (pick[0] == -1) {
+                pick[0] = fruits[right];
+                res++;
+            }
+            else if (pick[1] == -1) {
+                pick[1] = fruits[right];
+                res++;
+            }
+            else if (pick[0] == fruits[right] || pick[1] == fruits[right]) res++;
+            else {
+                anw = max(anw, res);
+                left = right - 1;
+                while (left > 0 && fruits[left] == fruits[left - 1]) left--;
+                res = right - left + 1;
+                if (pick[0] != fruits[right-1]) pick[0] = fruits[right];
+                else pick[1] = fruits[right];
+            }
+        }
+        anw= max(anw,res);
+        return anw;
+    }
+};
+```
 
 ### 1475 商品折扣后最终价格
 这个题和 739 是一个类型，假设 `[4,8,3,7]`，可以用 3 更新前边的 4，8，也就是当前的值比前边的小，就出栈之前内容并更新。
