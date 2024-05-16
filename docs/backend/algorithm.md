@@ -1425,9 +1425,32 @@ mergesort
     ```
 
 
-## thought
+## DP
+### 背包
+经过空间优化后成一维的背包问题，直接写转移方程加判断条件，但是脑中想的是二维情况，写的是一维化简
 
-### Q: 为什么区间dp先枚举长度再枚举左端点
+01 背包求最大值 
+
+$$ f[i][w]=max(f[i-1][w],value[i-1]+f[i][w-weight[i-1]]) $$
+
+```cpp
+for (int i = 1; i <= stones.size(); i++) {
+    for (int w = target; w >= 0; w--) {
+        if (w >= stones[i - 1])
+            f[w] = max(f[w],
+                       stones[i - 1] + f[w - stones[i - 1]]);
+    }
+}
+```
+
+为什么去掉物品维度后体积从不同顺序枚举
+
+- 01背包计算本层 `f[x][y]` 用到上一层的前边 `f[x-1][a] a<y` 和上一层的上位 `f[x-1][y]`，为了避免上一层的值被本层的值覆盖了，所以从后往前枚举体积；画一下就明白了
+- 完全背包公式推导后 `f[x][y]` 用的是本层的前边 `f[x][a] a<y` 和上一层的上位 `f[x-1][y]`，所以从大到小枚举体积
+
+### 区间
+
+Q: 为什么区间dp先枚举长度再枚举左端点
 
 A: 防止用到还没算好的小区间 
 
@@ -1436,6 +1459,7 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
 用 `dp[0][4]` 的时候应该先算 `dp[1][3]` ,但是先枚举左端点的话就没做到先算 `dp[1][3]`
 
 ??? "wrong answer"
+
     ```C++
     class Solution {
     public:
@@ -1474,6 +1498,7 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
     ```
 
 ??? "correct answer"
+
     ```C++
     class Solution {
     public:
@@ -1507,6 +1532,9 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
 
 
 ### 记忆化搜索
+看[博主宫水三叶的刷题笔记](https://mp.weixin.qq.com/s?__biz=MzU4NDE3MTEyMA==&mid=2247485297&idx=1&sn=5ee4ce31c42d368af0653f60aa263c82&chksm=fd9cac6ecaeb25787e6da90423c5467e1679da0a8aaf1a3445475199a8f148d8629e851fea57&scene=178&cur_album_id=1748759632187047943#rd)的时候看到：我们可以先想出 dfs 怎么做，然后看dfs用到了几个可变维度，就是 dp 的维度，转成 dp
+
+---
 
 [oi介绍](https://oi-wiki.org/dp/memo/#%E5%BC%95%E5%85%A5)
 
@@ -1515,6 +1543,7 @@ eg:[最长回文字串"aaaaa"](https://leetcode.cn/problems/longest-palindromic-
 在原始dfs中，会出现很多重复没有用的计算。
 
 求数字8的位置时，把之前的3，1，2等就重复算了。
+
 ```
 7
 3 1 2 1 8 5 6

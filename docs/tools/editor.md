@@ -10,6 +10,8 @@ categories:
 
 
 ## C++
+CLion 突然发现输入 vector 不补全尖括号了，后来发现设置成 c11 就行了即 `set(CMAKE_CXX_STANDARD 11)`
+
 早日远离M$C++，早日获得新生😋
 
 - [教程](https://zhangjk98.xyz/vscode-c-and-cpp-develop-and-debug-setting/)

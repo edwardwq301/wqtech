@@ -598,6 +598,27 @@ public:
     };
     ```
 
+### 26 80 数组去重
+当前数字和答案中往前数第 len-k 个不重就放
+
+```cpp
+class Solution {
+public:
+    int removeDuplicates(vector<int> & nums) {
+        return work(nums, 2);
+    }
+    
+    int work(vector<int> nums, int k) {
+        int len = 0;
+        for (int x : nums)
+            if (len < k || nums[len - k] != x)
+                nums[len++] = k;
+        return len;
+    }
+};
+```
+
+
 ### 31 下一个排列
 [题解](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-)
 
@@ -2605,6 +2626,110 @@ public:
     }
 };
 ```
+
+### 274 H指数
+看起来挺简单，做起来难
+
+有 H 个数大于等于 H，找最大的 H
+
+1. 发现 H 在 [0, size]，可以二分找有至少 H 个数大于 H 的右端点
+2. 先排个序，假如要看是不是有 4 个数大于等于 4，怎么找呢，应该是从数组后面往前看四个，如果第四个大于等于四，那么说明符合。根据这个条件可以从前往后找，也可以从后往前找
+3. 用桶记录，超过 size 的相当于引用为 size，从后往前找到第一个满足 引用加和 >= H 的 H
+
+总结：用二分和桶比较好，排序也行
+
+=== "二分"
+
+    ```cpp
+    class Solution {
+    public:
+        int hIndex(vector<int>& citations) {
+            int n = citations.size();
+
+            int left = 0, right = n;
+            while (left < right) {
+                int mid = left + right + 1 >> 1;
+                if (check(mid, citations))
+                    left = mid;
+                else
+                    right = mid - 1;
+            }
+            return left;
+        }
+
+        bool check(int mid, vector<int>& nums) {
+            int cnt = 0;
+            for (int x : nums) {
+                if (x >= mid)
+                    cnt++;
+            }
+            return cnt >= mid;
+        }
+    };
+    ```
+
+=== "从前往后"
+
+    ```cpp
+    class Solution {
+    public:
+        int hIndex(vector<int>& citations) {
+            sort(citations.begin(), citations.end());
+            
+            int anw = 0;
+            int n = citations.size();
+            for (int i = 1; i <= n; i++) {
+                if (citations[n-i]>=i)
+                    anw = i;
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "从后往前"
+
+    ```cpp
+    class Solution {
+    public:
+        int hIndex(vector<int>& citations) {
+            sort(citations.begin(), citations.end());
+        
+            int n = citations.size();
+            for (int i = n; i >=1; i--) {
+                if (citations[n-i]>=i)
+                    return i;
+            }
+            return 0;
+        }
+    };
+    ```
+
+=== "桶"
+
+    ```cpp
+    #include<vector>
+
+    class Solution {
+    public:
+        int hIndex(vector<int>& citations) {
+            int n = citations.size();
+            vector<int>f(n + 1);
+
+            for (int x : citations)
+                f[min(n, x)]++;
+            
+            int total = 0;
+            for (int i = n; i >= 0; i--)
+            {
+                total += f[i];
+                // 从后往前找到第一个 有 k 个数 >= k
+                if (total >= i) return i;
+            }
+            return -1;
+        }
+    };
+    ```
 
 ### 283 移动0
 比较好的做法是双指针，一个指向新的开始，一个找应该出现的下一位
