@@ -1030,13 +1030,13 @@ public:
 出自编译原理那本龙书（汉化第二版 86 页）
 
 下面都是**从 1 开始计数**
-1. 先构造这样的函数表示 $$b_1b_2..b_{f(s)}$$ 既是整个 pattern 的 s 位真前缀，也是 s 位真后缀，两者相同。
+1. 先构造这样的函数表示 $$ b_1b_2..b_{f(s)} $$ 既是整个 pattern 的 s 位**真**前缀，也是 s 位后缀，两者相同。
 
 2. 当匹配 s 个字母成功，s+1 个字母失败时，将 pattern 移动 s-f(s) 位 
 
 ```txt
 no          1 2 3 4 5 6
-word        a b a b x       // fail on no.5, and move 4-2=2 char
+word        a b a b x       // fail on no.5, s = 4 and move 4-2=2 char
 pattern     a b a b a b
 f(s)        0 0 1 2 3 1
 
@@ -1045,6 +1045,23 @@ word        a b a b x
 pattern         a b a b a b
 
 ```
+
+在实现的时候从 1 开始和从 0 开始有不同，
+
+如何计算 lose：字符不等就试一下上一个长度，正好 id 等于上一个长度能比较字符。
+
+eg: ababax -> 比较 ababax  发现 x != b 下一个比 aba abx
+
+下面是对 s-f(s) 进行修改
+
+1. 在扫描的时候比较当前位，不是下一位
+2. 假如在从 1 数第 5 位失败 s = 4, pat 整个前移 s - f(s)= 4 - f(4) = 2 位
+3. 转换成下标就是从 0 数，下标 id 为 4 失败，pat 整个前移 id - f(id - 1) = 4 - 2
+4. 字符串整个前移等价于扫描点回移，所以新的扫描点是 id - (id - f(id-1) ) = f(id - 1)
+
+|计数起点|成功|失败|转换|
+|1|s 为 4 成功|s 为 5 失败|s - f(s) = 4 - f(4)|
+|0|id 为 3 成功| id 为 4 失败| id - f(id-1) |
 
 实现
 ```cpp
@@ -1055,8 +1072,11 @@ pattern         a b a b a b
 using namespace std;
 
 vector<int> SolveLose(string pattern) {
+    // lose 可以看成 以下标为结尾的 符合条件的长度
     vector<int> lose(pattern.size(), 0);
+
     for (int slow = 0, fast = 1; fast < pattern.size(); fast++) {
+       
         while (slow > 0 && pattern[slow] != pattern[fast]) slow = lose[slow - 1];
         if (pattern[slow] == pattern[fast]) {
             slow++;
@@ -1091,7 +1111,7 @@ void Search(string word, string pat) {
 int main() {
     int n, m;
     string pat, word;
-    cin >> n >> pat >> m >> word;
+    cin >> pat >> word;
     Search(word, pat);
     return 0;
 }

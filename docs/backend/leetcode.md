@@ -772,34 +772,64 @@ public:
 
 **按列求双指针**：题解里 dp 优化成双指针没看明白，但是第一个评论很好，和 12 题有异曲同工之妙，但是这个双指针先理解 dp 会更好理解
 
-```cpp
-class Solution {
-public:
-    int trap(vector<int> &height) {
-        int anw = 0;
-        int sz = height.size();
-        int left = 0, right = sz - 1;
-        int leftMaxHeight = height[left], rightMaxHeight = height[right];
+=== "left < right"
 
-        left++; // 左右边界不能存
-        right--;
-
-        while (left <= right) { // left=right 也是可能的答案
-            leftMaxHeight = max(leftMaxHeight, height[left]);
-            rightMaxHeight = max(rightMaxHeight, height[right]);
-            if (leftMaxHeight < rightMaxHeight) {
-                anw += leftMaxHeight - height[left];
-                left++;
+    ```cpp
+    class Solution {
+    public:
+        int trap(vector<int> &height) {
+            int n = height.size();
+            int left = 0, right = n - 1;
+            int leftMaxHeight = height[0];
+            int rightMaxHeight = height[n - 1];
+            int anw = 0;
+            while (left < right) {
+                leftMaxHeight = max(leftMaxHeight, height[left]);
+                rightMaxHeight = max(rightMaxHeight, height[right]);
+                if (leftMaxHeight < rightMaxHeight) {
+                    anw += leftMaxHeight - height[left];
+                    left++;
+                }
+                else {
+                    anw += rightMaxHeight - height[right];
+                    right--;
+                }
             }
-            else {
-                anw += rightMaxHeight - height[right];
-                right--;
-            }
+            return anw;
         }
-        return anw;
-    }
-};
-```
+    };
+    ```
+
+=== "left <= right"
+
+    ```cpp
+    class Solution {
+    public:
+        int trap(vector<int> &height) {
+            int anw = 0;
+            int sz = height.size();
+            int left = 0, right = sz - 1;
+            int leftMaxHeight = height[left], rightMaxHeight = height[right];
+
+            left++; // 左右边界不能存
+            right--;
+
+            while (left <= right) { // left=right 也是可能的答案
+                leftMaxHeight = max(leftMaxHeight, height[left]);
+                rightMaxHeight = max(rightMaxHeight, height[right]);
+                if (leftMaxHeight < rightMaxHeight) {
+                    anw += leftMaxHeight - height[left];
+                    left++;
+                }
+                else {
+                    anw += rightMaxHeight - height[right];
+                    right--;
+                }
+            }
+            return anw;
+        }
+    };
+    ```
 
 
 **单调栈**：假如当前块比前一个低，说明会有雨水（下标入栈，因为后续会用到水平距离）；假如当前块比之前高，说明之前的雨水应该停下，进行计算。（一行按部分求）
