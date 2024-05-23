@@ -8,55 +8,53 @@
 
 不足：中文首行缩进需要一些 trick，希望未来能加入这个功能（2024/1/21）
 
-下面是一些简单例子
+默认字体是 Linux Libertine
+## sheet
+`set` 规则类似 `css` 把所有实例设置特征
 
-```txt
-#set text(size: 16pt, lang: "zh",font: "Roboto")
-#set par(justify: true, first-line-indent: 2em)
-#set page(columns: 1,fill: gray,numbering: "1/1",
-          header: [
-            #set align(right)
-            #set text(size: 0.8em)
-            #smallcaps("i am header")
-            ],
-            footer: [
-             #set text(size: 0.8em)
-             #set align(right)
-             i am footer
-            ]
-          )
-#set heading(numbering: "1.1",supplement: auto)
-#set document(author: "wq",date:auto,keywords: "typst")
+- #align(center+bottom)
+- `page` 的 `flipped` 
+    - 默认为 false，结果为竖版（portrait orientation 人像画）
+    - 为 true： 调整为横板（landscape orientation 风景画）
+
+set 规则方便设置已有的元素，像是 page，heading 等，一次调整好所有元素
+
+show 规则对自定义元素进行调整 `#show "WWWQQQ": wq => text(font: "Fira Code",wq)`
+
+set 会设置所有符合条件的，比如所一级标题和二级标题有不同样式，就不应该用 set，应该改用 show
+
+```typ
+#show: rest => columns(2,rest)
+
+#set heading(
+  offset: 2
+)
+// 后边的show 不起作用
+
+#show heading.where(
+  level: 1
+): it => block(width: 100%)[
+  #set align(center)
+  #set text(12pt, weight: "regular")
+  #smallcaps(it.body)
+]
+
+#show heading.where(
+  level: 2
+): it => text(
+  size: 11pt,
+  weight: "regular",
+  style: "italic",
+  smallcaps(it.body)
+)
 
 
-= first <firstChapter>
-#lorem(20)
-
-#lorem(20) 
-
-引用@firstChapter
-
-中文输入一些文字，胡言乱语。按下123发射东风
+= Introduction
+#lorem(300)
 
 == second
-#figure(image("bing.png", width: 50%), caption: "this is caption")<bingDraw>
+#lorem(20)
 
-= third
-i want to use pic @bingDraw
-
-this is some words \ code
-
-new line 
-
-```cpp
-#include<iostream>
-int main(){
-  std::cout<<"hello typst\n";
-  return 0;
-}
+= Related Work
+#lorem(200)
 ```
-
-```
-
-## todo
-`show` 规则，闭包

@@ -975,6 +975,59 @@ public:
 
 
 ## string 
+### trie
+力扣 208
+
+```cpp
+class Trie {
+    int isEnd;
+    Trie *next[26];
+public:
+    Trie() {
+        isEnd = false;
+        for (auto &i: next)
+            i = nullptr;
+    }
+
+    void insert(string word) {
+        Trie *cur = this;
+        for (char x: word) {
+            if (cur->next[x - 'a'] == nullptr) cur->next[x - 'a'] = new Trie();
+            cur = cur->next[x - 'a'];
+        }
+        cur->isEnd = true;
+    }
+
+    bool search(string word) {
+        Trie *cur = this;
+        for (char x: word) {
+            int id = x - 'a';
+            if (cur->next[id]) cur = cur->next[id];
+            else return false;
+        }
+        return cur->isEnd;
+    }
+
+    bool startsWith(string prefix) {
+        Trie *cur = this;
+        for (char x: prefix) {
+            int id = x - 'a';
+            if (cur->next[id]) cur = cur->next[id];
+            else return false;
+        }
+        return true;
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
+```
+
 ### 马拉车
 [讲解](https://www.zhihu.com/question/37289584/answer/465656849)
 
@@ -1030,8 +1083,8 @@ public:
 出自编译原理那本龙书（汉化第二版 86 页）
 
 下面都是**从 1 开始计数**
-1. 先构造这样的函数表示 $$ b_1b_2..b_{f(s)} $$ 既是整个 pattern 的 s 位**真**前缀，也是 s 位后缀，两者相同。
 
+1. 先构造函数 `f(s)` 表示 $$ b_1b_2..b_{f(s)} $$ 既是整个 pattern 的 s 位**真**前缀，也是 s 位后缀，两者相同。
 2. 当匹配 s 个字母成功，s+1 个字母失败时，将 pattern 移动 s-f(s) 位 
 
 ```txt
@@ -1050,20 +1103,20 @@ pattern         a b a b a b
 
 如何计算 lose：字符不等就试一下上一个长度，正好 id 等于上一个长度能比较字符。
 
-eg: ababax -> 比较 ababax  发现 x != b 下一个比 aba abx
+eg: `ababax` -> 比较 `ababax`  发现 x != b 下一个比 `aba` `abx`
 
-下面是对 s-f(s) 进行修改
+下面是对 `s-f(s)` 进行修改
 
 1. 在扫描的时候比较当前位，不是下一位
-2. 假如在从 1 数第 5 位失败 s = 4, pat 整个前移 s - f(s)= 4 - f(4) = 2 位
-3. 转换成下标就是从 0 数，下标 id 为 4 失败，pat 整个前移 id - f(id - 1) = 4 - 2
-4. 字符串整个前移等价于扫描点回移，所以新的扫描点是 id - (id - f(id-1) ) = f(id - 1)
+2. 假如在从 1 数第 5 位失败 s = 4, pat 整个前移 `s - f(s)= 4 - f(4) = 2` 位
+3. 转换成下标就是从 0 数，下标 id 为 4 失败，pat 整个前移 `id - f(id - 1) = 4 - 2`
+4. 字符串整个前移等价于扫描点回移，所以新的扫描点是 `id - (id - f(id-1) ) = f(id - 1)`
 
 |计数起点|成功|失败|转换|
+|:--:|:--|:--|:--|
 |1|s 为 4 成功|s 为 5 失败|s - f(s) = 4 - f(4)|
 |0|id 为 3 成功| id 为 4 失败| id - f(id-1) |
 
-实现
 ```cpp
 #include "vector"
 #include "string"
@@ -1306,11 +1359,70 @@ void change_base(int n, const int base) {
 }
 ```
 
-## template
+## 模板
+### 分组判断
+双指针的一种，也还行，双指针有时候写不好还要判断最后一段，例题为力扣 1146
 
-vector删除特定元素 `nums.erase(remove(nums.begin(), nums.end(), val) ,nums.end());`
+[例题合集](https://leetcode.cn/problems/summary-ranges/solutions/553645/hui-zong-qu-jian-by-leetcode-solution-6zrs/comments/2106748)
 
-mergesort
+=== "双指针"
+
+    ```cpp
+    class Solution {
+    public:
+        int maxPower(string s) {
+            int anw = 0;
+            for (int left = 0, right = 0; right < s.size(); right++) {
+                if (right < s.size() - 1 && s[right] == s[right + 1]) continue;
+                anw = max(anw, right - left + 1);
+                left = right + 1;
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "分组判断"
+
+    ```cpp
+    class Solution {
+    public:
+        int maxPower(string s) {
+            int anw = 0;
+            int begin = 0;
+            while (begin < s.size()) {
+                int tem = begin;
+                while (s[begin] == s[begin + 1]) begin++;
+                anw = max(anw, begin - tem + 1);
+                begin++;
+            }
+            return anw;
+        }
+    };
+    ```
+
+其实这个也能改造 `for` ，但是感觉 `while` 思路更流畅，例子：力扣 2110
+
+```cpp
+int i = 0;
+while (i < prices.size()) {
+    int tem = i;
+    while (i + 1 < prices.size() && prices[i + 1] + 1 == prices[i]) i++;
+    int len = i - tem + 1;
+    anw += (1ll + len) * len / 2;
+    i++;
+}
+```
+
+```cpp
+for (int i = 0; i < prices.size(); i++) {
+    int tem = i;
+    while (i + 1 < prices.size() && prices[i + 1] + 1 == prices[i]) i++;
+    int len = i - tem + 1;
+    anw += (1ll + len) * len / 2;
+}
+```
+### 归并排序
 
 === "normal"
 

@@ -1,3 +1,57 @@
+### cheat sheet
+- `isalpha` 大小写英文字母
+- `isdight` 0-9
+- `isalnum` 上边两个
+- `isblank` `\t` 和空格
+- `stoi` 字符串变数字
+- `to_string` 数字变字符串
+- `1ll` 参与 `int` 计算时将结果转为 `long long` `1ll+anw`
+- `floor(double x)` 向下取整
+- `ceil(double x)` 向上取整
+- `memeset` 只用来赋 0 或者 -1
+- `string x.replace(int pos,int n,string new_str)` 效果为：从下标为 pos 的位置开始数 n 个字符（pos 也算一个），把他们删除，再插入 new_str ，可以配合 `x.find()` 使用
+- vector删除特定元素 `nums.erase(remove(nums.begin(), nums.end(), val) ,nums.end());`
+
+`stringstream` 用法
+- 最好不要混着用输入输出，每次用的时候只用一个方向，要是换方向需要 `ss.str(string()); ss.clear()` 相当于用一个空字符串取代原来内容
+- 用例：去除字符串的空格，用 `>>` 的好处是可以忽略所有空格，用 `getline` 的好处是可以指定分隔符，但是多个分隔符判断为空串,和 Python 效果一样，都没法分辨的，`['', 'aa', 'aaa', '', '', '', 'aa', 'aaa', '', '', 'a', 'aa', '', '', '']`
+- 省流：如果字符串比较好，没有前导和尾空格，中间只有一个空格，用 `getline` 和 `>>` 都行，不然用 `>>` 效果好
+
+```cpp
+void learn() {
+    string input = " aa aaa    aa aaa   a aa   ";
+    string cache;
+
+    stringstream ss(input);
+
+    vector<string> res;
+    while (ss >> cache) {
+        res.emplace_back(cache);
+    }
+    for (string a: res) {
+        cout << a << '+';
+    }
+    cout << endl;
+
+    // Clear the stringstream before using it for output
+    ss.str(string()); // Clear the contents
+    ss.clear(); // Reset the stream state
+
+    ss << input;
+    vector<string> other;
+
+    while (getline(ss, cache, ' ')) {
+        other.emplace_back(cache);
+    }
+    for (string a: other)
+        cout << a << '+';
+}
+
+//aa+aaa+aa+aaa+a+aa+        
+//+aa+aaa++++aa+aaa+++a+aa+++
+
+```
+
 ### pointer vs reference
 pointer：
 

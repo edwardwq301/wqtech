@@ -1088,6 +1088,81 @@ public:
 };
 ```
 
+### 61 旋转链表
+开始直接两次反转
+
+???
+    ```cpp
+    class Solution {
+    public:
+        ListNode *rotateRight(ListNode *head, int k) {
+            if(head==nullptr) return nullptr;
+            int cnt = 0;
+            for (ListNode *cur = head; cur; cur = cur->next)
+                cnt++;
+            k %= cnt;
+            if(k==0) return head;
+            
+            head = reverseList(head);
+            ListNode dummy(0, head);
+
+            ListNode *n4 = &dummy;
+            ListNode *n5 = dummy.next;
+            for (int i = 0; i < k; i++)
+                n4 = n4->next;
+            ListNode *n3 = n4->next;
+            n4->next = nullptr;
+            dummy.next = reverseList(n5);
+            n5->next = reverseList(n3);
+
+            return dummy.next;
+        }
+
+        ListNode *reverseList(ListNode *head) {
+            ListNode *pre = nullptr;
+            while (head) {
+                ListNode *ne = head->next;
+                head->next = pre;
+                pre = head;
+                head = ne;
+            }
+            return pre;
+        }
+    };
+    ```
+
+看题解后发现可以首尾相接成环，然后合理断开
+
+!!! "断开"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode *rotateRight(ListNode *head, int k) {
+            if (head == nullptr || k == 0) return head;
+            // 统计个数并成环
+            int cnt = 0;
+            ListNode *cur = head;
+            while (cur->next) {
+                cur = cur->next;
+                cnt++;
+            }
+            cnt++;
+            cur->next = head;
+
+            k %= cnt;
+            // 找到新头的前一个 并断开和新头的连接
+            cur = head;
+            for (int i = 0; i < cnt - k - 1; i++)
+                cur = cur->next;
+
+            ListNode *newHead = cur->next;
+            cur->next = nullptr;
+            return newHead;
+        }
+    };
+    ```
+
 ### 73 矩阵置0
 - 第一种用集合存对应的行、列，最后集中置零
 - 第二种用第一行，第一列做标记，（先记录第一行，第一列要不要置0），假如 `martix[i][j] = 0`，那么 `martix[i][0] = martix[0][j] = 0` （打上置零标记），最后集中处理
@@ -1306,52 +1381,154 @@ dfs
 ```cpp
 class Solution {
 public:
-    string target;
-    string now;
-    vector<vector<bool>> used;
-    int dx[4] = {0, 0, -1, 1};
-    int dy[4] = {1, -1, 0, 0};
-
     bool exist(vector<vector<char>> &board, string word) {
-        target = word;
-        used = vector<vector<bool>>(board.size(),
-                                    vector<bool>(board[0].size(), false));
-        for (int i = 0; i < board.size(); i++)
-            for (int j = 0; j < board[0].size(); j++) {
-                bool anw = dfs(now, 0, i, j, board);
-                if (anw)
+        for (int row = 0; row < board.size(); row++)
+            for (int col = 0; col < board[0].size(); col++)
+                if (dfs(row, col, 0, board, word))
                     return true;
-            };
         return false;
     }
 
-    bool dfs(string& now, int posi, int x, int y, vector<vector<char>> &board) {
-
-        if (target[posi] != board[x][y])
+    bool dfs(int row, int col, int cnt, vector<vector<char>> &board, string &word) {
+        if (cnt == word.size())
+            return true;
+        if (row < 0 || row >= board.size() || col < 0 || col >= board[0].size())
             return false;
 
-        now += board[x][y];
-        used[x][y] = true;
-
-        if (now == target)
-            return true;
-
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i], ny = y + dy[i];
-            if (nx >= 0 && nx < board.size() &&
-                ny >= 0 && ny < board[0].size() &&
-                !used[nx][ny])
-                if (dfs(now, posi + 1, nx, ny, board))
-                    return true;
-        }
-
-        now.pop_back();
-        used[x][y] = false;
-
-        return false;
+        char c = board[row][col];
+        if (c != word[cnt])
+            return false;
+        
+        board[row][col] = '#'; // visited
+        bool isFind = dfs(row + 1, col, cnt + 1, board, word) ||
+                      dfs(row - 1, col, cnt + 1, board, word) ||
+                      dfs(row, col + 1, cnt + 1, board, word) ||
+                      dfs(row, col - 1, cnt + 1, board, word);
+        board[row][col] = c;
+        return isFind;
     }
 };
 ```
+
+??? "早期版本"
+
+    ```cpp
+    class Solution {
+    public:
+        string target;
+        string now;
+        vector<vector<bool>> used;
+        int dx[4] = {0, 0, -1, 1};
+        int dy[4] = {1, -1, 0, 0};
+
+        bool exist(vector<vector<char>> &board, string word) {
+            target = word;
+            used = vector<vector<bool>>(board.size(),
+                                        vector<bool>(board[0].size(), false));
+            for (int i = 0; i < board.size(); i++)
+                for (int j = 0; j < board[0].size(); j++) {
+                    bool anw = dfs(now, 0, i, j, board);
+                    if (anw)
+                        return true;
+                };
+            return false;
+        }
+
+        bool dfs(string& now, int posi, int x, int y, vector<vector<char>> &board) {
+
+            if (target[posi] != board[x][y])
+                return false;
+
+            now += board[x][y];
+            used[x][y] = true;
+
+            if (now == target)
+                return true;
+
+            for (int i = 0; i < 4; i++) {
+                int nx = x + dx[i], ny = y + dy[i];
+                if (nx >= 0 && nx < board.size() &&
+                    ny >= 0 && ny < board[0].size() &&
+                    !used[nx][ny])
+                    if (dfs(now, posi + 1, nx, ny, board))
+                        return true;
+            }
+
+            now.pop_back();
+            used[x][y] = false;
+
+            return false;
+        }
+    };
+    ```
+
+### 86 分隔链表
+开始想直接快慢指针调整顺序，没写出来，然后发现用两个链表头直接挑出来就好了
+
+另外有可能 cur_big->next 指向为小于 x 的点 比如 `1 4 2 x = 3` 需要断开，要么每次处理，要么最后处理
+
+=== "最后处理"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode *partition(ListNode *head, int x) {
+
+            ListNode small(0);
+            ListNode *cur_small = &small;
+            ListNode big(0);
+            ListNode *cur_big = &big;
+
+            while (head) {
+                if (head->val < x) {
+                    cur_small->next = head;
+                    cur_small = cur_small->next;
+                }
+                else {
+                    cur_big->next = head;
+                    cur_big = cur_big->next;
+                }
+                head = head->next;
+            }
+
+            cur_small->next = big.next;
+            cur_big->next=nullptr; // important
+            return small.next;
+        }
+    };
+    ```
+
+=== "每次处理"
+
+    ```cpp
+    class Solution {
+    public:
+        ListNode *partition(ListNode *head, int x) {
+
+            ListNode small(0);
+            ListNode *cur_small = &small;
+            ListNode big(0);
+            ListNode *cur_big = &big;
+
+            while (head) {
+                ListNode *ne = head->next;
+                if (head->val < x) {
+                    cur_small->next = head;
+                    cur_small = cur_small->next;
+                    head->next = nullptr;
+                }
+                else {
+                    cur_big->next = head;
+                    cur_big = cur_big->next;
+                    head->next = nullptr;
+                }
+                head = ne;
+            }
+            cur_small->next = big.next;
+            return small.next;
+        }
+    };
+    ```
 
 ### 94 二叉树中序遍历
 今天看到一个[好理解的非递归方法](https://leetcode.cn/problems/binary-tree-inorder-traversal/solutions/25220/yan-se-biao-ji-fa-yi-chong-tong-yong-qie-jian-ming)
@@ -1391,91 +1568,384 @@ public:
 };
 ```
 
+### 98 验证二叉搜索树
+和 99 一个思路，先检验中序遍历有没有逆序
+
+=== "dfs"
+
+    ```cpp
+    class Solution {
+    public:
+        long long  last_val = LONG_LONG_MIN;
+
+        bool isValidBST(TreeNode* root) {
+            if (root == nullptr)
+                return true;
+            bool leftValid = isValidBST(root->left);
+            if (!leftValid)
+                return false;
+            if (last_val >= root->val)
+                return false;
+            last_val = root->val;
+            bool rightValid = isValidBST(root->right);
+            if (!rightValid)
+                return false;
+            return true;
+        }
+    };
+    ```
+
+=== "mirros"
+
+    ```cpp
+    class Solution {
+    public:
+        int last_val = INT_MIN;
+        bool ff = false;
+
+        bool isValidBST(TreeNode* root) {
+
+            dfs(root);
+            if (ff)
+                return false;
+            else
+                return true;
+        }
+
+        void dfs(TreeNode* root) {
+            TreeNode* pre = nullptr;
+            TreeNode* now = root;
+            while (now) {
+                TreeNode* mirros = now->left;
+                if (mirros == nullptr) {
+                    if (pre && pre->val >= now->val) {
+                        ff = true;
+                    }
+                    pre = now;
+                    now = now->right;
+                    continue;
+                }
+                while (mirros->right && mirros->right != now) {
+                    mirros = mirros->right;
+                }
+                if (mirros->right == nullptr) {
+                    mirros->right = now;
+                    now = now->left;
+                } else {
+                    if (pre && pre->val >= now->val) {
+                        ff = true;
+                    }
+                    mirros->right = nullptr;
+                    pre = now;
+                    now = now->right;
+                }
+            }
+        }
+
+    }
+    ;
+    ```
+
 ### 99 恢复二叉搜索树
 - 中序遍历的结果序列中，第一个逆序对 AB 的 A 是待换元素
 - 如果有第二个逆序对，第二个逆序对 CD 的 D 是待换元素
 - 如果没有第二个逆序对，就是 AB 互换
 - 为什么这么说，可以写一个升序序列然后换其中的两个位置
 
-[java 题解](https://leetcode.cn/problems/recover-binary-search-tree/solutions/271778/san-chong-jie-fa-xiang-xi-tu-jie-99-hui-fu-er-cha-)
+=== "dfs"
 
-```java
-class Solution {
-    //用两个变量x，y来记录需要交换的节点
-    private TreeNode x = null;
-    private TreeNode y = null;
-    private TreeNode pre = null;
-    public void recoverTree(TreeNode root) {
-        dfs(root);
-        //如果x和y都不为空，说明二叉搜索树出现错误的节点，将其交换
-        if(x!=null && y!=null) {
-            int tmp = x.val;
-            x.val = y.val;
-            y.val = tmp;
+    ```cpp
+    class Solution {
+    public:
+        void recoverTree(TreeNode *root) {
+            dfs(root);
+            swap(fault_left->val, fault_right->val);
         }
-    }
-	
-    //中序遍历二叉树，并比较上一个中序遍历节点(pre)和当前节点的值，如果pre的值大于当前节点值，则记录下这两个节点
-    private void dfs(TreeNode node) {
-        if(node==null) {
-            return;
-        }
-        dfs(node.left);
-        if(pre==null) {
-            pre = node;
-        }
-        else {
-            if(pre.val>node.val) {
-                if(x==null) x = pre;
-                y = node;
+
+        TreeNode *fault_left;
+        TreeNode *fault_right;
+        TreeNode *last = nullptr;
+
+        void dfs(TreeNode *root) {
+            if (root == nullptr) return;
+            dfs(root->left);
+            if (last == nullptr) last = root;
+            if (last->val > root->val) {
+                if (fault_left == nullptr) {
+                    fault_left = last;
+                    fault_right = root;
+                }
+                else {
+                    fault_right = root;
+                }
             }
-            pre = node;
+            last = root;
+            dfs(root->right);
         }
-        dfs(node.right);
-    }
-}
-```
+    };
+    ```
 
-Mirros 遍历
+=== "Mirros"
+
+    ```cpp
+    class Solution {
+    public:
+        void recoverTree(TreeNode * root) {
+            TreeNode * now = root;
+            TreeNode * pre = nullptr;
+            TreeNode * x = nullptr;
+            TreeNode * y = nullptr;
+
+            while (now) {
+                TreeNode * mirros = now->left;
+                if (mirros == nullptr) {
+                    if (pre && pre->val > now->val) {
+                        if (x == nullptr) x = pre;
+                        y = now;
+                    }
+                    pre = now;
+                    now = now->right;
+                    continue;
+                }
+                while (mirros->right && mirros->right != now) {
+                    mirros = mirros->right;
+                }
+                if (mirros->right == nullptr) {
+                    mirros->right = now;
+                    now = now->left;
+                }
+                else {
+                    if (pre && pre->val > now->val) {
+                        if (x == nullptr) x = pre;
+                        y = now;
+                    }
+                    mirros->right = nullptr;
+                    pre = now;
+                    now = now->right;
+                }
+            }
+            if (x && y) swap(x->val, y->val);
+        }
+    };
+    ```
+
+### 105 106 构建二叉树
+简单的记法：统一用左子树的大小去调整范围，节省心智
+
+??? "105"
+
+    ```cpp
+    class Solution {
+    public:
+        unordered_map<int, int> valIndexInorder;
+
+        TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+
+            for (int i = 0; i < inorder.size(); i++)
+                valIndexInorder[inorder[i]] = i;
+
+            return build(preorder, inorder, 0, preorder.size() - 1, 0,
+                        inorder.size() - 1);
+        }
+
+        TreeNode *build(vector<int> &preorder, vector<int> &inorder, int preleft,
+                        int preright, int inleft, int inright) {
+            if (preleft > preright)
+                return nullptr;
+
+            int val = preorder[preleft];
+            TreeNode *root = new TreeNode(val);
+            int index = valIndexInorder[val];
+            int leftLen = index - inleft;
+
+            root->left = build(preorder, inorder,
+                            preleft + 1, preleft + leftLen,
+                            inleft, inleft + leftLen - 1);
+            root->right = build(preorder, inorder,
+                                preleft + leftLen + 1, preright,
+                                inleft + leftLen + 1, inright);
+            return root;
+        }
+    };
+    ```
+
+??? "106"
+
+    ```cpp
+    class Solution {
+    public:
+        unordered_map<int, int> indexInMidorderOf;
+
+        TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder) {
+            for (int i = 0; i < inorder.size(); i++)
+                indexInMidorderOf[inorder[i]] = i;
+            return build(inorder, 0, inorder.size() - 1,
+                        postorder, 0, postorder.size() - 1);
+        }
+
+        TreeNode *build(vector<int> &inorder, int in_l, int in_r,
+                        vector<int> &postorder, int po_l, int po_r) {
+            if (in_l > in_r || po_l > po_r) return nullptr;
+
+            TreeNode *root = new TreeNode(postorder[po_r]);
+            int rootIndexofMidorder = indexInMidorderOf[postorder[po_r]];
+            int leftSonSize = rootIndexofMidorder - in_l;
+
+            root->left = build(inorder, in_l, in_l + leftSonSize - 1,
+                            postorder, po_l, po_l + leftSonSize - 1);
+
+            root->right = build(inorder, in_l + leftSonSize + 1, in_r,
+                                postorder, po_l + leftSonSize, po_r - 1);
+            return root;
+        }
+    };
+    ```
+
+### 114 二叉树转链表
+1. 先序遍历，前一个节点的右儿子改成当前点，左儿子为空
+2. 把右儿子挂到左子树的最右节点，然后把当前点右儿子改成左，左儿子为空。
+
+=== "递归"
+
+    ```cpp
+    class Solution {
+    public:
+        void flatten(TreeNode *root) {
+            TreeNode dummy(0);
+            pre = &dummy;
+            dfs(root);
+        }
+
+        TreeNode *pre = nullptr;
+
+        void dfs(TreeNode *root) {
+            if (root == nullptr)
+                return;
+
+            TreeNode *leftson = root->left;
+            TreeNode *rightson = root->right;
+
+            pre->left = nullptr;
+            pre->right = root;
+            pre = root;
+
+            dfs(leftson);
+            dfs(rightson);
+        }
+    };
+    ```
+
+=== "非递归"
+
+    ```cpp
+    class Solution {
+    public:
+        void flatten(TreeNode *root) {
+            if (root == nullptr) return;
+            TreeNode du(0);
+            TreeNode *pre = &du;
+            stack<pair<TreeNode *, bool>> st;
+            st.push({root, false});
+            while (!st.empty()) {
+                auto [node, color] = st.top();
+                st.pop();
+                if (node == nullptr) continue;
+                if (color) {
+                    pre->right = node;
+                    pre->left = nullptr;
+
+                    pre = node;
+                }
+                else {
+                    st.push({node->right, false});
+                    st.push({node->left, false});
+                    st.push({node, true});
+                }
+            }
+        }
+    };
+    ```
+
+=== "规律"
+
+    ```cpp
+    class Solution {
+    public:
+        void flatten(TreeNode* root) {
+            if (root == nullptr)
+                return;
+            while (root) {
+                TreeNode* move = root->left;
+                while (move && move->right)
+                    move = move->right;
+                if (move) {
+                    move->right = root->right;
+                    root->right = root->left;
+                    root->left = nullptr;
+                }
+                root = root->right;
+            }
+        }
+    };
+    ```
+
+### 117 填充右指针
+层序遍历
 
 ```cpp
 class Solution {
 public:
-    void recoverTree(TreeNode * root) {
-        TreeNode * now = root;
-        TreeNode * pre = nullptr;
-        TreeNode * x = nullptr;
-        TreeNode * y = nullptr;
-
-        while (now) {
-            TreeNode * mirros = now->left;
-            if (mirros == nullptr) {
-                if (pre && pre->val > now->val) {
-                    if (x == nullptr) x = pre;
-                    y = now;
+    Node* connect(Node* root) {
+        if (root == nullptr)
+            return root;
+        queue<Node*> qu;
+        qu.push(root);
+        while (!qu.empty()) {
+            int sz = qu.size();
+            for (int i = 0; i < sz; i++) {
+                auto item_a = qu.front();
+                    qu.pop();
+                if (i != sz - 1) {
+                    item_a->next = qu.front();
                 }
-                pre = now;
-                now = now->right;
-                continue;
-            }
-            while (mirros->right && mirros->right != now) {
-                mirros = mirros->right;
-            }
-            if (mirros->right == nullptr) {
-                mirros->right = now;
-                now = now->left;
-            }
-            else {
-                if (pre && pre->val > now->val) {
-                    if (x == nullptr) x = pre;
-                    y = now;
-                }
-                mirros->right = nullptr;
-                pre = now;
-                now = now->right;
+                if (item_a->left)
+                    qu.push(item_a->left);
+                if (item_a->right)
+                    qu.push(item_a->right);
             }
         }
-        if (x && y) swap(x->val, y->val);
+
+        return root;
+    }
+};
+```
+
+每层相当于一个链表，假如第 i 层已经建立好链表，遍历第 i 层时可以建下一层的
+
+```cpp
+class Solution {
+public:
+    Node *connect(Node *root) {
+
+        if (root == nullptr) return nullptr;
+
+        Node *head = root;
+        while (head) {
+            Node next_level_head(0); // 开一个 dummy head
+            Node *next_level_p = &next_level_head;
+            for (Node *cur_level_p = head; cur_level_p; cur_level_p = cur_level_p->next) {
+                if (cur_level_p->left) {
+                    next_level_p->next = cur_level_p->left;
+                    next_level_p = next_level_p->next;
+                }
+                if (cur_level_p->right) {
+                    next_level_p->next = cur_level_p->right;
+                    next_level_p = next_level_p->next;
+                }
+            }
+            head = next_level_head.next;
+        }
+        return root;
     }
 };
 ```
@@ -2323,6 +2793,251 @@ public:
 
         dfs(root->right, depth + 1);
         dfs(root->left, depth + 1);
+    }
+};
+```
+
+### 202 快乐数
+并不快乐
+
+官方题解写的挺好，补充说明，如果 x 长度大于 3，最终 x 会小于等于 243（999 -> 243），也就是绕来绕去绕到长度为 3 状态顶多会有 243 个，因为状态数有限（最多 243）但是操作无限，所以要么成环绕回到本身，要么到 1 出口
+
+[为什么只有一个环](https://leetcode.cn/problems/happy-number/solutions/21454/shi-yong-kuai-man-zhi-zhen-si-xiang-zhao-chu-xun-h/comments/2245241)
+
+=== "哈希表"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isHappy(int n) {
+            unordered_map<int, bool> appear;
+            while (true) {
+                n = getNext(n);
+                if (n == 1) return true;
+                if (appear[n] == false) appear[n] = true;
+                else return false;
+            }
+        }
+
+        int getNext(int n) {
+            int anw = 0;
+            while (n > 0) {
+                int x = n % 10;
+                anw += x * x;
+                n /= 10;
+            }
+            return anw;
+        }
+    };
+    ```
+
+=== "快慢指针"
+
+    ```cpp
+    class Solution {
+    public:
+        bool isHappy(int n) {
+            int slow = getNext(n), fast = getNext(getNext(n));
+            while (fast != 1 && slow != fast) {
+                slow = getNext(slow);
+                fast = getNext(getNext(fast));
+            }
+            return fast == 1;
+        }
+
+        int getNext(int n) {
+            int anw = 0;
+            while (n > 0) {
+                int x = n % 10;
+                anw += x * x;
+                n /= 10;
+            }
+            return anw;
+        }
+    };
+    ```
+
+
+### 205 同构字符串
+离散数学最有用的一次
+
+1. 一个哈希表不能维护多对一，要么用两个，要么判断两次。
+2. 如果换一种思路，全都转成第三方，汉语和日语全都换成英语，检测英语是不是一样就行了，具体为对应成首次出现的下标
+
+```
+abca
+
+0120
+
+defd
+```
+
+=== "判两次"
+
+    ```cpp
+    class Solution {
+    public:
+
+        bool isIsomorphic(string s, string t) {
+            return checkT2S(s, t) && checkT2S(t, s);
+        }
+
+        bool checkT2S(string t, string s) {
+            unordered_map<char, char> ttos;
+            for (int i = 0; i < s.size(); i++) {
+                if (ttos.find(t[i]) == ttos.end()) {
+                    ttos[t[i]] = s[i];
+                }
+                else if (ttos[t[i]] != s[i]) return false;
+            }
+            return true;
+        }
+    };
+    ```
+
+=== "转下标"
+
+    ```cpp
+    class Solution {
+    public:
+
+        bool isIsomorphic(string s, string t) {
+            return toIndexString(s) == toIndexString(t);
+        }
+
+        string toIndexString(string s) {
+            int cnt = 0;
+            unordered_map<char, int> toindex;
+            string res;
+            for (char x: s) {
+                if (toindex.find(x) == toindex.end()) {
+                    toindex[x] = cnt;
+                    // 防止 21 0 2 10 不能区分，所以加空格
+                    res +=' '+ to_string(cnt);
+                    cnt++;
+                }
+                else res +=' '+ to_string(toindex[x]);
+            }
+            cout<<res<<'\n';
+            return res;
+        }
+
+
+    };
+    ```
+
+### 211 添加与搜索单词
+前缀树，主要是搜索的时候怎么处理通配符，直接进行一个 dfs
+
+```cpp
+class WordDictionary {
+public:
+    bool isend;
+    WordDictionary *next[26];
+
+    WordDictionary() {
+        isend = false;
+        fill(next, next + 26, nullptr);
+    }
+
+    void addWord(string word) {
+        WordDictionary *cur = this;
+        for (char x: word) {
+            int id = x - 'a';
+            if (cur->next[id] == nullptr) cur->next[id] = new WordDictionary();
+            cur = cur->next[id];
+        }
+        cur->isend = true;
+    }
+
+    bool search(string word) {
+        return search_core(this, word, 0);
+    }
+
+    bool search_core(WordDictionary *cur, string &word, int cnt) {
+        if (cnt == word.size()) return cur->isend;
+        if (word[cnt] == '.') {
+            for (auto &x: cur->next)
+                if (x != nullptr && search_core(x, word, cnt + 1))
+                    return true;
+            return false;
+        }
+        else {
+            int id = word[cnt] - 'a';
+            if (cur->next[id] == nullptr) return false;
+            return search_core(cur->next[id], word, cnt + 1);
+        }
+    }
+};
+```
+
+### 212 单词搜索2
+一眼爆搜，问题在于怎么减少无效的搜索。
+
+1. 有很多字符串，用 trie
+2. 搜过的状态不在搜
+3. 不在 trie 的不搜
+
+```cpp
+class Trie {
+    bool isend;
+
+public:
+    string word;
+    vector<Trie*> next;
+
+    Trie() {
+        isend = false;
+        next.assign(26, nullptr);
+    }
+
+    void add(string& word) {
+        Trie* cur = this;
+        for (char x : word) {
+            int id = x - 'a';
+            if (cur->next[id] == nullptr)
+                cur->next[id] = new Trie();
+            cur = cur->next[id];
+        }
+        cur->word = word;
+        cur->isend = true;
+    }
+};
+
+class Solution {
+    vector<string> anw;
+    Trie trie;
+
+public:
+    vector<string> findWords(vector<vector<char>>& board,
+                             vector<string>& words) {
+        for (auto x : words)
+            trie.add(x);
+        for (int row = 0; row < board.size(); row++)
+            for (int col = 0; col < board[0].size(); col++)
+                dfs(row, col, &trie, board);
+        return anw;
+    }
+
+    void dfs(int row, int col, Trie* cur, vector<vector<char>>& board) {
+        if (row < 0 || row >= board.size() || col < 0 || col >= board[0].size())
+            return;
+        char c = board[row][col];
+        if (c == '#' || cur->next[c - 'a'] == nullptr)
+            return;
+
+        cur = cur->next[c - 'a']; // trie 看下一位，因为有 dummy 头
+        if (!cur->word.empty()) {
+            anw.emplace_back(cur->word);
+            cur->word.clear(); // 防止多次添加到答案
+        }
+
+        board[row][col] = '#';  // 访问过了就修改标志位
+        dfs(row + 1, col, cur, board);
+        dfs(row - 1, col, cur, board);
+        dfs(row, col + 1, cur, board);
+        dfs(row, col - 1, cur, board);
+        board[row][col] = c;
     }
 };
 ```
@@ -3268,6 +3983,145 @@ public:
 
 做出来了，feel good🥰
 
+
+### 784 字母大小写全排列
+不能用每次都收集，因为没法区分 `ab pos=1` 和 `ab pos=2` ，导致重复收集
+
+应该用下标超界做收集条件
+
+位图做法，统计字母个数，总共有 `2^chars` 可能，遇到字符，看是纯字串的第 k 位，如果在 第 poss 个可能中第 k 位为 1，放大写；反之放小写
+
+??? "wrong"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<string> anw;
+        vector<string> letterCasePermutation(string s) {
+            dfs(0, s);
+            return anw;
+        }
+        void dfs(int pos, string s) {
+            if (pos == s.size())
+                return;
+            if (isdigit(s[pos])) {
+                dfs(pos + 1, s);
+                return;
+            }
+            else if (isupper(s[pos])) {
+                anw.emplace_back(s);
+                dfs(pos + 1, s);
+                s[pos] = tolower(s[pos]);
+                anw.emplace_back(s);
+                dfs(pos + 1, s);
+            }
+            else {
+                anw.emplace_back(s);
+                dfs(pos + 1, s);
+                s[pos] = toupper(s[pos]);
+                anw.emplace_back(s);
+                dfs(pos + 1, s);
+            }
+        }
+    };
+    ```
+
+=== "正常思路"
+
+    ```cpp
+    class Solution {
+        vector<string> ret;
+
+        // 取不取引用都对
+        void dfs(string & s, int pos) {
+            while (pos < s.size() && isdigit(s[pos]))
+                ++pos;
+            if (pos >= s.size())
+                return ret.push_back(s);
+
+            if (islower(s[pos])) {
+                dfs(s, pos + 1);
+
+                s[pos] = toupper(s[pos]);
+                dfs(s, pos + 1);
+            }
+            else {
+                dfs(s, pos + 1);
+
+                s[pos] = tolower(s[pos]);
+                dfs(s, pos + 1);
+            }
+        }
+
+    public:
+        vector<string> letterCasePermutation(string s) {
+            dfs(s, 0);
+            return ret;
+        }
+    };
+    ```
+
+=== "改进"
+
+    ```cpp
+    class Solution {
+    public:
+        void dfs(string &s, int pos, vector<string> &res) {
+            while (pos < s.size() && isdigit(s[pos])) {
+                pos++;
+            }
+            if (pos == s.size()) {
+                res.emplace_back(s);
+                return;
+            }
+            dfs(s, pos + 1, res);
+        // 65^32=97, 97^32=65 
+        // a->A A->a
+            s[pos] ^= 32;
+            dfs(s, pos + 1, res);
+        }
+
+        vector<string> letterCasePermutation(string s) {
+            vector<string> ans;
+            dfs(s, 0, ans);
+            return ans;
+        }
+    };
+
+    ```
+
+=== "位图"
+
+    ```cpp
+    class Solution {
+    public:
+        vector<string> letterCasePermutation(string s) {
+            vector<string> anw;
+            int char_cnt = 0;
+            for (char x : s)
+                if (isalpha(x))
+                    char_cnt++;
+
+            int total_possible = 1 << char_cnt;
+
+            for (int poss = 0; poss < total_possible; poss++) {
+                string tem;
+                for (int si = 0, k_in_chars = 0; si < s.size(); si++) {
+                    if (isdigit(s[si]))
+                        tem += s[si];
+                    else {
+                        if (poss & (1 << k_in_chars++))
+                            tem += toupper(s[si]);
+                        else
+                            tem += tolower(s[si]);
+                    }
+                }
+                anw.emplace_back(tem);
+            }
+            return anw;
+        }
+    };
+    ```
 
 ### 904 水果成篮
 就是找一段区间尽可能长，区间内只有两种元素
@@ -4537,3 +5391,215 @@ int main() {
 
 巧妙在相当于并行处理2个字符串，想不出来😥 
 
+
+### 读者写者问题
+[wiki](https://en.wikipedia.org/wiki/Readers%E2%80%93writers_problem#)
+
+!!! "读者优先"
+
+    ```cpp
+    #include <mutex>
+    #include <iostream>
+    #include <thread>
+
+    using namespace std;
+
+    mutex readCntLock;
+    int readCnt;
+    mutex resource;
+
+    void readResource(int x) {
+        cout << x << " read\n";
+    }
+
+    void reader() {
+        while (true) {
+            readCntLock.lock();
+            readCnt++;
+            if (readCnt == 1)
+                resource.lock();
+            readCntLock.unlock();
+
+            readResource(readCnt);
+
+            readCntLock.lock();
+            readCnt--;
+            if (readCnt == 0)
+                resource.unlock();
+            readCntLock.unlock();
+        }
+    }
+
+    void writeResource(int x) {
+        cout << x << " write\n";
+    }
+
+    void writer() {
+        while (true) {
+            resource.lock();
+            writeResource(1);
+            resource.unlock();
+        }
+    }
+
+    int main() {
+        thread reader_b(reader);
+        thread writer_a(writer);
+        thread reader_c(reader);
+        writer_a.join();
+        reader_b.join();
+        reader_c.join();
+        return 0;
+    }
+    ```
+
+!!! "写者优先"
+
+    ```cpp
+    #include <mutex>
+    #include <iostream>
+    #include <thread>
+
+    using namespace std;
+
+    int readCnt;
+    mutex readCntLock;
+
+    int writeCnt;
+    mutex writeCntLock;
+
+    mutex readTry;
+    mutex resource;
+
+    void readResource(int x) {
+        cout << x << " read\n";
+    }
+
+    void reader() {
+        while (true) {
+            readTry.lock();
+
+            readCntLock.lock();
+            readCnt++;
+            if (readCnt == 1)
+                resource.lock();
+            readCntLock.unlock();
+
+            readTry.unlock();
+
+
+            readResource(readCnt);
+
+
+            readCntLock.lock();
+            readCnt--;
+            if (readCnt == 0)
+                resource.unlock();
+            readCntLock.unlock();
+        }
+    }
+
+    void writeResource(int x) {
+        cout << x << " write\n";
+    }
+
+    void writer() {
+        while (true) {
+            writeCntLock.lock();
+            writeCnt++;
+            if (writeCnt == 1)
+                readTry.lock();
+            writeCntLock.unlock();
+
+            resource.lock();
+            writeResource(1);
+            resource.unlock();
+
+            writeCntLock.lock();
+            writeCnt--;
+            if (writeCnt == 0)
+                readTry.unlock();
+            writeCntLock.unlock();
+        }
+    }
+
+    int main() {
+        thread reader_b(reader);
+        thread writer_a(writer);
+        thread reader_c(reader);
+        writer_a.join();
+        reader_b.join();
+        reader_c.join();
+        return 0;
+    }
+    ```
+
+!!! "公平"
+
+    ```cpp
+    #include <mutex>
+    #include <iostream>
+    #include <thread>
+
+    using namespace std;
+
+    int readCnt;
+    mutex readCntLock;
+
+    mutex serviceQueue;
+    mutex resource;
+
+    void readResource(int x) {
+        cout << x << " read\n";
+    }
+
+    void reader() {
+        while (true) {
+            serviceQueue.lock();
+
+            readCntLock.lock();
+            readCnt++;
+            if (readCnt == 1)
+                resource.lock();
+            readCntLock.unlock();
+
+            serviceQueue.unlock();
+
+
+            readResource(readCnt);
+
+
+            readCntLock.lock();
+            readCnt--;
+            if (readCnt == 0)
+                resource.unlock();
+            readCntLock.unlock();
+        }
+    }
+
+    void writeResource(int x) {
+        cout << x << " write\n";
+    }
+
+    void writer() {
+        while (true) {
+            serviceQueue.lock();
+            resource.lock();
+            serviceQueue.unlock();
+
+            writeResource(1);
+
+            resource.unlock();
+        }
+    }
+
+    int main() {
+        thread reader_b(reader);
+        thread writer_a(writer);
+        thread reader_c(reader);
+        writer_a.join();
+        reader_b.join();
+        reader_c.join();
+        return 0;
+    }
+    ```
