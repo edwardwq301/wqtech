@@ -371,6 +371,33 @@ public:
 };
 ```
 
+还有一种迭代的做法，找笛卡尔乘积，那我只要把上次结果的每一项都加一一个字母就行了
+
+```py
+def calc(phone: str):
+    kmaps = {
+        "2": "abc",
+        "3": "def",
+        "4": "ghi",
+        "5": "jkl",
+        "6": "mno",
+        "7": "pqrs",
+        "8": "tuv",
+        "9": "wxyz"
+    }
+    if phone == "":
+        return []
+
+    anw = [""]
+    for digit in phone:
+        tem = []
+        for item in anw:
+            for choose in kmaps[digit]:
+                tem.append(item+choose)
+        anw = tem
+    print(anw)
+```
+
 ### 22 括号生成
 最开始想的是在当前基础前边加 `()`，后边加 `()`，包裹当前 `(cur)`。然后错了，因为少了 `(())(())` 这种。
 

@@ -1743,7 +1743,7 @@ dfs时进行计数
 约瑟夫环问题， [省流版](https://blog.csdn.net/yzyyylx/article/details/78473304
 ) ， [详细版](https://www.acwing.com/solution/content/796/)
 
-??? "solve"
+=== "cpp"
 
     ```cpp
     class Solution {
@@ -1758,6 +1758,26 @@ dfs时进行计数
         }
     };
     ```
+
+=== "py"
+
+    ```py
+    def josephus(int_list: list, skip):
+        """skip: choose skip_th, eg: skip=2, 0 1 23"""
+        choose_id = 0
+        len_list = len(int_list)
+        while len_list:
+            choose_id = (choose_id+skip-1) % len_list
+            yield int_list.pop(choose_id)
+            len_list -= 1
+
+
+    def test_josephus():
+        anw = josephus([i for i in range(5)], 3)
+        for val in anw:
+            print(val)
+    ```
+
 
 ## [买卖股票1：股票的最大利润](https://www.acwing.com/problem/content/79/)
 
