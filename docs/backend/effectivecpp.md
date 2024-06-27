@@ -79,6 +79,17 @@ char* const cpnd = p1;       // const pointer,non-const data
 const char* const cpcd = p1; // const pointer,const data
 ```
 
+### y = *p++
+tldr：先取内容，然后指针加一
+
+1. 从左往右读
+2. `*` 和 `++` 是从右向左结合的，`y = *p++ -> y = *(p++)` 我们知道 `x = 0; y = x++;` y 是 0，类比过来就是 `y = *p;p++;`
+
+再举一个例子：`++*p` 转成 `++(*p)`，就是把内容取出来，内容加一；`++*p` 等价于 `(*p)++` 
+但是不等于 `*p++`
+
+最好不这么写；不是最一目了然😋
+
 ### 类型转换
 `const_cast< >` 把const转为非const，去掉constness或者volatileness
 
