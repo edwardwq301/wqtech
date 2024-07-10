@@ -371,6 +371,33 @@ public:
 };
 ```
 
+还有一种迭代的做法，找笛卡尔乘积，那我只要把上次结果的每一项都加一一个字母就行了
+
+```py
+def calc(phone: str):
+    kmaps = {
+        "2": "abc",
+        "3": "def",
+        "4": "ghi",
+        "5": "jkl",
+        "6": "mno",
+        "7": "pqrs",
+        "8": "tuv",
+        "9": "wxyz"
+    }
+    if phone == "":
+        return []
+
+    anw = [""]
+    for digit in phone:
+        tem = []
+        for item in anw:
+            for choose in kmaps[digit]:
+                tem.append(item+choose)
+        anw = tem
+    print(anw)
+```
+
 ### 22 括号生成
 最开始想的是在当前基础前边加 `()`，后边加 `()`，包裹当前 `(cur)`。然后错了，因为少了 `(())(())` 这种。
 
@@ -1091,7 +1118,8 @@ public:
 ### 61 旋转链表
 开始直接两次反转
 
-???
+??? "两次反转"
+
     ```cpp
     class Solution {
     public:
@@ -1133,7 +1161,7 @@ public:
 
 看题解后发现可以首尾相接成环，然后合理断开
 
-!!! "断开"
+??? "断开"
 
     ```cpp
     class Solution {
@@ -5395,7 +5423,7 @@ int main() {
 ### 读者写者问题
 [wiki](https://en.wikipedia.org/wiki/Readers%E2%80%93writers_problem#)
 
-!!! "读者优先"
+??? "读者优先"
 
     ```cpp
     #include <mutex>
@@ -5453,7 +5481,8 @@ int main() {
     }
     ```
 
-!!! "写者优先"
+
+??? "写者优先"
 
     ```cpp
     #include <mutex>
@@ -5534,7 +5563,7 @@ int main() {
     }
     ```
 
-!!! "公平"
+??? "公平"
 
     ```cpp
     #include <mutex>

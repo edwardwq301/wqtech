@@ -1089,12 +1089,12 @@ public:
 
 ```txt
 no          1 2 3 4 5 6
-word        a b a b x       // fail on no.5, s = 4 and move 4-2=2 char
+word        a b a b x .... // fail on no.5, s = 4 and move 4-2=2 char
 pattern     a b a b a b
-f(s)        0 0 1 2 3 1
+f(s)        0 0 1 2 3 4
 
 ---
-word        a b a b x
+word        a b a b x ....
 pattern         a b a b a b
 
 ```

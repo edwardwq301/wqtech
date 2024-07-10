@@ -69,4 +69,3 @@ Lorem ipsum dolor sit amet, (1) consectetur adipiscing elit.
       return 0;
     }
     ```
-
