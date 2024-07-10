@@ -22,7 +22,7 @@
       
       
       <link rel="icon" href="../../image/gode.jpg">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.26">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.28">
     
     
       
@@ -672,6 +672,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#others" class="md-nav__link">
+    <span class="md-ellipsis">
+      others
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -770,6 +779,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#others" class="md-nav__link">
+    <span class="md-ellipsis">
+      others
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -795,6 +813,7 @@
 <li><a href="https://github.com/anishathalye/dotbot">仓库链接</a></li>
 <li><a href="https://www.elliotdenolf.com/blog/bootstrap-your-dotfiles-with-dotbot">quick start</a></li>
 </ul>
+<p>还可以配合 puppet 快速开荒新机，比如生成用户等</p>
 <h2 id="ssh">SSH</h2>
 <p>假设用户是 <code>wqq</code></p>
 <p>part1：生成并上传密钥
@@ -831,6 +850,18 @@
 <ul>
 <li><code>adduser</code> is more convenient than <code>useradd</code></li>
 </ul>
+<h2 id="others">others</h2>
+<p><code>some failed command &gt; failed.txt 2&gt;&amp;1</code> 这个是把错误重定向到 <code>failed.txt</code>，为什么不能 <code>some failed command 2&gt;&amp;1 &gt; failed.txt</code>，我的理解如下</p>
+<p>正确的做法为什么行</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>1 ----&gt; screen
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1 ----&gt; txt
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>2 的内容流向 1 所指的位置，也就是 txt
+</span></code></pre></div>
+<p>为什么后者不行</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>2 的内容流向 1 所指的位置，也就是 screen
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>1 ----&gt; txt 此时只改变 1 的内容流向位置，不会改变 2 的
+</span></code></pre></div>
+<p>还可以写成 <code>some failed command &amp;&gt; failed.txt</code> 或者 <code>some failed command &amp;&gt;&gt; failed.txt</code>，<a href="https://stackoverflow.com/a/876267/24175021">后者在 bash4 开始可以</a></p>
 
 
 
@@ -890,7 +921,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["header.autohide", "navigation.sections", "navigation.tracking", "navigation.tabs", "navigation.top", "navigation.indexes", "search.highlight", "search.share", "search.suggest", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+      <script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
       
         <script src="../../javascripts/mathjax.js"></script>
       
