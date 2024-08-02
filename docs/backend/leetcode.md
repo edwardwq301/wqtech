@@ -4432,6 +4432,54 @@ public:
 };
 ```
 
+### 最长连续公共子序列
+[题目](https://www.acwing.com/problem/content/description/3695/)
+
+??? "slove"
+
+```cpp
+#include <string>
+#include <iostream>
+using namespace std;
+
+int main() {
+    string a, b;
+    cin >> a >> b;
+    string anw;
+    
+    // solution 1
+    // int minlen = min(a.size(), b.size());
+    // for (int trylen = 0; trylen <= minlen; trylen++)
+    //     for (int ia = 0; ia + trylen <= a.size(); ia++)
+    //         for (int ib = 0; ib + trylen < b.size(); ib++) {
+    //             if (a.substr(ia, trylen) == b.substr(ib, trylen)) {
+    //                 if (trylen >= anw.size())
+    //                     anw = a.substr(ia, trylen);
+    //             }
+    //         }
+
+    // solution 2 better
+    for (int ia = 0; ia < a.size(); ia++) {
+        for (int ib = 0; ib < b.size(); ib++) {
+            int succ = 0;
+            for (int trylen = 0; ia + trylen < a.size() && ib + trylen < b.size(); trylen++) {
+                if (a[ia + trylen] == b[ib + trylen]) {
+                    succ++;
+                }
+                else
+                    break;
+            }
+            if (succ >= anw.size())
+                anw = a.substr(ia, succ);
+        }
+    }
+    cout << anw.size() << '\n';
+    cout << anw;
+
+    return 0;
+}
+```
+
 ### 第K大的数
 
 [链接](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/)
