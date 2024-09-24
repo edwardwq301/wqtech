@@ -646,6 +646,7 @@ public:
 ```
 
 
+
 ### 31 下一个排列
 [题解](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-)
 
@@ -1190,6 +1191,30 @@ public:
         }
     };
     ```
+
+### 69 平方根
+如果 x*x 大于 n，一定不是答案；如果等于，直接返回；如果小于，可能是答案。因此找的是最后一个 平方小于等于 n 的数字
+
+开始用乘法，爆范围了。改用除法
+```java
+import java.math.BigInteger;
+
+class Solution {
+    public int mySqrt(int x) {
+
+        int left = 0, right = x;
+        while (left < right) {
+            int mid = 1 + left + (right - left) / 2;
+//            int pow=mid*mid;
+            if (mid == x / mid) return mid; // pow == x
+            else if (mid < x / mid) left = mid; // pow < x
+            else right = mid - 1;
+        }
+        return left;
+    }
+}
+```
+
 
 ### 73 矩阵置0
 - 第一种用集合存对应的行、列，最后集中置零
@@ -3616,6 +3641,37 @@ public:
         return anw;
     }
 };
+```
+
+### 367 有效的完全平方数
+和 69 题联动，先找到平方根的整数，然后判断；或者 `n^2 = (1+3...+2n-1)` 用奇数能一直减到零就是完全平方数
+```java
+class Solution {
+
+    public boolean isPerfectSquare(int num) {
+        int x = 1;
+        while (num >= x) {
+            num -= x;
+            x += 2;
+        }
+        return num == 0;
+    }
+
+    public boolean isPerfectSquare2(int num) {
+        int x = mysqrt(num);
+        return x*x == num;
+    }
+
+    private int mysqrt(int num) {
+        int left = 0, right = num;
+        while (left < right) {
+            int mid = 1 + left + (right - left) / 2;
+            if (mid <= num / mid) left = mid;
+            else right = mid - 1;
+        }
+        return left;
+    }
+}
 ```
 
 ### 394 字符串解码
