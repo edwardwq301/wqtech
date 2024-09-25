@@ -3530,7 +3530,41 @@ public:
     ```
 
 ### 283 移动0
-比较好的做法是双指针，一个指向新的开始，一个找应该出现的下一位
+联动 26 27，把非零都捡出来
+
+```java
+class Solution {
+    public void moveZeroes(int[] nums) {
+        int newCount = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) {
+                nums[newCount++] = nums[i];
+            }
+        }
+        for (int i = newCount; i < nums.length; i++)
+            nums[i] = 0;
+    }
+}
+
+class SolutionUpdate {
+    public void moveZeroes(int[] nums) {
+        int newCount = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) {
+                int temp=nums[newCount];
+                nums[newCount++] = nums[i];
+                nums[i]=temp;
+            }
+        }
+    
+    }
+}
+```
+
+
+下边是为了用双指针而用，感觉比较僵硬
+
+一种是双指针，一个指向新的开始，一个找应该出现的下一位
 
 ```cpp
 class Solution {
@@ -4206,6 +4240,120 @@ public:
         }
     };
     ```
+
+### 844 比较含退格的字符串
+最直接的想法：模拟
+
+```java
+class Solution {
+
+    public boolean backspaceCompare(String s, String t) {
+        return getTrim(s).equals(getTrim(t));
+    }
+
+    private static String getTrim(String s) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != '#') {
+                stringBuilder.append(s.charAt(i));
+            } else {
+                if (!stringBuilder.isEmpty())
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            }
+        }
+        return stringBuilder.toString();
+    }
+}
+```
+
+联动 移动0 那个题，把关键的内容提出来
+
+```java
+class Solution {
+    public boolean backspaceCompare(String s, String t) {
+        return changeString(s).equals(changeString(t));
+    }
+
+    public static String changeString(String str) {
+        char[] x = str.toCharArray();
+        int slow = 0;
+        for (int fast = 0; fast < x.length; fast++) {
+            if (x[fast] != '#')
+                x[slow++] = x[fast];
+            else {
+                if (slow > 0)
+                    slow--;
+            }
+        }
+
+        return String.valueOf(x, 0, slow);
+
+    }
+}
+```
+
+从后往前看。删除对字符串后面的字符就不起作用了，每次找到要比较的字符
+
+关键是**或**条件：因为可能有一个跑完了，但是另一个是 `x#` 这种，所以不能是与条件
+
+```java
+public class Solution {
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        solution.test();
+    }
+
+    void test() {
+        String s = "nzp#o#g";
+        String t = "b#nzp#o#g";
+        // after compare char n ,si = -1 and ti = 1 so use or condition
+        System.out.println(this.backspaceCompare(s, t));
+    }
+
+    public boolean backspaceCompare(String s, String t) {
+
+        int sCnt = 0, tCnt = 0;
+        int si = s.length() - 1, ti = t.length() - 1;
+        while (si >= 0 && ti >= 0) {
+            while (si >= 0) {
+                if (s.charAt(si) == '#') {
+                    sCnt++;
+                    si--;
+                } else if (sCnt > 0) {
+                    sCnt--;
+                    si--;
+                } else {
+                    break;
+                }
+            }
+            while (ti >= 0) {
+                if (t.charAt(ti) == '#') {
+                    tCnt++;
+                    ti--;
+                } else if (tCnt > 0) {
+                    tCnt--;
+                    ti--;
+                } else {
+                    break;
+                }
+            }
+            if (si >= 0 && ti >= 0) {
+                if (s.charAt(si) != t.charAt(ti)) {
+                    return false;
+                }
+                si--;
+                ti--;
+            } else {
+                if (si >= 0 || ti >= 0) return false;
+            }
+
+        }
+        System.out.println("si: " + si);
+        System.out.println("ti: " + ti);
+        return true;
+    }
+}
+```
 
 ### 904 水果成篮
 就是找一段区间尽可能长，区间内只有两种元素
