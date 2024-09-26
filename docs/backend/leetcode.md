@@ -4358,7 +4358,57 @@ public class Solution {
 ### 904 水果成篮
 就是找一段区间尽可能长，区间内只有两种元素
 
-用滑动窗口
+用滑动窗口，不能用变量存值去删除，原因下边 java
+
+```java
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import static java.lang.Integer.max;
+
+class Solution {
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int[] nums = {3, 3, 3, 1, 2, 1, 1, 2, 3, 3, 4};
+        System.out.println(solution.totalFruit(nums));
+    }
+
+    private int totalFruit(int[] nums) {
+        int left = 0, right = 0;
+        int anw = 0;
+        HashMap<Integer, Integer> cnt = new HashMap<>();
+        for (; right < nums.length; right++) {
+            cnt.put(nums[right], cnt.getOrDefault(nums[right], 0) + 1);
+            while (cnt.size() > 2) {
+                cnt.put(nums[left], cnt.getOrDefault(nums[left], 0) - 1);
+                if (cnt.get(nums[left]) == 0) cnt.remove(nums[left]);
+                left++;
+            }
+            anw = max(anw, right - left + 1);
+        }
+        return anw;
+    }
+
+    public int totalFruitFailed(int[] nums) {
+        // failed on 1,2,1,1,2 because only remove the first 1, not remove later of 1
+        int left = 0, right = 0;
+        HashSet<Integer> types = new HashSet<>();
+        int maxLen = 0;
+        for (; right < nums.length; right++) {
+            types.add(nums[right]);
+            while (types.size() > 2) {
+                maxLen = max(maxLen, right - left);
+                int removeVal = nums[left];
+                types.remove(nums[left]);
+                while (nums[left] == removeVal && left < right) left++;
+            }
+        }
+        return maxLen;
+    }
+}
+```
 
 ```cpp
 class Solution {
@@ -4420,6 +4470,80 @@ public:
     }
 };
 ```
+
+### 977 有序数组平方
+直观做法：先找第一个大于等于 0 的数，然后往两边选
+
+巧妙做法：两边开选，选较大的放在答案最后
+
+=== "直观"
+
+    ```java
+    import static java.lang.Math.*;
+
+    class Solution {
+        public int[] sortedSquares(int[] nums) {
+
+            int rightPoint = bsearch(nums);
+            int leftPoint = rightPoint - 1;
+            int[] anw = new int[nums.length];
+            for (int i = 0; i < nums.length; i++) {
+                int leftval = Integer.MAX_VALUE;
+                int rightval = Integer.MAX_VALUE;
+                if (leftPoint >= 0) {
+                    leftval = nums[leftPoint] * nums[leftPoint];
+                }
+                if (rightPoint < nums.length) {
+                    rightval = nums[rightPoint] * nums[rightPoint];
+                }
+            //  System.out.println(leftval + "--" + rightval);
+                if (leftval < rightval) {
+                    anw[i] = leftval;
+                    leftPoint--;
+                } else {
+                    anw[i] = rightval;
+                    rightPoint++;
+                }
+            }
+            return anw;
+        }
+
+        private int bsearch(int[] nums) {
+            int left = 0, right = nums.length;
+            while (left < right) {
+                int mid = left + (right - left) / 2;
+                if (nums[mid] >= 0) right = mid;
+                else left = mid + 1;
+            }
+            return left;
+        }
+    }
+    ```
+
+=== "巧妙"
+
+    ```java
+    import static java.lang.Math.*;
+
+    class Solution {
+        public int[] sortedSquares(int[] nums) {
+            int left = 0, right = nums.length - 1;
+            int[] anw = new int[nums.length];
+            for (int i = nums.length - 1; i >= 0; i--) {
+                int leftval = nums[left] * nums[left];
+                int rightval = nums[right] * nums[right];
+                if (leftval > rightval) {
+                    anw[i] = leftval;
+                    left++;
+                } else {
+                    anw[i] = rightval;
+                    right--;
+                }
+            }
+            return anw;
+        }
+    }
+    ```
 
 ### 1475 商品折扣后最终价格
 这个题和 739 是一个类型，假设 `[4,8,3,7]`，可以用 3 更新前边的 4，8，也就是当前的值比前边的小，就出栈之前内容并更新。
