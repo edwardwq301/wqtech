@@ -1299,11 +1299,91 @@ class Solution {
     ```
 
 ### 76 最小覆盖字串
+更新：反复做像是在背答案😇，本题关键是利用上来就减一，根据感兴趣字母的值反复在 >=0 上弹跳，不感兴趣字母的值在 <=0 上弹跳
+
+---
+
+优化版本
+
+```java
+import java.util.HashMap;
+
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s.length() < t.length())
+            return "";
+
+        char[] sa = s.toCharArray();
+        char[] ta = t.toCharArray();
+
+        HashMap<Character, Integer> hits = new HashMap<>();
+        for (char c : ta) {
+            hits.put(c, hits.getOrDefault(c, 0) + 1);
+        }
+
+        int left = 0, right = 0;
+        int anwLeft = 0, anwLen = Integer.MAX_VALUE;
+        int succHit = 0;
+        for (; right < s.length(); right++) {
+            char rightChar = sa[right];
+            hits.put(rightChar, hits.getOrDefault(rightChar, 0) - 1);
+            if (hits.get(rightChar) >= 0) {
+                succHit++;
+            }
+            while (succHit == t.length()) {
+                if (right - left + 1 < anwLen) {
+                    anwLen = right - left + 1;
+                    anwLeft = left;
+                }
+                char leftChar = sa[left];
+                hits.put(leftChar, hits.get(leftChar) + 1);
+                if (hits.get(leftChar) > 0)
+                    succHit--;
+                left++;
+            }
+        }
+        return anwLen == Integer.MAX_VALUE ? "" : s.substring(anwLeft, anwLeft + anwLen);
+
+    }
+}
+```
+
+```cpp
+class Solution {
+public:
+    unordered_map<char, int> letterNeed;
+
+    string minWindow(string s, string t) {
+        if (t.size() > s.size()) return "";
+
+        pair<int, int> anw = {INT_MAX, INT_MAX};
+        for (char x: t) letterNeed[x]++;
+
+        int cnt = 0;
+        for (int left = 0, right = 0; right < s.size(); right++) {
+            letterNeed[s[right]]--;  // 上来就减不判断
+            if (letterNeed[s[right]] >= 0) cnt++; // 非答案字母此时为 -1 
+            while (cnt == t.size()) {
+                if (right - left + 1 < anw.second) anw = {left, right - left + 1};
+                letterNeed[s[left]]++;
+                if (letterNeed[s[left]] > 0) cnt--; // 非答案字母此时为 0
+                left++;
+            }
+        }
+
+        if (anw.second == INT_MAX) return "";
+        else return s.substr(anw.first, anw.second);
+    }
+};
+```
+
 有滑动窗口的提示，想起来是不是很难，但是写起来就容易超时。
 
 思路：如果找到了一个覆盖，就更新答案，再把左指针移动到不能覆盖的地方
 
 注意：每次移动一个字母的距离，不要把非答案字母用 while 全跳过，这样容易出问题
+
+原始版本
 
 ```cpp
 class Solution {
@@ -1340,37 +1420,6 @@ public:
         return true;
     }
 
-};
-```
-
-优化
-
-```cpp
-class Solution {
-public:
-    unordered_map<char, int> letterNeed;
-
-    string minWindow(string s, string t) {
-        if (t.size() > s.size()) return "";
-
-        pair<int, int> anw = {INT_MAX, INT_MAX};
-        for (char x: t) letterNeed[x]++;
-
-        int cnt = 0;
-        for (int left = 0, right = 0; right < s.size(); right++) {
-            letterNeed[s[right]]--;  // 上来就减不判断
-            if (letterNeed[s[right]] >= 0) cnt++; // 非答案字母此时为 -1 
-            while (cnt == t.size()) {
-                if (right - left + 1 < anw.second) anw = {left, right - left + 1};
-                letterNeed[s[left]]++;
-                if (letterNeed[s[left]] > 0) cnt--; // 非答案字母此时为 0
-                left++;
-            }
-        }
-
-        if (anw.second == INT_MAX) return "";
-        else return s.substr(anw.first, anw.second);
-    }
 };
 ```
 
