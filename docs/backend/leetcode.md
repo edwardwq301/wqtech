@@ -1117,6 +1117,40 @@ public:
 ```
 
 ### 61 旋转链表
+2024/10/04 周姓室友分享给我，重新做了一遍，想的是先成环，再断开
+
+发现相当于 **倒着转 k 步是新的头**，相当于正转 length-k ，接下来就是找到新头的前一个，断开，返回新头
+
+```java
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head==null) return head;
+
+        int length = 0;
+        ListNode lastTail = head;
+
+        for (ListNode temp = head; temp != null; temp = temp.next) {
+            lastTail = temp;
+            length++;
+        }
+    
+        lastTail.next = head;
+        k = k % length;
+
+        int toNextHead = length - k;
+        ListNode preNewHead = head;
+        for (int i = 0; i < toNextHead - 1; i++)
+            preNewHead = preNewHead.next;
+
+        ListNode newHead = preNewHead.next;
+        preNewHead.next = null;
+        return newHead;
+    }
+}
+```
+
+---
+
 开始直接两次反转
 
 ??? "两次反转"
