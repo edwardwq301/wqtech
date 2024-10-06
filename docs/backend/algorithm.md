@@ -125,6 +125,20 @@ for i from 0 to n−2 do
      exchange a[i] and a[j]
 ```
 
+## 环形队列
+容量为 n 的环形队列，读写指针拓展为 `原始[0, n-1] 镜像[n, 2n-1]`。当指针值大于等于 2n 时，使其折返到 ptr-2n。
+
+真正读写的索引：`in = in % n` 等价于 `in = in & (in-1)`
+
+如何判断空满：
+
+1. 两个符号，如果进入镜像就🚩，两个符号相同说明空，不同为满
+2. 如果队列容量是2的幂次，可以不用上边两个符号位。改进做法为：
+   1. 读写指针相同 空；相差 n 满;等价于 `out == (in xor size)`
+   2. [Linux使用无符号数进阶](https://zh.wikipedia.org/wiki/%E7%92%B0%E5%BD%A2%E7%B7%A9%E8%A1%9D%E5%8D%80#Linux%E5%86%85%E6%A0%B8%E7%9A%84kfifo)
+
+[参考资料](https://juejin.cn/post/7113550346835722276?searchId=202408141508525F245388AC3E2679B7EA#heading-0)
+
 ## 并查集
 
 ```java
