@@ -146,26 +146,32 @@ CLion 突然发现输入 vector 不补全尖括号了，后来发现设置成 c1
 ## markdown preview enhanced
 - 打印背景（让代码块背景为灰色） [教程](https://blog.csdn.net/RP123123123/article/details/118113026)
 
-## 更换vscode的代码颜色
-1. 找到对应的文件夹
-   默认主题 
-   ` D:\C\vscode\Microsoft VS Code\resources\app\extensions\theme-defaults\themes`
+## VIM
 
+edit keys
 
-2. 打开json文件，主要修改`"tokenColors"`这一项
-   可以用github dark的对应修改
+- visio block后进入insert **Shift-i**
+- undo all the changes on a line, **type U**
+- replace steadily **R**
+- changes to the end **C / D**
+- put before the cursor **P**
+- delete the char under cursor and enter insert mode **s**, and **S or CC** is the whole line 
 
+move keys
 
-## vim
+- move to the beginning of sentence/paragraph/block **( { [in normal**
 
-|操作|命令|
-|:---|:---|
-|复制|y|
-|选中后复制到系统剪贴板|"+y|
-|粘贴|p|
-|撤销undo|u|
-|重做redo|Ctrl-r|
-|visio block后进入insert|Shift-i|
+file keys
 
+- show where you are in a file **<C-g>**
+- jump to file under cursor **<C-]>** 
+- retrieves disk file FILENAME and puts it below the cursor position **:r FILENAME** 
+
+buffer and windows
+
+- list all open buffers **ls**
+- switch to a specific buffer **:b N**
+- change buffer **bn/bp or :buffer (press tab)** buffer next/previous
+- toggles between the last two files you edited **<C-^>**.  press ctrl and 6 or ctrl shift 6
 
 [vim和系统剪贴板交互](https://www.zhihu.com/question/19863631/answer/89354508)
