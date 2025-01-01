@@ -1328,53 +1328,45 @@ public:
 
 ## [0到n-1中缺失的数字](https://www.acwing.com/problem/content/description/64/)
 
-二分 特征 `f[i]=i` `f[i]!=i`
+二分 特征 数值比下标大或者等于下标
 
-??? "查后面的"
+=== "大于下标"
 
-    ```cpp
+    ```java
     class Solution {
-    public:
-        int getMissingNumber(vector<int> &nums) {
-            if(nums.size()==0) return 0;
-            return midsearch(nums, 0, nums.size() - 1);
-        }
-
-        int midsearch(vector<int> nums, int l, int r) {
-            while (l < r) {
-                int val=nums[l+r>>1];
-                int idx=l+r>>1;
-                if(val>idx) r=idx;
-                else l=idx+1;
+        public int getMissingNumber(int[] nums) {
+            if (nums.length == 0) return 0;
+            int left = 0, right = nums.length - 1;
+            while (left < right) {
+                int mid = (left + right) / 2;
+                if (nums[mid] > mid) right = mid;
+                else left = mid + 1;
             }
-            if(nums[l]==l) return l+1;
-            return l;
+            // if (nums.length-1 == left) return left + 1; 
+            // [0,1,2,4] 答案应为3，输出为4
+            // 应该是 数字符合[0..n-1]
+            if (nums[left] == left) return left + 1;
+            return left;
         }
-    };
+    }
     ```
 
-??? "查前边的"
+=== "等于下标"
 
-    ```cpp
+    ```java
     class Solution {
-    public:
-        int getMissingNumber(vector<int> &nums) {
-            if(nums.size()==0) return 0;
-            if(nums.size()==1) return 1;
-            return midsearch(nums, 0, nums.size() - 1);
-        }
-
-        int midsearch(vector<int> nums, int l, int r) {
-            while (l < r) {
-                int val=nums[l+r+1>>1];
-                int idx=l+r+1>>1;
-                if(idx==val) l=idx;
-                else r=idx-1;
+        public int getMissingNumber(int[] nums) {
+            if (nums.length == 0) return 0;
+            int left = 0, right = nums.length - 1;
+            while (left < right) {
+                int mid = (left + right + 1) / 2;
+                if (nums[mid] == mid) left = mid;
+                else right = mid - 1;
             }
-            if(l==0) return 0;
-            return l+1;
+            if (nums[left] == left) return left + 1;
+            return left;
         }
-    };
+    }
     ```
 
 ## [二叉搜索树的第k个结点](https://www.acwing.com/problem/content/description/66/)
@@ -2049,3 +2041,41 @@ dfs时进行计数
         }
     };
     ```
+
+## 不修改数组找出重复的数字
+对数值进行二分，比如`[1, 2, 3, 4, 4]`从`[1, 2]`的数值出现了2次，从[3,4]的数值出现了3次，答案在出现次数大于区间长度的区间，当区间长度为1就找到答案。
+
+```java
+class Solution {
+    public int duplicateInArray(int[] nums) {
+        int left = 1, right = nums.length - 1;
+        while (left < right) {
+            int cnt = 0;
+            int mid = left + (right - left) / 2;
+            for (int num : nums) {
+                if (num >= left && num <= mid) cnt++;
+            }
+            if (cnt > mid - left + 1) right = mid;
+            else left = mid + 1;
+
+            // 或者
+            // if(cnt <= mid - left + 1) left = mid + 1;
+            // else right = mid;
+        }
+        return left;
+    }
+}
+```
+
+不能判断等于 `if(cnt == mid - left + 1) left = mid + 1;` 因为数组有多个重复数字不能保证正好是相等，例如`[4, 9, 20, 12, 4, 14, 6, 13, 19, 5, 4, 18, 5, 16, 11, 10, 13, 5, 3, 2, 12]` 有两个4，12
+
+另外用等号也不符合二分条件：答案在出现次数**大于**区间长度的区间
+
+```
+left: 1 mid: 10 cnt: 11 right: 20
+left: 1 mid: 5 cnt: 8 right: 10
+left: 1 mid: 3 cnt: 2 right: 5 // 注意下一步就错了，因为[1,3] 只出现了两个
+left: 1 mid: 2 cnt: 1 right: 3
+left: 1 mid: 1 cnt: 0 right: 2
+1
+```

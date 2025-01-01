@@ -156,6 +156,7 @@ edit keys
 - changes to the end **C / D**
 - put before the cursor **P**
 - delete the char under cursor and enter insert mode **s**, and **S or CC** is the whole line 
+- search the word under cursor forward/backward **\* #** and can use **4\*** to use number
 
 move keys
 
