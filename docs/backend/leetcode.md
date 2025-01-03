@@ -4438,6 +4438,111 @@ public class Solution {
 }
 ```
 
+### 890 查找和替换模式
+题非常好地给出提示：是双射关系，不能 `f(a) = 1 f(a) = 2` 同时存在，只能是`f(a) = 1 f(1) = a`同时成立
+
+可以列出表格
+
+| a->1 | 1->a | null 不存在哈希映射 |
+| ---- | ---- | -------- |
+| null | null | add      |
+| null | yes  | err      |
+| null | no   | err      |
+| yes  | null | err      |
+| no   | null | err      |
+| yes  | no   | err      |
+| no   | yes  | err      |
+| no   | no   | err      |
+| yes  | yes  | continue |
+
+
+```java
+import java.util.*;
+
+class Solution {
+    public List<String> findAndReplacePattern(String[] words, String pattern) {
+        int[] word2pattern = new int[26];
+        int[] pattern2word = new int[26];
+        List<String> anw = new ArrayList<String>();
+        for (String word : words) {
+            Arrays.fill(word2pattern, -1);
+            Arrays.fill(pattern2word, -1);
+            boolean ok = true;
+            for (int i = 0; ok && i < word.length(); i++) {
+                int w = word.charAt(i) - 'a';
+                int p = pattern.charAt(i) - 'a';
+                if (pattern2word[p] == -1 && word2pattern[w] == -1) {
+                    pattern2word[p] = w;
+                    word2pattern[w] = p;
+                } else if (pattern2word[p] == w && word2pattern[w] == p) continue;
+                else ok = false;
+            }
+            if (ok) anw.add(word);
+        }
+        return anw;
+    }
+}
+```
+
+然后发现表格中间可以合并成 `pattern2word[p] != w`，因为不存在的 -1 刚好也能用，避免了空异常
+
+```java
+import java.util.*;
+
+class Solution {
+    public List<String> findAndReplacePattern(String[] words, String pattern) {
+        int[] word2pattern = new int[26];
+        int[] pattern2word = new int[26];
+        List<String> anw = new ArrayList<String>();
+        for (String word : words) {
+            Arrays.fill(word2pattern, -1);
+            Arrays.fill(pattern2word, -1);
+            boolean ok = true;
+            for (int i = 0; ok && i < word.length(); i++) {
+                int w = word.charAt(i) - 'a';
+                int p = pattern.charAt(i) - 'a';
+                if (pattern2word[p] == -1 && word2pattern[w] == -1) {
+                    pattern2word[p] = w;
+                    word2pattern[w] = p;
+                } else if (pattern2word[p] != w)
+                    ok = false;
+            }
+            if (ok) anw.add(word);
+        }
+        return anw;
+    }
+}
+```
+
+第二种方法就是官方做两次检查
+
+```java
+class Solution {
+    public List<String> findAndReplacePattern(String[] words, String pattern) {
+        List<String> ans = new ArrayList<String>();
+        for (String word : words) {
+            if (match(word, pattern) && match(pattern, word)) {
+                ans.add(word);
+            }
+        }
+        return ans;
+    }
+
+    public boolean match(String word, String pattern) {
+        Map<Character, Character> map = new HashMap<Character, Character>();
+        for (int i = 0; i < word.length(); ++i) {
+            char x = word.charAt(i), y = pattern.charAt(i);
+            if (!map.containsKey(x)) {
+                map.put(x, y);
+            } else if (map.get(x) != y) { 
+                return false;
+            }
+        }
+        return true;
+    }
+}
+```
+
 ### 904 水果成篮
 就是找一段区间尽可能长，区间内只有两种元素
 
