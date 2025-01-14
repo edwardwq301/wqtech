@@ -191,3 +191,6 @@ git commit --amend|修改最近一次提交信息，但是会改变sha1值，类
 
 
 [revert vs amend](https://stackoverflow.com/questions/28166547/what-are-the-differences-between-revert-amend-rollback-and-undo-a-com)
+
+## gcm
+git credential manager多用户：查了文档之后，排除了.gitconfig 文件，最后是在 控制面板—-用户账户—Windows管理凭据里删除了多余的账号 [参考](https://cloud.tencent.com/developer/article/2055131)
